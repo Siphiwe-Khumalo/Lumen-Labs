@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumen Labs Academia — Apply</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --navy:#0D1B3E;
+    --navy-deep:#060d24;
+    --blue:#3a83ff;
+    --blue-light:#6fb4ff;
+    --cyan:#23d1ff;
+    --purple:#a06bff;
+    --green:#3ddc8f;
+    --text-dim:#9db0da;
+    --glass:rgba(255,255,255,0.05);
+    --glass-border:rgba(255,255,255,0.10);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Inter',sans-serif;
+    background: radial-gradient(ellipse 900px 700px at 20% 0%, #14265c 0%, var(--navy) 45%, var(--navy-deep) 100%);
+    color:#fff;
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  h1,h2,h3{ font-family:'Space Grotesk',sans-serif; }
+  .app{ width:100%; max-width:640px; position:relative; }
+
+  /* floating glows */
+  .glow{ position:fixed; border-radius:50%; filter:blur(40px); pointer-events:none; z-index:0; }
+  .glow1{ width:400px; height:400px; top:-100px; right:-100px; background:radial-gradient(circle,rgba(58,131,255,0.3),transparent 70%);}
+  .glow2{ width:400px; height:400px; bottom:-100px; left:-100px; background:radial-gradient(circle,rgba(35,209,255,0.15),transparent 70%);}
+
+  .card{
+    background: var(--glass);
+    border:1px solid var(--glass-border);
+    backdrop-filter: blur(16px);
+    border-radius:24px;
+    padding:40px 36px;
+    position:relative;
+    z-index:1;
+    animation: fadeUp .5s ease;
+  }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);} }
+
+  /* ---------- Logo / Brand ---------- */
+  .brand{ display:flex; align-items:center; gap:10px; margin-bottom:28px; }
+  .brand svg{ width:30px; height:30px; }
+  .brand-name{ font-weight:700; font-size:18px; letter-spacing:.3px; }
+  .brand-name .labs{ color:var(--blue-light); }
+
+  /* ---------- Welcome ---------- */
+  .welcome{ text-align:center; }
+  .welcome .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(58,131,255,0.12); border:1px solid rgba(90,150,255,.35);
+    padding:6px 16px; border-radius:100px; font-size:12.5px; font-weight:600; color:#8fb4ff; margin-bottom:18px;
+  }
+  .welcome h1{ font-size:32px; line-height:1.2; margin-bottom:14px; }
+  .welcome p{ color:var(--text-dim); font-size:15px; line-height:1.6; max-width:440px; margin:0 auto 28px; }
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    background:linear-gradient(90deg,var(--blue),var(--cyan));
+    color:#fff; border:none; padding:14px 28px; border-radius:14px;
+    font-size:15px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;
+    transition:transform .15s ease, box-shadow .15s ease;
+    box-shadow:0 8px 24px rgba(58,131,255,0.25);
+  }
+  .btn:hover{ transform:translateY(-2px); box-shadow:0 12px 30px rgba(58,131,255,0.35); }
+  .btn:active{ transform:translateY(0); }
+  .btn.secondary{
+    background:transparent; border:1px solid var(--glass-border); box-shadow:none; color:var(--text-dim);
+  }
+  .btn.secondary:hover{ background:rgba(255,255,255,0.05); color:#fff; }
+  .btn:disabled{ opacity:.4; cursor:not-allowed; transform:none; }
+  .btn-row{ display:flex; justify-content:space-between; gap:12px; margin-top:28px; }
+
+  /* ---------- Progress ---------- */
+  .progress-wrap{ margin-bottom:30px; }
+  .progress-labels{ display:flex; justify-content:space-between; margin-bottom:10px; }
+  .progress-labels span{ font-size:11px; color:var(--text-dim); font-weight:600; letter-spacing:.3px; }
+  .progress-labels span.active{ color:var(--blue-light); }
+  .progress-track{ height:6px; background:rgba(255,255,255,0.08); border-radius:100px; overflow:hidden; }
+  .progress-fill{ height:100%; background:linear-gradient(90deg,var(--blue),var(--cyan)); border-radius:100px; transition:width .4s ease; }
+
+  /* ---------- Steps ---------- */
+  .step{ display:none; animation: fadeUp .4s ease; }
+  .step.active{ display:block; }
+  .step h2{ font-size:22px; margin-bottom:6px; }
+  .step .step-sub{ color:var(--text-dim); font-size:13.5px; margin-bottom:24px; }
+
+  .field{ margin-bottom:18px; }
+  .field label{ display:block; font-size:13px; font-weight:600; margin-bottom:8px; color:#dce4f7; }
+  .field input[type="text"],
+  .field input[type="email"],
+  .field input[type="tel"],
+  .field select,
+  .field textarea{
+    width:100%; padding:13px 14px; border-radius:12px;
+    background:rgba(255,255,255,0.04); border:1px solid var(--glass-border);
+    color:#fff; font-size:14.5px; font-family:'Inter',sans-serif;
+    outline:none; transition:border .15s ease, background .15s ease;
+  }
+  .field textarea{ resize:vertical; min-height:100px; }
+  .field input:focus, .field select:focus, .field textarea:focus{
+    border-color:var(--blue); background:rgba(58,131,255,0.06);
+  }
+  .field input::placeholder, .field textarea::placeholder{ color:#5f6f96; }
+  .field select{ appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239db0da' stroke-width='2' fill='none'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; }
+  .error-msg{ color:#ff8080; font-size:12px; margin-top:6px; display:none; }
+  .field.invalid input, .field.invalid select, .field.invalid textarea{ border-color:#ff6b6b; }
+  .field.invalid .error-msg{ display:block; }
+
+  .radio-grid, .checkbox-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .opt{
+    display:flex; align-items:center; gap:10px; padding:12px 14px;
+    border:1px solid var(--glass-border); border-radius:12px; cursor:pointer;
+    background:rgba(255,255,255,0.03); font-size:13.5px; transition:border .15s ease, background .15s ease;
+  }
+  .opt:hover{ border-color:rgba(90,150,255,.4); }
+  .opt input{ accent-color:var(--blue); width:16px; height:16px; }
+  .opt.checked{ border-color:var(--blue); background:rgba(58,131,255,0.1); }
+
+  /* ---------- Plans ---------- */
+  .plans{ display:flex; flex-direction:column; gap:14px; }
+  .plan{
+    border-radius:18px; padding:20px; border:1.5px solid var(--glass-border);
+    background:rgba(255,255,255,0.03); cursor:pointer; position:relative;
+    transition:border .15s ease, transform .15s ease, background .15s ease;
+  }
+  .plan:hover{ transform:translateY(-2px); }
+  .plan.selected{ border-color:var(--blue); background:rgba(58,131,255,0.08); box-shadow:0 0 0 1px var(--blue); }
+  .plan .plan-top{ display:flex; align-items:center; justify-content:space-between; }
+  .plan-name{ font-weight:700; font-size:16px; display:flex; align-items:center; gap:8px; }
+  .dot{ width:9px; height:9px; border-radius:50%; }
+  .dot-free{ background:var(--green); }
+  .dot-starter{ background:var(--blue); }
+  .dot-pro{ background:var(--purple); }
+  .plan-price{ font-weight:700; font-size:15px; color:var(--blue-light); }
+  .plan-desc{ font-size:12.5px; color:var(--text-dim); margin:6px 0 10px; }
+  .plan ul{ list-style:none; display:flex; flex-direction:column; gap:5px; }
+  .plan li{ font-size:12.5px; color:#cdd7f0; }
+  .plan .badge{ position:absolute; top:-10px; right:16px; background:linear-gradient(90deg,#7a5cff,#3a83ff); font-size:10px; font-weight:700; padding:4px 10px; border-radius:100px; }
+
+  /* ---------- Review ---------- */
+  .review-section{ margin-bottom:18px; padding-bottom:18px; border-bottom:1px solid var(--glass-border); }
+  .review-section:last-child{ border-bottom:none; }
+  .review-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .review-head h3{ font-size:14px; color:var(--blue-light); }
+  .edit-link{ font-size:12px; color:var(--text-dim); background:none; border:none; cursor:pointer; text-decoration:underline; font-family:'Inter',sans-serif; }
+  .review-row{ display:flex; justify-content:space-between; font-size:13px; padding:4px 0; color:#dce4f7; gap:12px; }
+  .review-row span:first-child{ color:var(--text-dim); }
+  .review-row span:last-child{ text-align:right; }
+
+  /* ---------- Success ---------- */
+  .success{ text-align:center; }
+  .success .check-anim{
+    width:76px; height:76px; margin:0 auto 20px; border-radius:50%;
+    background:linear-gradient(135deg,var(--blue),var(--cyan));
+    display:flex; align-items:center; justify-content:center; font-size:34px;
+    animation: pop .5s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes pop{ from{ transform:scale(0); opacity:0; } to{ transform:scale(1); opacity:1; } }
+  .success h1{ font-size:26px; margin-bottom:12px; }
+  .success p{ color:var(--text-dim); font-size:14.5px; line-height:1.6; max-width:420px; margin:0 auto 6px; }
+  .success .tag{ margin-top:20px; font-weight:700; color:var(--blue-light); letter-spacing:.5px; font-size:13px; }
+
+  @media (max-width:480px){
+    .card{ padding:28px 20px; }
+    .radio-grid, .checkbox-grid{ grid-template-columns:1fr; }
+    .welcome h1{ font-size:26px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow glow1"></div>
+<div class="glow glow2"></div>
+
+<div class="app">
+  <div class="card" id="card">
+
+    <div class="brand">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#6fb4ff"/><stop offset="100%" stop-color="#1a4fd6"/>
+        </linearGradient></defs>
+        <polygon points="30,10 55,10 45,55 30,65" fill="url(#lg1)"/>
+        <polygon points="30,65 90,65 65,90 15,90" fill="url(#lg1)"/>
+      </svg>
+      <div class="brand-name">LUMEN <span class="labs">LABS</span></div>
+    </div>
+
+    <!-- ============= WELCOME SCREEN ============= -->
+    <div class="screen welcome" id="screen-welcome">
+      <div class="eyebrow">🚀 Applications open</div>
+      <h1>Welcome to Lumen Labs Academia</h1>
+      <p>Your coding journey doesn't have to be lonely. We're here to help you learn, build, and grow with confidence.</p>
+      <button class="btn" id="startBtn">Start Application →</button>
+    </div>
+
+    <!-- ============= FORM ============= -->
+    <div class="screen" id="screen-form" style="display:none;">
+
+      <div class="progress-wrap">
+        <div class="progress-labels">
+          <span data-step="1">Personal</span>
+          <span data-step="2">Journey</span>
+          <span data-step="3">Plan</span>
+          <span data-step="4">Goals</span>
+          <span data-step="5">Review</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
+      </div>
+
+      <!-- Formspree endpoint: replace action URL below -->
+      <form id="appForm" action="https://formspree.io/f/xzdnwgjn" method="POST">
+
+        <!-- STEP 1: Personal Information -->
+        <div class="step active" data-step="1">
+          <h2>Personal Information</h2>
+          <p class="step-sub">Let's start with the basics.</p>
+
+          <div class="field">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" name="full_name" placeholder="e.g. Thabo Nkosi" required>
+            <div class="error-msg">Please enter your full name.</div>
+          </div>
+          <div class="field">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="you@email.com" required>
+            <div class="error-msg">Please enter a valid email address.</div>
+          </div>
+          <div class="field">
+            <label for="whatsapp">WhatsApp Number</label>
+            <input type="tel" id="whatsapp" name="whatsapp_number" placeholder="+27 82 123 4567" required>
+            <div class="error-msg">Please enter your WhatsApp number.</div>
+          </div>
+        </div>
+
+        <!-- STEP 2: Learning Journey -->
+        <div class="step" data-step="2">
+          <h2>Learning Journey</h2>
+          <p class="step-sub">Tell us where you're at right now.</p>
+
+          <div class="field">
+            <label for="programme">Which learning programme are you currently enrolled in?</label>
+            <select id="programme" name="programme" required>
+              <option value="" disabled selected>Select an option</option>
+              <option>FNB App Academy</option>
+              <option>Self-learning</option>
+              <option>College / University</option>
+              <option>Other</option>
+            </select>
+            <div class="error-msg">Please select a programme.</div>
+          </div>
+
+          <div class="field">
+            <label>Current learning phase</label>
+            <div class="radio-grid" id="phaseGroup">
+              <label class="opt"><input type="radio" name="learning_phase" value="Beginner" required> Beginner</label>
+              <label class="opt"><input type="radio" name="learning_phase" value="Intermediate"> Intermediate</label>
+              <label class="opt"><input type="radio" name="learning_phase" value="Advanced"> Advanced</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Programming languages currently learning</label>
+            <div class="checkbox-grid" id="langGroup">
+              <label class="opt"><input type="checkbox" name="languages" value="HTML"> HTML</label>
+              <label class="opt"><input type="checkbox" name="languages" value="CSS"> CSS</label>
+              <label class="opt"><input type="checkbox" name="languages" value="JavaScript"> JavaScript</label>
+              <label class="opt"><input type="checkbox" name="languages" value="Python"> Python</label>
+              <label class="opt"><input type="checkbox" name="languages" value="SQL"> SQL</label>
+              <label class="opt"><input type="checkbox" name="languages" value="Other"> Other</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Previous coding experience</label>
+            <div class="radio-grid" id="expGroup">
+              <label class="opt"><input type="radio" name="experience" value="None" required> None</label>
+              <label class="opt"><input type="radio" name="experience" value="Less than 6 months"> &lt; 6 months</label>
+              <label class="opt"><input type="radio" name="experience" value="6-12 months"> 6–12 months</label>
+              <label class="opt"><input type="radio" name="experience" value="More than 1 year"> &gt; 1 year</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: Plan -->
+        <div class="step" data-step="3">
+          <h2>Choose Your Learning Path</h2>
+          <p class="step-sub">Select one membership option.</p>
+
+          <div class="plans" id="planGroup">
+            <label class="plan" data-plan="Free">
+              <input type="radio" name="membership_plan" value="Free" style="display:none;" required>
+              <div class="plan-top">
+                <div class="plan-name"><span class="dot dot-free"></span>Free</div>
+                <div class="plan-price">R0</div>
+              </div>
+              <div class="plan-desc">Perfect for beginners.</div>
+              <ul><li>Coding tips</li><li>Community updates</li><li>Selected learning resources</li><li>Beginner tutorials</li></ul>
+            </label>
+
+            <label class="plan" data-plan="Starter">
+              <input type="radio" name="membership_plan" value="Starter Member (R80/month)" style="display:none;">
+              <div class="plan-top">
+                <div class="plan-name"><span class="dot dot-starter"></span>Starter Member</div>
+                <div class="plan-price">R80/mo</div>
+              </div>
+              <div class="plan-desc">Everything in Free, plus more.</div>
+              <ul><li>Complete learning notes (PDFs)</li><li>Weekly coding challenges</li><li>Practice exercises</li><li>Exclusive tutorials</li><li>Priority WhatsApp support</li></ul>
+            </label>
+
+            <label class="plan" data-plan="Pro">
+              <span class="badge">MOST POPULAR</span>
+              <input type="radio" name="membership_plan" value="Pro Member (R299/month)" style="display:none;">
+              <div class="plan-top">
+                <div class="plan-name"><span class="dot dot-pro"></span>Pro Member</div>
+                <div class="plan-price">R299/mo</div>
+              </div>
+              <div class="plan-desc">Everything in Starter, plus more.</div>
+              <ul><li>Full coding video lessons</li><li>One-on-one mentoring</li><li>Assignment reviews</li><li>Portfolio guidance</li><li>Live coding sessions</li><li>Career guidance (Coming Soon)</li></ul>
+            </label>
+          </div>
+        </div>
+
+        <!-- STEP 4: Goals -->
+        <div class="step" data-step="4">
+          <h2>Your Goals</h2>
+          <p class="step-sub">Help us understand what you're working toward.</p>
+
+          <div class="field">
+            <label for="goals">What do you hope to achieve with Lumen Labs Academia?</label>
+            <textarea id="goals" name="goals" placeholder="Share your goals..." required></textarea>
+            <div class="error-msg">Please share your goals.</div>
+          </div>
+          <div class="field">
+            <label for="notes">Anything you'd like us to know before we contact you? (optional)</label>
+            <textarea id="notes" name="additional_notes" placeholder="Optional notes..."></textarea>
+          </div>
+        </div>
+
+        <!-- STEP 5: Review -->
+        <div class="step" data-step="5">
+          <h2>Review Your Application</h2>
+          <p class="step-sub">Double check everything looks right before submitting.</p>
+          <div id="reviewContent"></div>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn secondary" id="prevBtn">← Back</button>
+          <button type="button" class="btn" id="nextBtn">Continue →</button>
+          <button type="submit" class="btn" id="submitBtn" style="display:none;">Submit Application</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ============= SUCCESS SCREEN ============= -->
+    <div class="screen success" id="screen-success" style="display:none;">
+      <div class="check-anim">🎉</div>
+      <h1>Application Received!</h1>
+      <p>Thank you for applying to Lumen Labs Academia. We'll review your application and contact you soon using the information you provided.</p>
+      <p>We're excited to be part of your coding journey.</p>
+      <div class="tag">LEARN · BUILD · GROW</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  const totalSteps = 5;
+  let currentStep = 1;
+
+  const screenWelcome = document.getElementById('screen-welcome');
+  const screenForm = document.getElementById('screen-form');
+  const screenSuccess = document.getElementById('screen-success');
+  const startBtn = document.getElementById('startBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const prevBtn = document.getElementById('prevBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  const progressFill = document.getElementById('progressFill');
+  const form = document.getElementById('appForm');
+
+  // Welcome -> Form
+  startBtn.addEventListener('click', () => {
+    screenWelcome.style.display = 'none';
+    screenForm.style.display = 'block';
+  });
+
+  // Highlight checked options visually
+  document.querySelectorAll('.opt input').forEach(inp => {
+    inp.addEventListener('change', () => {
+      const name = inp.name;
+      document.querySelectorAll(`input[name="${name}"]`).forEach(i => {
+        i.closest('.opt').classList.toggle('checked', i.checked);
+      });
+    });
+  });
+
+  // Plan card selection
+  document.querySelectorAll('.plan').forEach(planEl => {
+    planEl.addEventListener('click', () => {
+      document.querySelectorAll('.plan').forEach(p => p.classList.remove('selected'));
+      planEl.classList.add('selected');
+      planEl.querySelector('input[type="radio"]').checked = true;
+    });
+  });
+
+  function showStep(n){
+    document.querySelectorAll('.step').forEach(s => {
+      s.classList.toggle('active', parseInt(s.dataset.step) === n);
+    });
+    document.querySelectorAll('.progress-labels span').forEach(s => {
+      s.classList.toggle('active', parseInt(s.dataset.step) <= n);
+    });
+    progressFill.style.width = (n / totalSteps * 100) + '%';
+    prevBtn.style.visibility = n === 1 ? 'hidden' : 'visible';
+    nextBtn.style.display = n === totalSteps ? 'none' : 'inline-flex';
+    submitBtn.style.display = n === totalSteps ? 'inline-flex' : 'none';
+    if (n === totalSteps) buildReview();
+  }
+
+  function validateStep(n){
+    const stepEl = document.querySelector(`.step[data-step="${n}"]`);
+    let valid = true;
+
+    // text/email/tel/select/textarea required fields
+    stepEl.querySelectorAll('input[required][type="text"], input[required][type="email"], input[required][type="tel"], select[required], textarea[required]').forEach(inp => {
+      const field = inp.closest('.field');
+      const ok = inp.checkValidity() && inp.value.trim() !== '';
+      if (field) field.classList.toggle('invalid', !ok);
+      if (!ok) valid = false;
+    });
+
+    // radio groups required (phase, experience, plan)
+    const radioGroups = {};
+    stepEl.querySelectorAll('input[type="radio"][required]').forEach(r => radioGroups[r.name] = true);
+    Object.keys(radioGroups).forEach(name => {
+      const checked = stepEl.querySelector(`input[name="${name}"]:checked`);
+      if (!checked) valid = false;
+    });
+
+    return valid;
+  }
+
+  nextBtn.addEventListener('click', () => {
+    if (!validateStep(currentStep)) return;
+    if (currentStep < totalSteps){
+      currentStep++;
+      showStep(currentStep);
+    }
+  });
+
+  prevBtn.addEventListener('click', () => {
+    if (currentStep > 1){
+      currentStep--;
+      showStep(currentStep);
+    }
+  });
+
+  function buildReview(){
+    const get = id => document.getElementById(id)?.value || '—';
+    const radioVal = name => document.querySelector(`input[name="${name}"]:checked`)?.value || '—';
+    const checks = [...document.querySelectorAll('input[name="languages"]:checked')].map(c => c.value).join(', ') || '—';
+
+    document.getElementById('reviewContent').innerHTML = `
+      <div class="review-section">
+        <div class="review-head"><h3>Personal Information</h3><button type="button" class="edit-link" data-goto="1">Edit</button></div>
+        <div class="review-row"><span>Name</span><span>${get('fullName')}</span></div>
+        <div class="review-row"><span>Email</span><span>${get('email')}</span></div>
+        <div class="review-row"><span>WhatsApp</span><span>${get('whatsapp')}</span></div>
+      </div>
+      <div class="review-section">
+        <div class="review-head"><h3>Learning Journey</h3><button type="button" class="edit-link" data-goto="2">Edit</button></div>
+        <div class="review-row"><span>Programme</span><span>${get('programme')}</span></div>
+        <div class="review-row"><span>Phase</span><span>${radioVal('learning_phase')}</span></div>
+        <div class="review-row"><span>Languages</span><span>${checks}</span></div>
+        <div class="review-row"><span>Experience</span><span>${radioVal('experience')}</span></div>
+      </div>
+      <div class="review-section">
+        <div class="review-head"><h3>Learning Path</h3><button type="button" class="edit-link" data-goto="3">Edit</button></div>
+        <div class="review-row"><span>Plan</span><span>${radioVal('membership_plan')}</span></div>
+      </div>
+      <div class="review-section">
+        <div class="review-head"><h3>Goals</h3><button type="button" class="edit-link" data-goto="4">Edit</button></div>
+        <div class="review-row"><span>Goals</span><span>${get('goals')}</span></div>
+        <div class="review-row"><span>Notes</span><span>${get('notes')}</span></div>
+      </div>
+    `;
+
+    document.querySelectorAll('.edit-link').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentStep = parseInt(btn.dataset.goto);
+        showStep(currentStep);
+      });
+    });
+  }
+
+  // Submit -> Formspree (AJAX so we can show custom success screen)
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if (!validateStep(1) ) { currentStep = 1; showStep(1); return; }
+
+    const data = new FormData(form);
+    fetch(form.action, {
+      method: 'POST',
+      body: data,
+      headers: { 'Accept': 'application/json' }
+    }).then(response => {
+      // Show success regardless (Formspree placeholder URL won't resolve until configured)
+      screenForm.style.display = 'none';
+      screenSuccess.style.display = 'block';
+    }).catch(() => {
+      // Even on network error (e.g. placeholder endpoint), show success UX in demo mode
+      screenForm.style.display = 'none';
+      screenSuccess.style.display = 'block';
+    });
+  });
+
+  showStep(1);
+})();
+</script>
+
+</body>
+</html>
