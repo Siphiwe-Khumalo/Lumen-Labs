@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard · Lumen Labs Academia</title>
+    <meta name="description" content="Your personal coding headquarters at Lumen Labs Academia." />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ============================================================
+               CSS CUSTOM PROPERTIES
+               ============================================================ */
+        :root {
+            --color-navy: #0D1B3E;
+            --color-navy-light: #1a2d5a;
+            --color-navy-mid: #132a5e;
+            --color-royal: #4A7CF7;
+            --color-royal-light: #6b96f9;
+            --color-royal-glow: rgba(74, 124, 247, 0.25);
+            --color-white: #ffffff;
+            --color-off-white: #f0f4ff;
+            --color-gray: #8a9bb5;
+            --color-gray-light: #b8c7e0;
+            --color-glass: rgba(255, 255, 255, 0.06);
+            --color-glass-border: rgba(255, 255, 255, 0.10);
+            --color-card-bg: rgba(255, 255, 255, 0.04);
+            --color-success: #4ade80;
+            --color-error: #f87171;
+            --color-warning: #fbbf24;
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.35);
+            --shadow-soft: 0 12px 48px rgba(0, 0, 0, 0.25);
+            --shadow-glow: 0 0 60px rgba(74, 124, 247, 0.15);
+            --radius-card: 20px;
+            --radius-sm: 12px;
+            --radius-full: 9999px;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --transition-smooth: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --sidebar-width: 240px;
+            --header-height: 72px;
+            --right-sidebar-width: 280px;
+        }
+
+        /* ============================================================
+               RESET & BASE
+               ============================================================ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--color-navy);
+            color: var(--color-white);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        button {
+            cursor: pointer;
+            font-family: inherit;
+            border: none;
+            background: none;
+            color: inherit;
+        }
+        input {
+            font-family: inherit;
+        }
+
+        /* ============================================================
+               SCROLLBAR
+               ============================================================ */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--color-navy);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-royal);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-royal-light);
+        }
+
+        /* ============================================================
+               SIDEBAR
+               ============================================================ */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: rgba(13, 27, 62, 0.92);
+            backdrop-filter: blur(20px) saturate(1.4);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 24px 16px 24px 20px;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: transform var(--transition-smooth);
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: -0.02em;
+            padding: 4px 8px 24px 4px;
+            flex-shrink: 0;
+        }
+        .sidebar-brand .logo-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--color-royal), #7c5cfc);
+            color: #fff;
+            font-weight: 900;
+            font-size: 0.9rem;
+        }
+        .sidebar-brand span {
+            background: linear-gradient(135deg, #fff, var(--color-gray-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding-top: 4px;
+        }
+
+        .sidebar-nav .nav-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--color-gray);
+            font-weight: 600;
+            padding: 16px 8px 6px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--color-gray-light);
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+        .sidebar-nav a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+        .sidebar-nav a.active {
+            background: rgba(74, 124, 247, 0.12);
+            color: #fff;
+            box-shadow: inset 3px 0 0 var(--color-royal);
+        }
+        .sidebar-nav a .icon {
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .sidebar-nav a .badge-nav {
+            margin-left: auto;
+            font-size: 0.65rem;
+            background: rgba(74, 124, 247, 0.15);
+            padding: 1px 10px;
+            border-radius: var(--radius-full);
+            color: var(--color-royal-light);
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 16px;
+            margin-top: 4px;
+            flex-shrink: 0;
+        }
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--color-gray-light);
+            transition: var(--transition-smooth);
+        }
+        .sidebar-footer a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+        .sidebar-footer a .icon {
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* ============================================================
+               MAIN CONTENT
+               ============================================================ */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            min-height: 100vh;
+            padding: 0 32px 40px;
+            max-width: calc(100% - var(--sidebar-width) - var(--right-sidebar-width));
+            transition: margin var(--transition-smooth), max-width var(--transition-smooth);
+        }
+
+        /* ============================================================
+               RIGHT SIDEBAR
+               ============================================================ */
+        .right-sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: var(--right-sidebar-width);
+            background: rgba(13, 27, 62, 0.88);
+            backdrop-filter: blur(20px) saturate(1.4);
+            border-left: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 24px 20px 24px 20px;
+            overflow-y: auto;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: transform var(--transition-smooth);
+        }
+
+        .right-sidebar .rs-section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--color-gray);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        /* Motivation card */
+        .motivation-card {
+            background: var(--color-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-sm);
+            padding: 18px 18px 16px;
+        }
+        .motivation-card .quote-icon {
+            font-size: 1.2rem;
+            color: var(--color-royal-light);
+            margin-bottom: 4px;
+        }
+        .motivation-card blockquote {
+            font-size: 0.85rem;
+            font-style: italic;
+            color: var(--color-gray-light);
+            line-height: 1.6;
+        }
+        .motivation-card .attribution {
+            font-size: 0.7rem;
+            color: var(--color-gray);
+            margin-top: 6px;
+            text-align: right;
+        }
+
+        /* Lumen AI Widget */
+        .ai-widget {
+            background: var(--color-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-sm);
+            padding: 16px 18px;
+        }
+        .ai-widget .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .ai-widget .ai-header .ai-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-royal), #a78bfa);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .ai-widget .ai-header .ai-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .ai-widget .ai-header .ai-badge {
+            margin-left: auto;
+            font-size: 0.6rem;
+            background: rgba(74, 124, 247, 0.12);
+            padding: 1px 10px;
+            border-radius: var(--radius-full);
+            color: var(--color-royal-light);
+        }
+        .ai-widget .ai-message {
+            font-size: 0.8rem;
+            color: var(--color-gray-light);
+            line-height: 1.6;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-sm);
+            border-left: 2px solid var(--color-royal);
+            margin-bottom: 8px;
+        }
+        .ai-widget .ai-quick-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .ai-widget .ai-quick-actions button {
+            font-size: 0.7rem;
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: var(--color-gray-light);
+            transition: var(--transition-smooth);
+        }
+        .ai-widget .ai-quick-actions button:hover {
+            background: rgba(74, 124, 247, 0.1);
+            border-color: rgba(74, 124, 247, 0.2);
+            color: #fff;
+        }
+
+        /* Notifications */
+        .notif-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .notif-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-sm);
+            border-left: 2px solid transparent;
+            transition: var(--transition-smooth);
+            font-size: 0.8rem;
+        }
+        .notif-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .notif-item .notif-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .notif-item .notif-text {
+            color: var(--color-gray-light);
+            line-height: 1.4;
+        }
+        .notif-item .notif-text strong {
+            color: #fff;
+        }
+        .notif-item .notif-time {
+            font-size: 0.6rem;
+            color: var(--color-gray);
+            margin-top: 2px;
+        }
+        .notif-item.unread {
+            border-left-color: var(--color-royal);
+        }
+
+        /* ============================================================
+               HEADER
+               ============================================================ */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            margin-bottom: 28px;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .header-left .greeting {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        .header-left .greeting .highlight {
+            background: linear-gradient(135deg, var(--color-royal), #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-left .sub-greeting {
+            font-size: 0.9rem;
+            color: var(--color-gray);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .header-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--color-gray-light);
+            background: var(--color-card-bg);
+            padding: 4px 12px 4px 8px;
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .header-stat .icon {
+            font-size: 1rem;
+        }
+        .header-stat .value {
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .header-membership {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: var(--radius-full);
+            background: rgba(74, 124, 247, 0.12);
+            color: var(--color-royal-light);
+            border: 1px solid rgba(74, 124, 247, 0.1);
+            white-space: nowrap;
+        }
+        .header-membership.pro {
+            background: rgba(167, 139, 250, 0.12);
+            color: #a78bfa;
+            border-color: rgba(167, 139, 250, 0.15);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-actions .notif-btn {
+            font-size: 1.2rem;
+            padding: 6px;
+            border-radius: 50%;
+            background: var(--color-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+        .header-actions .notif-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .header-actions .notif-btn .dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--color-error);
+            border: 2px solid var(--color-navy);
+        }
+
+        .header-actions .avatar-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-royal), #7c5cfc);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            transition: var(--transition-smooth);
+        }
+        .header-actions .avatar-btn:hover {
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* XP Bar */
+        .xp-bar-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--color-card-bg);
+            padding: 4px 14px 4px 12px;
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .xp-bar-wrapper .xp-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--color-gray);
+            white-space: nowrap;
+        }
+        .xp-bar-track {
+            width: 120px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .xp-bar-track .xp-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--color-royal), #a78bfa);
+            width: 0%;
+            transition: width 1s ease;
+        }
+        .xp-bar-wrapper .xp-text {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--color-gray-light);
+            white-space: nowrap;
+        }
+
+        /* ============================================================
+               HERO CARD (Continue Learning)
+               ============================================================ */
+        .hero-card {
+            background: var(--color-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-card);
+            padding: 32px 36px;
+            backdrop-filter: blur(8px);
+            box-shadow: var(--shadow-glass), var(--shadow-glow);
+            margin-bottom: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(74, 124, 247, 0.08), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .hero-card .hero-left {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-card .hero-left .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--color-gray);
+            font-weight: 600;
+        }
+        .hero-card .hero-left h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        .hero-card .hero-left .progress-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 4px;
+        }
+        .hero-card .hero-left .progress-info .progress-track {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .hero-card .hero-left .progress-info .progress-track .fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--color-royal), #a78bfa);
+            width: 65%;
+        }
+        .hero-card .hero-left .progress-info .pct {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-gray-light);
+        }
+        .hero-card .hero-left .progress-info .time {
+            font-size: 0.8rem;
+            color: var(--color-gray);
+        }
+        .hero-card .hero-right {
+            position: relative;
+            z-index: 1;
+        }
+        .hero-card .hero-right .btn {
+            padding: 12px 28px;
+            font-size: 0.9rem;
+            width: auto;
+        }
+
+        /* ============================================================
+               DASHBOARD GRID
+               ============================================================ */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        /* Daily Goal */
+        .daily-goal {
+            background: var(--color-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-card);
+            padding: 24px 28px;
+            backdrop-filter: blur(4px);
+        }
+        .daily-goal .goal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .daily-goal .goal-header .icon {
+            font-size: 1.4rem;
+        }
+        .daily-goal .goal-header h4 {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .daily-goal .goal-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .daily-goal .goal-body .task {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-gray-light);
+        }
+        .daily-goal .goal-body .reward {
+            font-size: 0.8rem;
+            color: var(--color-warning);
+            background: rgba(251, 191, 36, 0.08);
+            padding: 4px 14px;
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(251, 191, 36, 0.1);
+        }
+
+        /* Progress Overview (stats) */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .stat-card {
+            background: var(--color-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-sm);
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: var(--transition-smooth);
+        }
+        .stat-card:hover {
+            border-color: rgba(74, 124, 247, 0.1);
+            transform: translateY(-2px);
+        }
+        .stat-card .stat-icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+        .stat-card .stat-info .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+        }
+        .stat-card .stat-info .stat-label {
+            font-size: 0.7rem;
+            color: var(--color-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        /* ============================================================
+               LEARNING PATHS
+               ============================================================ */
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title .see-all {
+            margin-left: auto;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--color-gray);
+            transition: var(--transition-smooth);
+        }
+        .section-title .see-all:hover {
+            color: var(--color-royal-light);
+        }
+
+        .paths-scroll {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding: 4px 2px 12px;
+            scroll-snap-type: x proximity;
+            -webkit-overflow-scrolling: touch;
+        }
+        .paths-scroll::-webkit-scrollbar {
+            height: 3px;
+        }
+        .paths-scroll::-webkit-scrollbar-thumb {
+            background: var(--color-royal);
+            border-radius: 8px;
+        }
+
+        .path-card {
+            min-width: 200px;
+            flex-shrink: 0;
+            background: var(--color-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-sm);
+            padding: 18px 20px;
+            scroll-snap-align: start;
+            transition: var(--transition-smooth);
+        }
+        .path-card:hover {
+            border-color: rgba(74, 124, 247, 0.12);
+            transform: translateY(-3px);
+        }
+        .path-card .path-icon {
+            font-size: 1.6rem;
+            margin-bottom: 6px;
+        }
+        .path-card .path-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .path-card .path-status {
+            font-size: 0.7rem;
+            color: var(--color-gray);
+            margin-top: 2px;
+        }
+        .path-card .path-progress {
+            margin-top: 10px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .path-card .path-progress .pf {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--color-royal), #a78bfa);
+            width: 0%;
+        }
+        .path-card .path-progress .pf.coming {
+            background: var(--color-gray);
+            opacity: 0.3;
+        }
+
+        /* ============================================================
+               RECENT ACTIVITY & ACHIEVEMENTS
+               ============================================================ */
+        .activity-achievement-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            color: var(--color-gray-light);
+            transition: var(--transition-smooth);
+        }
+        .activity-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .activity-item .act-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .activity-item .act-time {
+            margin-left: auto;
+            font-size: 0.65rem;
+            color: var(--color-gray);
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+        }
+        .badge-item {
+            background: var(--color-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-sm);
+            padding: 12px 8px;
+            text-align: center;
+            transition: var(--transition-smooth);
+        }
+        .badge-item:hover {
+            transform: translateY(-3px) scale(1.04);
+            border-color: rgba(74, 124, 247, 0.12);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+        .badge-item .badge-icon {
+            font-size: 1.8rem;
+            display: block;
+        }
+        .badge-item .badge-name {
+            font-size: 0.6rem;
+            color: var(--color-gray);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* ============================================================
+               QUICK ACTIONS
+               ============================================================ */
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+        .quick-action {
+            background: var(--color-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-sm);
+            padding: 18px 16px;
+            text-align: center;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+        }
+        .quick-action:hover {
+            transform: translateY(-4px);
+            border-color: rgba(74, 124, 247, 0.12);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+        .quick-action .qa-icon {
+            font-size: 1.8rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .quick-action .qa-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--color-gray-light);
+        }
+
+        /* ============================================================
+               MOBILE BOTTOM NAV
+               ============================================================ */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 27, 62, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 8px 12px 12px;
+            z-index: 1000;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .mobile-bottom-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            font-size: 0.6rem;
+            color: var(--color-gray);
+            transition: var(--transition-smooth);
+            padding: 4px 8px;
+        }
+        .mobile-bottom-nav a .icon {
+            font-size: 1.2rem;
+        }
+        .mobile-bottom-nav a.active {
+            color: var(--color-royal-light);
+        }
+        .mobile-bottom-nav a:hover {
+            color: #fff;
+        }
+
+        /* ============================================================
+               MOBILE HAMBURGER
+               ============================================================ */
+        .mobile-hamburger {
+            display: none;
+            background: none;
+            border: none;
+            flex-direction: column;
+            gap: 4px;
+            padding: 8px;
+            cursor: pointer;
+            margin-left: auto;
+        }
+        .mobile-hamburger span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: #fff;
+            border-radius: 4px;
+            transition: var(--transition-smooth);
+        }
+        .mobile-hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(4px, 4px);
+        }
+        .mobile-hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .mobile-hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(4px, -4px);
+        }
+
+        /* ============================================================
+               OVERLAY (mobile sidebar)
+               ============================================================ */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            backdrop-filter: blur(4px);
+        }
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* ============================================================
+               RESPONSIVE
+               ============================================================ */
+        @media (max-width: 1200px) {
+            .right-sidebar {
+                transform: translateX(100%);
+            }
+            .right-sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                max-width: calc(100% - var(--sidebar-width));
+            }
+            .right-sidebar-toggle {
+                display: flex !important;
+            }
+        }
+
+        .right-sidebar-toggle {
+            display: none;
+            background: var(--color-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: var(--transition-smooth);
+        }
+        .right-sidebar-toggle:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .activity-achievement-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .hero-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .hero-card .hero-right .btn {
+                width: 100%;
+            }
+            .hero-card .hero-left .progress-info .progress-track {
+                width: 140px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+                padding: 20px 16px;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .sidebar-overlay.active {
+                display: block;
+            }
+            .mobile-hamburger {
+                display: flex;
+            }
+            .mobile-bottom-nav {
+                display: flex;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 0 16px 80px;
+                max-width: 100%;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                padding-top: 16px;
+            }
+            .header-right {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            .header-stats {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .xp-bar-wrapper {
+                flex: 1;
+                min-width: 160px;
+            }
+            .xp-bar-track {
+                flex: 1;
+            }
+
+            .hero-card {
+                padding: 24px 20px;
+            }
+            .hero-card .hero-left h3 {
+                font-size: 1.2rem;
+            }
+            .hero-card .hero-left .progress-info {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .hero-card .hero-left .progress-info .progress-track {
+                width: 100px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .stat-card .stat-info .stat-number {
+                font-size: 1.2rem;
+            }
+
+            .quick-actions-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .badges-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .daily-goal {
+                padding: 20px;
+            }
+            .daily-goal .goal-body {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .right-sidebar {
+                width: 300px;
+                transform: translateX(100%);
+            }
+            .right-sidebar.open {
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .stat-card {
+                padding: 12px 14px;
+            }
+            .stat-card .stat-icon {
+                font-size: 1.4rem;
+            }
+            .stat-card .stat-info .stat-number {
+                font-size: 1.1rem;
+            }
+            .quick-actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .badges-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .header-left .greeting {
+                font-size: 1.1rem;
+            }
+            .header-stat {
+                font-size: 0.7rem;
+                padding: 2px 10px 2px 6px;
+            }
+            .header-membership {
+                font-size: 0.6rem;
+                padding: 2px 10px;
+            }
+            .xp-bar-wrapper .xp-label {
+                font-size: 0.6rem;
+            }
+            .xp-bar-wrapper .xp-text {
+                font-size: 0.6rem;
+            }
+            .hero-card .hero-left .label {
+                font-size: 0.6rem;
+            }
+            .hero-card .hero-left h3 {
+                font-size: 1rem;
+            }
+            .path-card {
+                min-width: 160px;
+                padding: 14px 16px;
+            }
+            .path-card .path-icon {
+                font-size: 1.2rem;
+            }
+            .path-card .path-name {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* ============================================================
+               KEYBOARD FOCUS
+               ============================================================ */
+        :focus-visible {
+            outline: 2px solid var(--color-royal);
+            outline-offset: 2px;
+        }
+
+        /* ============================================================
+               UTILITY
+               ============================================================ */
+        .glass-panel {
+            background: var(--color-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-card);
+            padding: 24px 28px;
+            backdrop-filter: blur(4px);
+        }
+
+        .text-muted {
+            color: var(--color-gray);
+        }
+
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+        .gap-4 {
+            gap: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============================================================
+    SIDEBAR OVERLAY (mobile)
+    ============================================================ -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ============================================================
+    SIDEBAR
+    ============================================================ -->
+    <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+        <div class="sidebar-brand">
+            <span class="logo-icon">L</span>
+            <span>Lumen Labs Academia</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <span class="nav-label">Main</span>
+            <a href="dashboard.html" class="active">
+                <span class="icon">🏠</span> Dashboard
+            </a>
+            <a href="learn.html">
+                <span class="icon">📚</span> Learn
+            </a>
+            <a href="notes.html">
+                <span class="icon">📄</span> Notes
+            </a>
+            <a href="videos.html">
+                <span class="icon">🎥</span> Videos
+            </a>
+            <a href="challenges.html">
+                <span class="icon">🧪</span> Challenges
+                <span class="badge-nav">3</span>
+            </a>
+            <a href="projects.html">
+                <span class="icon">🏗</span> Projects
+            </a>
+            <a href="resources.html">
+                <span class="icon">📥</span> Resources
+            </a>
+
+            <span class="nav-label">Tools</span>
+            <a href="ai.html">
+                <span class="icon">🤖</span> Lumen AI
+                <span class="badge-nav">New</span>
+            </a>
+            <a href="profile.html">
+                <span class="icon">👤</span> Profile
+            </a>
+            <a href="pro.html">
+                <span class="icon">💎</span> Pro
+            </a>
+            <a href="settings.html">
+                <span class="icon">⚙</span> Settings
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="#" id="logoutBtn">
+                <span class="icon">🚪</span> Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- ============================================================
+    MAIN CONTENT
+    ============================================================ -->
+    <main class="main-content" id="mainContent">
+
+        <!-- HEADER -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="greeting">
+                    👋 Good <span id="timeGreeting">Evening</span>,
+                    <span class="highlight" id="userNameDisplay">Developer</span>
+                </div>
+                <div class="sub-greeting" id="subGreeting">Ready to continue your coding journey?</div>
+            </div>
+
+            <div class="header-right">
+                <div class="header-stats">
+                    <span class="header-stat">
+                        <span class="icon">🔥</span>
+                        <span class="value" id="headerStreak">0</span> day streak
+                    </span>
+                    <span class="header-stat">
+                        <span class="icon">⭐</span>
+                        <span class="value" id="headerLevel">Level 1</span>
+                    </span>
+                </div>
+
+                <div class="xp-bar-wrapper">
+                    <span class="xp-label">XP</span>
+                    <div class="xp-bar-track">
+                        <div class="xp-fill" id="xpFill" style="width:0%;"></div>
+                    </div>
+                    <span class="xp-text" id="xpText">0 / 100</span>
+                </div>
+
+                <span class="header-membership" id="membershipBadge">🟢 Free Explorer</span>
+
+                <div class="header-actions">
+                    <button class="right-sidebar-toggle" id="rightSidebarToggle" aria-label="Toggle right sidebar">
+                        📋
+                    </button>
+                    <button class="notif-btn" id="notifBtn" aria-label="Notifications">
+                        🔔
+                        <span class="dot"></span>
+                    </button>
+                    <span class="avatar-btn" id="avatarBtn">JD</span>
+                </div>
+            </div>
+
+            <!-- Mobile hamburger -->
+            <button class="mobile-hamburger" id="mobileHamburger" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </header>
+
+        <!-- HERO CARD -->
+        <section class="hero-card" aria-label="Continue learning">
+            <div class="hero-left">
+                <span class="label">📚 Continue Learning</span>
+                <h3 id="currentLesson">Python Functions</h3>
+                <div class="progress-info">
+                    <div class="progress-track">
+                        <div class="fill" id="heroProgress" style="width:65%;"></div>
+                    </div>
+                    <span class="pct" id="heroPct">65%</span>
+                    <span class="time">⏱️ <span id="heroTime">12</span> min remaining</span>
+                </div>
+            </div>
+            <div class="hero-right">
+                <a href="learn.html" class="btn btn-primary btn-glow" style="width:auto;padding:12px 28px;font-size:0.9rem;">
+                    Continue →
+                </a>
+            </div>
+        </section>
+
+        <!-- GRID: Daily Goal + Progress Stats -->
+        <div class="dashboard-grid">
+            <!-- Daily Goal -->
+            <section class="daily-goal" aria-label="Today's goal">
+                <div class="goal-header">
+                    <span class="icon">🎯</span>
+                    <h4>Today's Goal</h4>
+                </div>
+                <div class="goal-body">
+                    <span class="task" id="dailyTask">Complete: Python Functions</span>
+                    <span class="reward">🏆 +50 XP</span>
+                </div>
+            </section>
+
+            <!-- Progress Stats -->
+            <section class="stats-grid" aria-label="Progress overview">
+                <div class="stat-card">
+                    <span class="stat-icon">📚</span>
+                    <div class="stat-info">
+                        <div class="stat-number" id="statLessons">0</div>
+                        <div class="stat-label">Lessons Completed</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">🧪</span>
+                    <div class="stat-info">
+                        <div class="stat-number" id="statChallenges">0</div>
+                        <div class="stat-label">Challenges Solved</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">🏗</span>
+                    <div class="stat-info">
+                        <div class="stat-number" id="statProjects">0</div>
+                        <div class="stat-label">Projects Built</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">🏆</span>
+                    <div class="stat-info">
+                        <div class="stat-number" id="statBadges">0</div>
+                        <div class="stat-label">Badges Earned</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- LEARNING PATHS -->
+        <section style="margin-bottom:28px;">
+            <div class="section-title">
+                <span>🛤️ Learning Paths</span>
+                <a href="learn.html" class="see-all">View all →</a>
+            </div>
+            <div class="paths-scroll" id="pathsContainer">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- ACTIVITY + ACHIEVEMENTS -->
+        <div class="activity-achievement-grid">
+            <!-- Recent Activity -->
+            <section aria-label="Recent activity">
+                <div class="section-title">
+                    <span>⚡ Recent Activity</span>
+                </div>
+                <div class="activity-list" id="activityList">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- Achievements -->
+            <section aria-label="Achievements">
+                <div class="section-title">
+                    <span>🏅 Achievements</span>
+                </div>
+                <div class="badges-grid" id="badgesContainer">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <section aria-label="Quick actions">
+            <div class="section-title">
+                <span>⚡ Quick Actions</span>
+            </div>
+            <div class="quick-actions-grid">
+                <a href="notes.html" class="quick-action">
+                    <span class="qa-icon">📄</span>
+                    <span class="qa-label">Read Notes</span>
+                </a>
+                <a href="videos.html" class="quick-action">
+                    <span class="qa-icon">🎥</span>
+                    <span class="qa-label">Watch Videos</span>
+                </a>
+                <a href="challenges.html" class="quick-action">
+                    <span class="qa-icon">🧪</span>
+                    <span class="qa-label">Solve Challenges</span>
+                </a>
+                <a href="projects.html" class="quick-action">
+                    <span class="qa-icon">🏗</span>
+                    <span class="qa-label">Build Projects</span>
+                </a>
+                <a href="ai.html" class="quick-action">
+                    <span class="qa-icon">🤖</span>
+                    <span class="qa-label">Ask Lumen AI</span>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================================
+    RIGHT SIDEBAR
+    ============================================================ -->
+    <aside class="right-sidebar" id="rightSidebar" aria-label="Dashboard extras">
+
+        <!-- Motivation -->
+        <div>
+            <div class="rs-section-title">💡 Today's Quote</div>
+            <div class="motivation-card">
+                <div class="quote-icon">💡</div>
+                <blockquote id="dailyQuote">The expert in anything was once a beginner.</blockquote>
+                <div class="attribution">— Anonymous</div>
+            </div>
+        </div>
+
+        <!-- Lumen AI Widget -->
+        <div>
+            <div class="rs-section-title">🤖 Lumen AI</div>
+            <div class="ai-widget">
+                <div class="ai-header">
+                    <span class="ai-avatar">AI</span>
+                    <span class="ai-name">Lumen Assistant</span>
+                    <span class="ai-badge">v1.0</span>
+                </div>
+                <div class="ai-message" id="aiMessage">
+                    Hello! I'm here to help you with Python, coding challenges, and more. What do you need?
+                </div>
+                <div class="ai-quick-actions">
+                    <button data-question="Explain Python loops">🔁 Loops</button>
+                    <button data-question="What is a variable?">📦 Variables</button>
+                    <button data-question="How do I start a project?">🚀 Project</button>
+                    <button data-question="Help with functions">⚡ Functions</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div>
+            <div class="rs-section-title">🔔 Notifications</div>
+            <div class="notif-list" id="notifList">
+                <div class="notif-item unread">
+                    <span class="notif-icon">🎥</span>
+                    <div>
+                        <div class="notif-text"><strong>New video</strong> available: "Python Functions Explained"</div>
+                        <div class="notif-time">2 hours ago</div>
+                    </div>
+                </div>
+                <div class="notif-item unread">
+                    <span class="notif-icon">🏆</span>
+                    <div>
+                        <div class="notif-text">You earned the <strong>"First Lesson"</strong> badge!</div>
+                        <div class="notif-time">1 day ago</div>
+                    </div>
+                </div>
+                <div class="notif-item">
+                    <span class="notif-icon">🧪</span>
+                    <div>
+                        <div class="notif-text"><strong>Weekly Challenge</strong> is now live: "Build a Calculator"</div>
+                        <div class="notif-time">3 days ago</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- ============================================================
+    MOBILE BOTTOM NAV
+    ============================================================ -->
+    <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Mobile navigation">
+        <a href="dashboard.html" class="active">
+            <span class="icon">🏠</span> Home
+        </a>
+        <a href="learn.html">
+            <span class="icon">📚</span> Learn
+        </a>
+        <a href="challenges.html">
+            <span class="icon">🧪</span> Challenges
+        </a>
+        <a href="ai.html">
+            <span class="icon">🤖</span> AI
+        </a>
+        <a href="profile.html">
+            <span class="icon">👤</span> Profile
+        </a>
+    </nav>
+
+    <!-- ============================================================
+    JAVASCRIPT
+    ============================================================ -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ============================================================
+            // DOM REFS
+            // ============================================================
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            const mobileHamburger = document.getElementById('mobileHamburger');
+            const rightSidebar = document.getElementById('rightSidebar');
+            const rightSidebarToggle = document.getElementById('rightSidebarToggle');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            const timeGreeting = document.getElementById('timeGreeting');
+            const subGreeting = document.getElementById('subGreeting');
+            const headerStreak = document.getElementById('headerStreak');
+            const headerLevel = document.getElementById('headerLevel');
+            const membershipBadge = document.getElementById('membershipBadge');
+            const xpFill = document.getElementById('xpFill');
+            const xpText = document.getElementById('xpText');
+
+            const currentLesson = document.getElementById('currentLesson');
+            const heroProgress = document.getElementById('heroProgress');
+            const heroPct = document.getElementById('heroPct');
+            const heroTime = document.getElementById('heroTime');
+
+            const dailyTask = document.getElementById('dailyTask');
+            const statLessons = document.getElementById('statLessons');
+            const statChallenges = document.getElementById('statChallenges');
+            const statProjects = document.getElementById('statProjects');
+            const statBadges = document.getElementById('statBadges');
+
+            const pathsContainer = document.getElementById('pathsContainer');
+            const activityList = document.getElementById('activityList');
+            const badgesContainer = document.getElementById('badgesContainer');
+
+            const dailyQuote = document.getElementById('dailyQuote');
+            const aiMessage = document.getElementById('aiMessage');
+
+            // ============================================================
+            // QUOTES
+            // ============================================================
+            const quotes = [
+                { text: "The expert in anything was once a beginner.", author: "Anonymous" },
+                { text: "Code is like humor. When you have to explain it, it's bad.", author: "Cory House" },
+                { text: "First, solve the problem. Then, write the code.", author: "John Johnson" },
+                { text: "Experience is the name everyone gives to their mistakes.", author: "Oscar Wilde" },
+                { text: "The only way to learn a new programming language is by writing programs in it.", author: "Dennis Ritchie" },
+                { text: "Programming isn't about what you know; it's about what you can figure out.", author: "Chris Pine" },
+                { text: "Make it work, make it right, make it fast.", author: "Kent Beck" },
+                { text: "Simplicity is the soul of efficiency.", author: "Austin Freeman" },
+            ];
+
+            // ============================================================
+            // LOAD USER FROM LOCALSTORAGE
+            // ============================================================
+            function loadUserData() {
+                let user = null;
+                try {
+                    const stored = localStorage.getItem('lumen_user');
+                    if (stored) {
+                        user = JSON.parse(stored);
+                    }
+                } catch (e) {
+                    console.warn('Error parsing user data:', e);
+                }
+
+                // If no user, create a default demo user
+                if (!user) {
+                    user = {
+                        fullName: 'Ronnie Developer',
+                        username: 'ronnie_coder',
+                        email: 'ronnie@example.com',
+                        xp: 45,
+                        level: 3,
+                        streak: 5,
+                        completedLessons: 12,
+                        completedChallenges: 8,
+                        completedProjects: 2,
+                        membership: 'Free Explorer',
+                        createdAt: new Date().toISOString(),
+                    };
+                    // Save default for demo
+                    localStorage.setItem('lumen_user', JSON.stringify(user));
+                    localStorage.setItem('lumen_auth', 'true');
+                }
+
+                return user;
+            }
+
+            const user = loadUserData();
+
+            // ============================================================
+            // UPDATE UI WITH USER DATA
+            // ============================================================
+            function updateDashboard(user) {
+                // Greeting
+                const hour = new Date().getHours();
+                let greeting = 'Evening';
+                if (hour < 12) greeting = 'Morning';
+                else if (hour < 17) greeting = 'Afternoon';
+                timeGreeting.textContent = greeting;
+
+                const name = user.fullName || 'Developer';
+                userNameDisplay.textContent = name;
+
+                const subMessages = [
+                    'Ready to continue your coding journey?',
+                    'Another day, another step forward.',
+                    'Your future self will thank you.',
+                    'Keep building, keep growing.',
+                    'Today is a great day to learn something new.',
+                ];
+                subGreeting.textContent = subMessages[Math.floor(Math.random() * subMessages.length)];
+
+                // Streak & Level
+                headerStreak.textContent = user.streak || 0;
+                headerLevel.textContent = 'Level ' + (user.level || 1);
+
+                // Membership
+                const isPro = user.membership && user.membership.includes('Pro');
+                membershipBadge.textContent = isPro ? '🟣 Pro Access' : '🟢 Free Explorer';
+                membershipBadge.className = 'header-membership' + (isPro ? ' pro' : '');
+
+                // XP
+                const xp = user.xp || 0;
+                const level = user.level || 1;
+                const xpNeeded = level * 100;
+                const pct = Math.min((xp / xpNeeded) * 100, 100);
+                xpFill.style.width = pct + '%';
+                xpText.textContent = xp + ' / ' + xpNeeded + ' XP';
+
+                // Hero - Continue Learning
+                const lessons = ['Python Functions', 'Variables & Data Types', 'Control Flow', 'Lists & Loops', 'Dictionaries'];
+                const currentIdx = Math.min(user.completedLessons || 0, lessons.length - 1);
+                currentLesson.textContent = lessons[currentIdx] || 'Python Basics';
+                const progress = Math.min(((user.completedLessons || 0) / lessons.length) * 100, 100);
+                heroProgress.style.width = progress + '%';
+                heroPct.textContent = Math.round(progress) + '%';
+                heroTime.textContent = Math.max(5, 20 - Math.round((user.completedLessons || 0) * 1.2));
+
+                // Daily Goal
+                const goals = [
+                    'Complete: Python Functions',
+                    'Solve: 3 Coding Challenges',
+                    'Build: Your First Project',
+                    'Review: Study Notes',
+                    'Watch: Python Tutorial',
+                ];
+                const goalIdx = Math.min(user.completedLessons || 0, goals.length - 1);
+                dailyTask.textContent = goals[goalIdx] || 'Complete: Python Functions';
+
+                // Stats
+                statLessons.textContent = user.completedLessons || 0;
+                statChallenges.textContent = user.completedChallenges || 0;
+                statProjects.textContent = user.completedProjects || 0;
+
+                // Badges count (computed)
+                let badgeCount = 0;
+                if ((user.completedLessons || 0) >= 1) badgeCount++;
+                if ((user.completedLessons || 0) >= 5) badgeCount++;
+                if ((user.completedChallenges || 0) >= 1) badgeCount++;
+                if ((user.completedChallenges || 0) >= 5) badgeCount++;
+                if ((user.completedProjects || 0) >= 1) badgeCount++;
+                if ((user.streak || 0) >= 7) badgeCount++;
+                badgeCount = Math.max(badgeCount, 2);
+                statBadges.textContent = badgeCount;
+
+                // Learning Paths
+                renderPaths(user);
+
+                // Recent Activity
+                renderActivity(user);
+
+                // Badges
+                renderBadges(user);
+            }
+
+            // ============================================================
+            // RENDER LEARNING PATHS
+            // ============================================================
+            function renderPaths(user) {
+                const paths = [
+                    { icon: '🐍', name: 'Python Basics', status: 'In Progress', progress: Math.min((user.completedLessons ||
+                            0) * 8, 100) },
+                    { icon: '🌐', name: 'HTML', status: 'Coming Soon', progress: 0, coming: true },
+                    { icon: '🎨', name: 'CSS', status: 'Coming Soon', progress: 0, coming: true },
+                    { icon: '⚡', name: 'JavaScript', status: 'Coming Soon', progress: 0, coming: true },
+                ];
+
+                pathsContainer.innerHTML = paths.map(p => `
+                        <div class="path-card">
+                            <div class="path-icon">${p.icon}</div>
+                            <div class="path-name">${p.name}</div>
+                            <div class="path-status">${p.status}</div>
+                            <div class="path-progress">
+                                <div class="pf ${p.coming ? 'coming' : ''}" style="width:${p.progress}%;"></div>
+                            </div>
+                        </div>
+                    `).join('');
+            }
+
+            // ============================================================
+            // RENDER RECENT ACTIVITY
+            // ============================================================
+            function renderActivity(user) {
+                const activities = [];
+                const lessons = user.completedLessons || 0;
+                const challenges = user.completedChallenges || 0;
+                const projects = user.completedProjects || 0;
+
+                if (lessons >= 1) activities.push({ icon: '✔', text: 'Completed <strong>Variables</strong> lesson' });
+                if (lessons >= 2) activities.push({ icon: '✔', text: 'Completed <strong>Data Types</strong> lesson' });
+                if (lessons >= 3) activities.push({ icon: '✔', text: 'Completed <strong>Control Flow</strong> lesson' });
+                if (challenges >= 1) activities.push({ icon: '🧪', text: 'Solved <strong>Challenge #1</strong>' });
+                if (challenges >= 2) activities.push({ icon: '🧪', text: 'Solved <strong>Challenge #2</strong>' });
+                if (challenges >= 3) activities.push({ icon: '🧪', text: 'Solved <strong>Challenge #3</strong>' });
+                if (projects >= 1) activities.push({ icon: '🏗', text: 'Built <strong>First Project</strong>' });
+                if (projects >= 2) activities.push({ icon: '🏗', text: 'Built <strong>Second Project</strong>' });
+                if (lessons >= 1) activities.push({ icon: '🏆', text: 'Earned <strong>"First Lesson"</strong> badge' });
+                if ((user.streak || 0) >= 7) activities.push({ icon: '🔥', text: 'Reached <strong>7-Day Streak</strong>' });
+
+                // If no activities, show a default
+                if (activities.length === 0) {
+                    activities.push({ icon: '👋', text: 'Welcome to Lumen Labs! Start your first lesson today.' });
+                }
+
+                // Show latest 6
+                const display = activities.slice(-6).reverse();
+                activityList.innerHTML = display.map(a => `
+                        <div class="activity-item">
+                            <span class="act-icon">${a.icon}</span>
+                            <span>${a.text}</span>
+                            <span class="act-time">just now</span>
+                        </div>
+                    `).join('');
+            }
+
+            // ============================================================
+            // RENDER BADGES
+            // ============================================================
+            function renderBadges(user) {
+                const allBadges = [
+                    { icon: '🏅', name: 'First Lesson', unlocked: (user.completedLessons || 0) >= 1 },
+                    { icon: '🔥', name: '7-Day Streak', unlocked: (user.streak || 0) >= 7 },
+                    { icon: '🐍', name: 'Python Beginner', unlocked: (user.completedLessons || 0) >= 3 },
+                    { icon: '💻', name: 'First Project', unlocked: (user.completedProjects || 0) >= 1 },
+                    { icon: '🧩', name: 'Challenge Solver', unlocked: (user.completedChallenges || 0) >= 3 },
+                    { icon: '🏆', name: 'Consistent Learner', unlocked: (user.completedLessons || 0) >= 10 },
+                    { icon: '📚', name: 'Bookworm', unlocked: (user.completedLessons || 0) >= 5 },
+                    { icon: '⚡', name: 'Quick Learner', unlocked: (user.completedChallenges || 0) >= 5 },
+                ];
+
+                // Show unlocked badges, then locked ones
+                const unlocked = allBadges.filter(b => b.unlocked);
+                const locked = allBadges.filter(b => !b.unlocked).slice(0, 4);
+
+                const display = [...unlocked, ...locked];
+
+                badgesContainer.innerHTML = display.map(b => `
+                        <div class="badge-item" style="opacity:${b.unlocked ? 1 : 0.3};">
+                            <span class="badge-icon">${b.icon}</span>
+                            <span class="badge-name">${b.name}</span>
+                        </div>
+                    `).join('');
+            }
+
+            // ============================================================
+            // SET DAILY QUOTE
+            // ============================================================
+            function setDailyQuote() {
+                const day = new Date().getDate();
+                const idx = day % quotes.length;
+                const q = quotes[idx];
+                dailyQuote.textContent = q.text;
+                // Attribution is already in HTML
+            }
+
+            // ============================================================
+            // AI WIDGET INTERACTIONS
+            // ============================================================
+            function setupAIWidget() {
+                const responses = {
+                    'Explain Python loops': 'Loops allow code to repeat tasks. A `for` loop iterates over a sequence, while a `while` loop continues until a condition is false. Example: `for i in range(5): print(i)`',
+                    'What is a variable?': 'A variable is like a labeled box that stores data. In Python, you create one with `name = value`. For example: `age = 25` stores the number 25 in a variable called `age`.',
+                    'How do I start a project?': 'Start by defining what you want to build. Break it down into small steps. Write pseudo-code first, then implement one piece at a time. Test often and don\'t be afraid to make mistakes!',
+                    'Help with functions': 'A function is a reusable block of code. Define it with `def function_name():` and call it by name. Functions help you organize code and avoid repetition. Example: `def greet(): print("Hello!")`',
+                };
+
+                document.querySelectorAll('.ai-quick-actions button').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const question = this.getAttribute('data-question');
+                        const response = responses[question] ||
+                            "I'm here to help! That's a great question. Let's break it down step by step.";
+                        aiMessage.textContent = response;
+                        // Animate
+                        aiMessage.style.transition = 'opacity 0.3s';
+                        aiMessage.style.opacity = '0';
+                        setTimeout(() => {
+                            aiMessage.textContent = response;
+                            aiMessage.style.opacity = '1';
+                        }, 150);
+                    });
+                });
+            }
+
+            // ============================================================
+            // SIDEBAR TOGGLES (Mobile)
+            // ============================================================
+            function setupSidebars() {
+                // Mobile hamburger
+                mobileHamburger.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    sidebar.classList.toggle('open');
+                    sidebarOverlay.classList.toggle('active');
+                    document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+                });
+
+                sidebarOverlay.addEventListener('click', function() {
+                    mobileHamburger.classList.remove('active');
+                    sidebar.classList.remove('open');
+                    sidebarOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+
+                // Right sidebar toggle
+                rightSidebarToggle.addEventListener('click', function() {
+                    rightSidebar.classList.toggle('open');
+                });
+
+                // Close right sidebar on outside click (desktop)
+                document.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 1200) {
+                        if (rightSidebar.classList.contains('open') &&
+                            !rightSidebar.contains(e.target) &&
+                            !rightSidebarToggle.contains(e.target)) {
+                            rightSidebar.classList.remove('open');
+                        }
+                    }
+                });
+            }
+
+            // ============================================================
+            // LOGOUT
+            // ============================================================
+            function setupLogout() {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    localStorage.removeItem('lumen_auth');
+                    window.location.href = 'index.html';
+                });
+            }
+
+            // ============================================================
+            // NOTIFICATIONS BUTTON
+            // ============================================================
+            function setupNotifications() {
+                const notifBtn = document.getElementById('notifBtn');
+                notifBtn.addEventListener('click', function() {
+                    // Toggle right sidebar or scroll to notifications
+                    if (window.innerWidth <= 1200) {
+                        rightSidebar.classList.toggle('open');
+                    } else {
+                        // Scroll to notification section
+                        const notifSection = document.getElementById('rightSidebar');
+                        if (notifSection) {
+                            notifSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                });
+            }
+
+            // ============================================================
+            // AVATAR CLICK
+            // ============================================================
+            function setupAvatar() {
+                document.getElementById('avatarBtn').addEventListener('click', function() {
+                    window.location.href = 'profile.html';
+                });
+            }
+
+            // ============================================================
+            // INIT
+            // ============================================================
+            function init() {
+                updateDashboard(user);
+                setDailyQuote();
+                setupAIWidget();
+                setupSidebars();
+                setupLogout();
+                setupNotifications();
+                setupAvatar();
+
+                console.log('📊 Lumen Labs Academia — Dashboard ready');
+                console.log('👤 Welcome back, ' + (user.fullName || 'Developer'));
+            }
+
+            // Run
+            init();
+
+        })();
+    </script>
+
+</body>
+</html>

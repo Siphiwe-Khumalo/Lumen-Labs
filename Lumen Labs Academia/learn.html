@@ -1,0 +1,1965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Learn · Lumen Labs Academia</title>
+    <meta name="description" content="Master Python one chapter at a time through lessons, notes, videos, challenges, and projects." />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ============================================================
+               CSS CUSTOM PROPERTIES
+               ============================================================ */
+        :root {
+            --color-navy: #0D1B3E;
+            --color-navy-light: #1a2d5a;
+            --color-navy-mid: #132a5e;
+            --color-royal: #4A7CF7;
+            --color-royal-light: #6b96f9;
+            --color-royal-glow: rgba(74, 124, 247, 0.25);
+            --color-white: #ffffff;
+            --color-off-white: #f0f4ff;
+            --color-gray: #8a9bb5;
+            --color-gray-light: #b8c7e0;
+            --color-glass: rgba(255, 255, 255, 0.06);
+            --color-glass-border: rgba(255, 255, 255, 0.10);
+            --color-card-bg: rgba(255, 255, 255, 0.04);
+            --color-success: #4ade80;
+            --color-error: #f87171;
+            --color-warning: #fbbf24;
+            --color-locked: #4a5568;
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.35);
+            --shadow-soft: 0 12px 48px rgba(0, 0, 0, 0.25);
+            --shadow-glow: 0 0 60px rgba(74, 124, 247, 0.15);
+            --radius-card: 20px;
+            --radius-sm: 12px;
+            --radius-full: 9999px;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --transition-smooth: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --sidebar-width: 240px;
+            --header-height: 72px;
+        }
+
+        /* ============================================================
+               RESET & BASE
+               ============================================================ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--color-navy);
+            color: var(--color-white);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        button {
+            cursor: pointer;
+            font-family: inherit;
+            border: none;
+            background: none;
+            color: inherit;
+        }
+        input {
+            font-family: inherit;
+        }
+
+        /* ============================================================
+               SCROLLBAR
+               ============================================================ */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--color-navy);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-royal);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-royal-light);
+        }
+
+        /* ============================================================
+               SIDEBAR
+               ============================================================ */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: rgba(13, 27, 62, 0.92);
+            backdrop-filter: blur(20px) saturate(1.4);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 24px 16px 24px 20px;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: transform var(--transition-smooth);
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: -0.02em;
+            padding: 4px 8px 24px 4px;
+            flex-shrink: 0;
+        }
+        .sidebar-brand .logo-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--color-royal), #7c5cfc);
+            color: #fff;
+            font-weight: 900;
+            font-size: 0.9rem;
+        }
+        .sidebar-brand span {
+            background: linear-gradient(135deg, #fff, var(--color-gray-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding-top: 4px;
+        }
+
+        .sidebar-nav .nav-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--color-gray);
+            font-weight: 600;
+            padding: 16px 8px 6px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--color-gray-light);
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+        .sidebar-nav a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+        .sidebar-nav a.active {
+            background: rgba(74, 124, 247, 0.12);
+            color: #fff;
+            box-shadow: inset 3px 0 0 var(--color-royal);
+        }
+        .sidebar-nav a .icon {
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .sidebar-nav a .badge-nav {
+            margin-left: auto;
+            font-size: 0.65rem;
+            background: rgba(74, 124, 247, 0.15);
+            padding: 1px 10px;
+            border-radius: var(--radius-full);
+            color: var(--color-royal-light);
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 16px;
+            margin-top: 4px;
+            flex-shrink: 0;
+        }
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--color-gray-light);
+            transition: var(--transition-smooth);
+        }
+        .sidebar-footer a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+        .sidebar-footer a .icon {
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* ============================================================
+               MAIN CONTENT
+               ============================================================ */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            min-height: 100vh;
+            padding: 0 32px 40px;
+            max-width: calc(100% - var(--sidebar-width));
+            transition: margin var(--transition-smooth), max-width var(--transition-smooth);
+        }
+
+        /* ============================================================
+               MOBILE HAMBURGER
+               ============================================================ */
+        .mobile-hamburger {
+            display: none;
+            background: none;
+            border: none;
+            flex-direction: column;
+            gap: 4px;
+            padding: 8px;
+            cursor: pointer;
+            margin-left: auto;
+        }
+        .mobile-hamburger span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: #fff;
+            border-radius: 4px;
+            transition: var(--transition-smooth);
+        }
+        .mobile-hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(4px, 4px);
+        }
+        .mobile-hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .mobile-hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(4px, -4px);
+        }
+
+        /* ============================================================
+               OVERLAY (mobile sidebar)
+               ============================================================ */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            backdrop-filter: blur(4px);
+        }
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* ============================================================
+               HEADER
+               ============================================================ */
+        .page-header {
+            padding: 20px 0 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            margin-bottom: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .page-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-header-left h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+        }
+        .page-header-left h1 .highlight {
+            background: linear-gradient(135deg, var(--color-royal), #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .page-header-left .sub {
+            color: var(--color-gray-light);
+            font-size: 0.95rem;
+            margin-top: 2px;
+        }
+
+        .page-header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .header-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--color-gray-light);
+            background: var(--color-card-bg);
+            padding: 4px 12px 4px 8px;
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .header-stat .icon {
+            font-size: 1rem;
+        }
+        .header-stat .value {
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-actions .avatar-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-royal), #7c5cfc);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            transition: var(--transition-smooth);
+        }
+        .header-actions .avatar-btn:hover {
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Progress bar row */
+        .progress-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+        .progress-row .track {
+            flex: 1;
+            min-width: 120px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-row .track .fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--color-royal), #a78bfa);
+            width: 0%;
+            transition: width 1s ease;
+        }
+        .progress-row .stats {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 0.8rem;
+            color: var(--color-gray);
+        }
+        .progress-row .stats strong {
+            color: var(--color-gray-light);
+        }
+
+        /* ============================================================
+               SEARCH & FILTERS
+               ============================================================ */
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            align-items: center;
+        }
+        .search-bar .search-input-wrapper {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-sm);
+            transition: var(--transition-smooth);
+        }
+        .search-bar .search-input-wrapper:focus-within {
+            border-color: var(--color-royal);
+            box-shadow: 0 0 0 3px rgba(74, 124, 247, 0.12);
+        }
+        .search-bar .search-input-wrapper .icon {
+            padding: 0 12px 0 14px;
+            color: var(--color-gray);
+            font-size: 1rem;
+        }
+        .search-bar .search-input-wrapper input {
+            width: 100%;
+            padding: 10px 14px 10px 0;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+        .search-bar .search-input-wrapper input::placeholder {
+            color: var(--color-gray);
+        }
+
+        .search-bar .filter-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .search-bar .filter-group button {
+            padding: 6px 16px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--color-gray);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: var(--transition-smooth);
+        }
+        .search-bar .filter-group button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+        .search-bar .filter-group button.active {
+            background: rgba(74, 124, 247, 0.12);
+            color: var(--color-royal-light);
+            border-color: rgba(74, 124, 247, 0.15);
+        }
+
+        /* ============================================================
+               CONTINUE LEARNING CARD
+               ============================================================ */
+        .continue-card {
+            background: var(--color-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-card);
+            padding: 24px 32px;
+            backdrop-filter: blur(8px);
+            box-shadow: var(--shadow-glass), var(--shadow-glow);
+            margin-bottom: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        .continue-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(74, 124, 247, 0.06), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .continue-card .left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            position: relative;
+            z-index: 1;
+        }
+        .continue-card .left .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--color-gray);
+            font-weight: 600;
+        }
+        .continue-card .left h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .continue-card .left .meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 0.8rem;
+            color: var(--color-gray);
+        }
+        .continue-card .left .meta .pct {
+            color: var(--color-royal-light);
+            font-weight: 600;
+        }
+        .continue-card .right {
+            position: relative;
+            z-index: 1;
+        }
+        .continue-card .right .btn {
+            padding: 10px 28px;
+            font-size: 0.9rem;
+            width: auto;
+        }
+
+        /* ============================================================
+               LEARNING ROADMAP
+               ============================================================ */
+        .roadmap-section {
+            margin-bottom: 32px;
+        }
+        .roadmap-section .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .roadmap-section .section-title .count {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--color-gray);
+            margin-left: auto;
+        }
+
+        .roadmap {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            position: relative;
+            padding-left: 28px;
+        }
+        .roadmap::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 12px;
+            bottom: 12px;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 4px;
+        }
+
+        .roadmap-item {
+            position: relative;
+            padding: 0 0 20px 28px;
+            transition: var(--transition-smooth);
+        }
+        .roadmap-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .roadmap-item .node {
+            position: absolute;
+            left: -22px;
+            top: 4px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: var(--color-navy);
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+        .roadmap-item .node .inner {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--color-gray);
+            transition: var(--transition-smooth);
+        }
+
+        .roadmap-item.completed .node {
+            border-color: var(--color-success);
+            background: var(--color-success);
+        }
+        .roadmap-item.completed .node .inner {
+            background: var(--color-success);
+        }
+
+        .roadmap-item.current .node {
+            border-color: var(--color-royal);
+            background: var(--color-royal);
+            box-shadow: 0 0 20px rgba(74, 124, 247, 0.3);
+            animation: pulse-node 2s ease-in-out infinite;
+        }
+        .roadmap-item.current .node .inner {
+            background: #fff;
+        }
+
+        .roadmap-item.locked .node {
+            border-color: var(--color-locked);
+            background: var(--color-locked);
+        }
+        .roadmap-item.locked .node .inner {
+            background: var(--color-locked);
+        }
+
+        @keyframes pulse-node {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(74, 124, 247, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(74, 124, 247, 0.6);
+            }
+        }
+
+        .roadmap-item .card {
+            background: var(--color-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            transition: var(--transition-smooth);
+            cursor: default;
+        }
+        .roadmap-item .card:hover {
+            border-color: rgba(74, 124, 247, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .roadmap-item.locked .card {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .roadmap-item.locked .card:hover {
+            border-color: rgba(255, 255, 255, 0.05);
+            background: var(--color-card-bg);
+        }
+
+        .roadmap-item .card .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .roadmap-item .card .top .left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .roadmap-item .card .top .left .chapter {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--color-gray);
+            font-weight: 600;
+        }
+        .roadmap-item .card .top .left .title {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .roadmap-item .card .top .badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .roadmap-item .card .top .badges .tag {
+            font-size: 0.65rem;
+            padding: 2px 10px;
+            border-radius: var(--radius-full);
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: var(--color-gray-light);
+        }
+        .roadmap-item .card .top .badges .tag.completed-tag {
+            background: rgba(74, 222, 128, 0.08);
+            border-color: rgba(74, 222, 128, 0.1);
+            color: var(--color-success);
+        }
+        .roadmap-item .card .top .badges .tag.current-tag {
+            background: rgba(74, 124, 247, 0.12);
+            border-color: rgba(74, 124, 247, 0.15);
+            color: var(--color-royal-light);
+        }
+        .roadmap-item .card .top .badges .tag.locked-tag {
+            color: var(--color-locked);
+        }
+
+        .roadmap-item .card .desc {
+            font-size: 0.85rem;
+            color: var(--color-gray);
+            margin: 6px 0 10px;
+            line-height: 1.5;
+        }
+
+        .roadmap-item .card .bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .roadmap-item .card .bottom .meta {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 0.75rem;
+            color: var(--color-gray);
+        }
+        .roadmap-item .card .bottom .meta .xp {
+            color: var(--color-warning);
+            font-weight: 600;
+        }
+        .roadmap-item .card .bottom .actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .roadmap-item .card .bottom .actions button {
+            padding: 4px 14px;
+            border-radius: var(--radius-full);
+            font-size: 0.7rem;
+            font-weight: 500;
+            transition: var(--transition-smooth);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--color-gray-light);
+        }
+        .roadmap-item .card .bottom .actions button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+        .roadmap-item .card .bottom .actions button.primary-action {
+            background: var(--color-royal);
+            color: #fff;
+            border-color: var(--color-royal);
+        }
+        .roadmap-item .card .bottom .actions button.primary-action:hover {
+            background: #5a8af8;
+            transform: translateY(-1px);
+        }
+        .roadmap-item .card .bottom .actions button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* ============================================================
+               LEARNING METHODS (Quick Access)
+               ============================================================ */
+        .methods-section {
+            margin-bottom: 32px;
+        }
+        .methods-section .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+        }
+        .method-card {
+            background: var(--color-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-sm);
+            padding: 18px 16px;
+            text-align: center;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+        }
+        .method-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(74, 124, 247, 0.12);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+        .method-card .icon {
+            font-size: 1.8rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .method-card .label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--color-gray-light);
+        }
+        .method-card .desc {
+            font-size: 0.65rem;
+            color: var(--color-gray);
+            margin-top: 2px;
+        }
+
+        /* ============================================================
+               ACHIEVEMENTS (within learn page)
+               ============================================================ */
+        .achievements-section {
+            margin-bottom: 28px;
+        }
+        .achievements-section .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badges-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .badge-mini {
+            background: var(--color-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-sm);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition-smooth);
+        }
+        .badge-mini:hover {
+            transform: translateY(-2px);
+            border-color: rgba(74, 124, 247, 0.1);
+        }
+        .badge-mini .icon {
+            font-size: 1.4rem;
+        }
+        .badge-mini .name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--color-gray-light);
+        }
+
+        /* ============================================================
+               MOTIVATION BANNER
+               ============================================================ */
+        .motivation-banner {
+            background: rgba(74, 124, 247, 0.04);
+            border: 1px solid rgba(74, 124, 247, 0.06);
+            border-radius: var(--radius-sm);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .motivation-banner .icon {
+            font-size: 1.6rem;
+        }
+        .motivation-banner .text {
+            font-size: 0.95rem;
+            font-style: italic;
+            color: var(--color-gray-light);
+        }
+        .motivation-banner .text strong {
+            color: #fff;
+            font-style: normal;
+        }
+
+        /* ============================================================
+               MOBILE BOTTOM NAV
+               ============================================================ */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 27, 62, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 8px 12px 12px;
+            z-index: 1000;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .mobile-bottom-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            font-size: 0.6rem;
+            color: var(--color-gray);
+            transition: var(--transition-smooth);
+            padding: 4px 8px;
+        }
+        .mobile-bottom-nav a .icon {
+            font-size: 1.2rem;
+        }
+        .mobile-bottom-nav a.active {
+            color: var(--color-royal-light);
+        }
+        .mobile-bottom-nav a:hover {
+            color: #fff;
+        }
+
+        /* ============================================================
+               EMPTY STATE
+               ============================================================ */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--color-gray);
+        }
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+        .empty-state h3 {
+            color: var(--color-gray-light);
+            margin-bottom: 4px;
+        }
+
+        /* ============================================================
+               RESPONSIVE
+               ============================================================ */
+        @media (max-width: 1024px) {
+            .main-content {
+                padding: 0 20px 40px;
+            }
+            .page-header-top {
+                flex-direction: column;
+            }
+            .page-header-right {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+                padding: 20px 16px;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .sidebar-overlay.active {
+                display: block;
+            }
+            .mobile-hamburger {
+                display: flex;
+            }
+            .mobile-bottom-nav {
+                display: flex;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 0 16px 80px;
+                max-width: 100%;
+            }
+
+            .page-header {
+                padding: 16px 0 20px;
+            }
+            .page-header-left h1 {
+                font-size: 1.4rem;
+            }
+            .page-header-left .sub {
+                font-size: 0.85rem;
+            }
+
+            .progress-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .progress-row .stats {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .search-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-bar .filter-group {
+                justify-content: center;
+            }
+
+            .continue-card {
+                padding: 20px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .continue-card .right .btn {
+                width: 100%;
+            }
+
+            .roadmap {
+                padding-left: 20px;
+            }
+            .roadmap-item {
+                padding-left: 20px;
+            }
+            .roadmap-item .node {
+                left: -16px;
+                width: 12px;
+                height: 12px;
+            }
+            .roadmap-item .node .inner {
+                width: 4px;
+                height: 4px;
+            }
+
+            .roadmap-item .card .top {
+                flex-direction: column;
+            }
+            .roadmap-item .card .bottom {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .roadmap-item .card .bottom .meta {
+                justify-content: center;
+            }
+            .roadmap-item .card .bottom .actions {
+                justify-content: center;
+            }
+
+            .methods-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .badges-row {
+                gap: 8px;
+            }
+            .badge-mini {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+            }
+            .badge-mini .icon {
+                font-size: 1.2rem;
+            }
+
+            .motivation-banner {
+                padding: 12px 16px;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 0 12px 80px;
+            }
+            .page-header-left h1 {
+                font-size: 1.2rem;
+            }
+            .header-stat {
+                font-size: 0.7rem;
+                padding: 2px 10px 2px 6px;
+            }
+            .methods-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .method-card {
+                padding: 14px 12px;
+            }
+            .method-card .icon {
+                font-size: 1.4rem;
+            }
+            .method-card .label {
+                font-size: 0.7rem;
+            }
+
+            .roadmap-item .card {
+                padding: 12px 14px;
+            }
+            .roadmap-item .card .top .left .title {
+                font-size: 0.9rem;
+            }
+            .roadmap-item .card .desc {
+                font-size: 0.8rem;
+            }
+            .roadmap-item .card .bottom .meta {
+                font-size: 0.7rem;
+                gap: 10px;
+            }
+            .roadmap-item .card .bottom .actions button {
+                font-size: 0.65rem;
+                padding: 3px 10px;
+            }
+
+            .badge-mini {
+                padding: 6px 10px;
+                font-size: 0.7rem;
+            }
+            .badge-mini .icon {
+                font-size: 1rem;
+            }
+
+            .continue-card .left h3 {
+                font-size: 1rem;
+            }
+            .continue-card .left .meta {
+                font-size: 0.7rem;
+                flex-wrap: wrap;
+            }
+        }
+
+        /* ============================================================
+               KEYBOARD FOCUS
+               ============================================================ */
+        :focus-visible {
+            outline: 2px solid var(--color-royal);
+            outline-offset: 2px;
+        }
+
+        /* ============================================================
+               UTILITY
+               ============================================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 24px;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition-smooth);
+            border: 1px solid transparent;
+            letter-spacing: 0.01em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--color-royal);
+            color: #fff;
+            box-shadow: 0 4px 24px rgba(74, 124, 247, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 8px 40px rgba(74, 124, 247, 0.4);
+            background: #5a8af8;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .btn-glow {
+            position: relative;
+        }
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: var(--radius-full);
+            background: linear-gradient(135deg, var(--color-royal), #a78bfa);
+            z-index: -1;
+            opacity: 0.25;
+            filter: blur(14px);
+            transition: var(--transition-smooth);
+        }
+        .btn-glow:hover::after {
+            opacity: 0.5;
+            filter: blur(20px);
+        }
+
+        .text-muted {
+            color: var(--color-gray);
+        }
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+        .gap-4 {
+            gap: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============================================================
+    SIDEBAR OVERLAY (mobile)
+    ============================================================ -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ============================================================
+    SIDEBAR
+    ============================================================ -->
+    <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+        <div class="sidebar-brand">
+            <span class="logo-icon">L</span>
+            <span>Lumen Labs</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <span class="nav-label">Main</span>
+            <a href="dashboard.html">
+                <span class="icon">🏠</span> Dashboard
+            </a>
+            <a href="learn.html" class="active">
+                <span class="icon">📚</span> Learn
+            </a>
+            <a href="notes.html">
+                <span class="icon">📄</span> Notes
+            </a>
+            <a href="videos.html">
+                <span class="icon">🎥</span> Videos
+            </a>
+            <a href="challenges.html">
+                <span class="icon">🧪</span> Challenges
+                <span class="badge-nav">3</span>
+            </a>
+            <a href="projects.html">
+                <span class="icon">🏗</span> Projects
+            </a>
+            <a href="resources.html">
+                <span class="icon">📥</span> Resources
+            </a>
+
+            <span class="nav-label">Tools</span>
+            <a href="lumen-ai.html">
+                <span class="icon">🤖</span> Lumen AI
+                <span class="badge-nav">New</span>
+            </a>
+            <a href="profile.html">
+                <span class="icon">👤</span> Profile
+            </a>
+            <a href="pro.html">
+                <span class="icon">💎</span> Pro
+            </a>
+            <a href="settings.html">
+                <span class="icon">⚙</span> Settings
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="#" id="logoutBtn">
+                <span class="icon">🚪</span> Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- ============================================================
+    MAIN CONTENT
+    ============================================================ -->
+    <main class="main-content" id="mainContent">
+
+        <!-- PAGE HEADER -->
+        <header class="page-header">
+            <div class="page-header-top">
+                <div class="page-header-left">
+                    <h1>📚 <span class="highlight">Python Fundamentals</span></h1>
+                    <div class="sub">Master Python one chapter at a time through lessons, notes, videos, challenges, and projects.</div>
+                </div>
+                <div class="page-header-right">
+                    <div class="header-stat">
+                        <span class="icon">⭐</span>
+                        <span class="value" id="headerLevel">Level 3</span>
+                    </div>
+                    <div class="header-stat">
+                        <span class="icon">🔥</span>
+                        <span class="value" id="headerStreak">5</span> days
+                    </div>
+                    <div class="header-stat">
+                        <span class="icon">📚</span>
+                        <span class="value" id="headerChapters">0</span>/<span id="headerTotal">9</span>
+                    </div>
+                    <div class="header-actions">
+                        <span class="avatar-btn" id="avatarBtn">JD</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress row -->
+            <div class="progress-row">
+                <div class="track">
+                    <div class="fill" id="courseProgress" style="width:0%;"></div>
+                </div>
+                <div class="stats">
+                    <span><strong id="completedCount">0</strong> chapters completed</span>
+                    <span>⏱️ <strong id="estRemaining">~2.5</strong> hours remaining</span>
+                    <span>🎯 <strong id="xpEarned">0</strong> XP earned</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- MOTIVATION BANNER -->
+        <div class="motivation-banner" id="motivationBanner">
+            <span class="icon">💡</span>
+            <span class="text" id="motivationText">"<strong>Consistency</strong> beats intensity." — Keep showing up, every single day.</span>
+        </div>
+
+        <!-- SEARCH & FILTERS -->
+        <div class="search-bar">
+            <div class="search-input-wrapper">
+                <span class="icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Search chapters..." aria-label="Search chapters" />
+            </div>
+            <div class="filter-group" id="filterGroup">
+                <button class="active" data-filter="all">All</button>
+                <button data-filter="completed">Completed</button>
+                <button data-filter="current">In Progress</button>
+                <button data-filter="locked">Locked</button>
+            </div>
+        </div>
+
+        <!-- CONTINUE LEARNING CARD -->
+        <div class="continue-card" id="continueCard">
+            <div class="left">
+                <span class="label">🚀 Continue Learning</span>
+                <h3 id="continueTitle">Chapter 5: Python Conditions</h3>
+                <div class="meta">
+                    <span>📖 <span id="continueChapter">Chapter 5</span></span>
+                    <span class="pct" id="continuePct">65% complete</span>
+                    <span>⏱️ <span id="continueTime">12</span> min</span>
+                </div>
+            </div>
+            <div class="right">
+                <a href="lesson.html?id=5" class="btn btn-primary btn-glow" id="continueBtn">Continue →</a>
+            </div>
+        </div>
+
+        <!-- ROADMAP -->
+        <section class="roadmap-section">
+            <div class="section-title">
+                <span>🛤️ Learning Roadmap</span>
+                <span class="count" id="roadmapCount">0 / 9 chapters</span>
+            </div>
+            <div class="roadmap" id="roadmapContainer">
+                <!-- Rendered by JavaScript -->
+            </div>
+        </section>
+
+        <!-- LEARNING METHODS -->
+        <section class="methods-section">
+            <div class="section-title">
+                <span>⚡ Learning Methods</span>
+            </div>
+            <div class="methods-grid">
+                <a href="notes.html" class="method-card">
+                    <span class="icon">📄</span>
+                    <span class="label">Read Notes</span>
+                    <span class="desc">Written explanations</span>
+                </a>
+                <a href="videos.html" class="method-card">
+                    <span class="icon">🎥</span>
+                    <span class="label">Watch Videos</span>
+                    <span class="desc">YouTube tutorials</span>
+                </a>
+                <a href="challenges.html" class="method-card">
+                    <span class="icon">🧪</span>
+                    <span class="label">Solve Challenges</span>
+                    <span class="desc">Interactive coding</span>
+                </a>
+                <a href="projects.html" class="method-card">
+                    <span class="icon">🏗</span>
+                    <span class="label">Build Projects</span>
+                    <span class="desc">Apply knowledge</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- ACHIEVEMENTS -->
+        <section class="achievements-section">
+            <div class="section-title">
+                <span>🏅 Course Achievements</span>
+            </div>
+            <div class="badges-row" id="courseBadges">
+                <!-- Rendered by JavaScript -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================================
+    MOBILE BOTTOM NAV
+    ============================================================ -->
+    <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Mobile navigation">
+        <a href="dashboard.html">
+            <span class="icon">🏠</span> Home
+        </a>
+        <a href="learn.html" class="active">
+            <span class="icon">📚</span> Learn
+        </a>
+        <a href="challenges.html">
+            <span class="icon">🧪</span> Challenges
+        </a>
+        <a href="lumen-ai.html">
+            <span class="icon">🤖</span> AI
+        </a>
+        <a href="profile.html">
+            <span class="icon">👤</span> Profile
+        </a>
+    </nav>
+
+    <!-- ============================================================
+    JAVASCRIPT
+    ============================================================ -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ============================================================
+            // CHAPTER DATA (MVP - future-ready for backend)
+            // ============================================================
+            const CHAPTERS = [{
+                id: 1,
+                title: 'Introduction to Python',
+                description: 'What is Python? Setting up your environment and writing your first program.',
+                difficulty: 'Beginner',
+                time: 10,
+                xp: 20,
+                status: 'completed', // 'completed' | 'current' | 'locked'
+                lessonUrl: 'lesson.html?id=1',
+                notesUrl: 'notes.html?chapter=1',
+                videoUrl: 'https://www.youtube.com/embed/g_N4mDHETXU?rel=0',
+                challengeUrl: 'challenges.html?chapter=1',
+            }, {
+                id: 2,
+                title: 'Variables',
+                description: 'Storing data in memory. Understanding variable types and naming conventions.',
+                difficulty: 'Beginner',
+                time: 12,
+                xp: 25,
+                status: 'completed',
+                lessonUrl: 'lesson.html?id=2',
+                notesUrl: 'notes.html?chapter=2',
+                videoUrl: 'https://www.youtube.com/embed/pHOH7UfOhbE?rel=0',
+                challengeUrl: 'challenges.html?chapter=2',
+            }, {
+                id: 3,
+                title: 'Data Types',
+                description: 'Strings, integers, floats, and booleans. Type conversion and operations.',
+                difficulty: 'Beginner',
+                time: 14,
+                xp: 25,
+                status: 'completed',
+                lessonUrl: 'lesson.html?id=3',
+                notesUrl: 'notes.html?chapter=3',
+                videoUrl: 'https://www.youtube.com/embed/ppsCxnNm-JI?rel=0',
+                challengeUrl: 'challenges.html?chapter=3',
+            }, {
+                id: 4,
+                title: 'Input & Output',
+                description: 'Getting user input and displaying output. Formatting strings and f-strings.',
+                difficulty: 'Beginner',
+                time: 10,
+                xp: 20,
+                status: 'completed',
+                lessonUrl: 'lesson.html?id=4',
+                notesUrl: 'notes.html?chapter=4',
+                videoUrl: 'https://www.youtube.com/embed/4OX49nLNPEE?rel=0',
+                challengeUrl: 'challenges.html?chapter=4',
+            }, {
+                id: 5,
+                title: 'Conditions',
+                description: 'If, elif, else statements. Making decisions in your code with logic.',
+                difficulty: 'Intermediate',
+                time: 16,
+                xp: 30,
+                status: 'current',
+                lessonUrl: 'lesson.html?id=5',
+                notesUrl: 'notes.html?chapter=5',
+                videoUrl: 'https://www.youtube.com/embed/DZwmZ8Usvnk?rel=0',
+                challengeUrl: 'challenges.html?chapter=5',
+            }, {
+                id: 6,
+                title: 'Loops',
+                description: 'For loops, while loops, and loop control. Iterating over sequences.',
+                difficulty: 'Intermediate',
+                time: 18,
+                xp: 35,
+                status: 'locked',
+                lessonUrl: 'lesson.html?id=6',
+                notesUrl: 'notes.html?chapter=6',
+                videoUrl: 'https://www.youtube.com/embed/94UHCEmprCY?rel=0',
+                challengeUrl: 'challenges.html?chapter=6',
+            }, {
+                id: 7,
+                title: 'Functions',
+                description: 'Defining and calling functions. Parameters, return values, and scope.',
+                difficulty: 'Intermediate',
+                time: 20,
+                xp: 40,
+                status: 'locked',
+                lessonUrl: 'lesson.html?id=7',
+                notesUrl: 'notes.html?chapter=7',
+                videoUrl: 'https://www.youtube.com/embed/u-OmVr_fT4s?rel=0',
+                challengeUrl: 'challenges.html?chapter=7',
+            }, {
+                id: 8,
+                title: 'Lists',
+                description: 'Creating, modifying, and iterating through lists. List methods and slicing.',
+                difficulty: 'Intermediate',
+                time: 16,
+                xp: 35,
+                status: 'locked',
+                lessonUrl: 'lesson.html?id=8',
+                notesUrl: 'notes.html?chapter=8',
+                videoUrl: 'https://www.youtube.com/embed/9OeznAkyQz4?rel=0',
+                challengeUrl: 'challenges.html?chapter=8',
+            }, {
+                id: 9,
+                title: 'Dictionaries',
+                description: 'Key-value pairs, dictionary methods, and when to use them.',
+                difficulty: 'Advanced',
+                time: 18,
+                xp: 40,
+                status: 'locked',
+                lessonUrl: 'lesson.html?id=9',
+                notesUrl: 'notes.html?chapter=9',
+                videoUrl: 'https://www.youtube.com/embed/qcbcxZOYtr4?rel=0',
+                challengeUrl: 'challenges.html?chapter=9',
+            }, {
+                id: 10,
+                title: '🏁 Final Python Project',
+                description: 'Apply everything you\'ve learned to build a complete Python application from scratch.',
+                difficulty: 'Advanced',
+                time: 45,
+                xp: 100,
+                status: 'locked',
+                lessonUrl: 'project.html?id=final',
+                notesUrl: 'notes.html?chapter=final',
+                videoUrl: 'https://www.youtube.com/embed/g_N4mDHETXU?rel=0',
+                challengeUrl: 'challenges.html?chapter=final',
+            }, ];
+
+            // ============================================================
+            // USER DATA (from localStorage)
+            // ============================================================
+            function getUser() {
+                let user = null;
+                try {
+                    const stored = localStorage.getItem('lumen_user');
+                    if (stored) user = JSON.parse(stored);
+                } catch (e) { /* ignore */ }
+                if (!user) {
+                    user = {
+                        fullName: 'Ronnie Developer',
+                        username: 'ronnie_coder',
+                        xp: 45,
+                        level: 3,
+                        streak: 5,
+                        completedLessons: 4,
+                        completedChallenges: 3,
+                        completedProjects: 1,
+                        membership: 'Free Explorer',
+                    };
+                    localStorage.setItem('lumen_user', JSON.stringify(user));
+                }
+                return user;
+            }
+
+            const user = getUser();
+
+            // ============================================================
+            // STATE
+            // ============================================================
+            let currentFilter = 'all';
+            let searchQuery = '';
+
+            // ============================================================
+            // DOM REFS
+            // ============================================================
+            const roadmapContainer = document.getElementById('roadmapContainer');
+            const searchInput = document.getElementById('searchInput');
+            const filterGroup = document.getElementById('filterGroup');
+            const courseProgress = document.getElementById('courseProgress');
+            const completedCount = document.getElementById('completedCount');
+            const estRemaining = document.getElementById('estRemaining');
+            const xpEarned = document.getElementById('xpEarned');
+            const headerChapters = document.getElementById('headerChapters');
+            const headerTotal = document.getElementById('headerTotal');
+            const headerLevel = document.getElementById('headerLevel');
+            const headerStreak = document.getElementById('headerStreak');
+            const roadmapCount = document.getElementById('roadmapCount');
+            const continueTitle = document.getElementById('continueTitle');
+            const continueChapter = document.getElementById('continueChapter');
+            const continuePct = document.getElementById('continuePct');
+            const continueTime = document.getElementById('continueTime');
+            const continueBtn = document.getElementById('continueBtn');
+            const courseBadges = document.getElementById('courseBadges');
+            const motivationText = document.getElementById('motivationText');
+
+            // ============================================================
+            // MOTIVATION QUOTES
+            // ============================================================
+            const quotes = [
+                { text: 'Consistency beats intensity. Keep showing up, every single day.', author: 'Anonymous' },
+                { text: 'The expert in anything was once a beginner.', author: 'Anonymous' },
+                { text: 'Code is like humor. When you have to explain it, it\'s bad.', author: 'Cory House' },
+                { text: 'First, solve the problem. Then, write the code.', author: 'John Johnson' },
+                { text: 'Make it work, make it right, make it fast.', author: 'Kent Beck' },
+                { text: 'Simplicity is the soul of efficiency.', author: 'Austin Freeman' },
+                { text: 'The only way to learn a new programming language is by writing programs in it.', author: 'Dennis Ritchie' },
+                { text: 'Programming isn\'t about what you know; it\'s about what you can figure out.', author: 'Chris Pine' },
+            ];
+
+            function setMotivation() {
+                const day = new Date().getDate();
+                const idx = day % quotes.length;
+                const q = quotes[idx];
+                motivationText.innerHTML = `"<strong>${q.text.split('.')[0]}</strong>." — ${q.author}`;
+            }
+
+            // ============================================================
+            // RENDER ROADMAP
+            // ============================================================
+            function renderRoadmap(filter = 'all', query = '') {
+                let filtered = CHAPTERS;
+
+                // Filter
+                if (filter === 'completed') {
+                    filtered = filtered.filter(c => c.status === 'completed');
+                } else if (filter === 'current') {
+                    filtered = filtered.filter(c => c.status === 'current');
+                } else if (filter === 'locked') {
+                    filtered = filtered.filter(c => c.status === 'locked');
+                }
+
+                // Search
+                if (query.trim()) {
+                    const q = query.toLowerCase().trim();
+                    filtered = filtered.filter(c =>
+                        c.title.toLowerCase().includes(q) ||
+                        c.description.toLowerCase().includes(q)
+                    );
+                }
+
+                if (filtered.length === 0) {
+                    roadmapContainer.innerHTML = `
+                            <div class="empty-state">
+                                <span class="icon">🔍</span>
+                                <h3>No chapters found</h3>
+                                <p>Try adjusting your search or filter.</p>
+                            </div>
+                        `;
+                    return;
+                }
+
+                const statusMap = {
+                    completed: { label: '✅ Completed', class: 'completed-tag' },
+                    current: { label: '🟡 In Progress', class: 'current-tag' },
+                    locked: { label: '🔒 Locked', class: 'locked-tag' },
+                };
+
+                let html = '';
+                filtered.forEach((chapter, index) => {
+                    const statusInfo = statusMap[chapter.status] || statusMap.locked;
+                    const isLocked = chapter.status === 'locked';
+                    const isCompleted = chapter.status === 'completed';
+                    const isCurrent = chapter.status === 'current';
+
+                    const actionsHtml = `
+                            <div class="actions">
+                                ${!isLocked ? `<button class="primary-action" onclick="window.location.href='${chapter.lessonUrl}'">🚀 Start</button>` : ''}
+                                ${!isLocked ? `<button onclick="window.location.href='${chapter.notesUrl}'">📄 Notes</button>` : ''}
+                                ${!isLocked ? `<button onclick="window.location.href='${chapter.videoUrl}'">🎥 Video</button>` : ''}
+                                ${!isLocked ? `<button onclick="window.location.href='${chapter.challengeUrl}'">🧪 Practice</button>` : ''}
+                                ${isLocked ? `<button disabled>🔒 Locked</button>` : ''}
+                            </div>
+                        `;
+
+                    html += `
+                            <div class="roadmap-item ${chapter.status}">
+                                <div class="node"><span class="inner"></span></div>
+                                <div class="card">
+                                    <div class="top">
+                                        <div class="left">
+                                            <span class="chapter">Chapter ${chapter.id}</span>
+                                            <span class="title">${chapter.title}</span>
+                                        </div>
+                                        <div class="badges">
+                                            <span class="tag ${statusInfo.class}">${statusInfo.label}</span>
+                                            <span class="tag">${chapter.difficulty}</span>
+                                            <span class="tag">⏱️ ${chapter.time} min</span>
+                                            <span class="tag" style="color:var(--color-warning);border-color:rgba(251,191,36,0.1);background:rgba(251,191,36,0.05);">+${chapter.xp} XP</span>
+                                        </div>
+                                    </div>
+                                    <div class="desc">${chapter.description}</div>
+                                    <div class="bottom">
+                                        <div class="meta">
+                                            <span>📖 Chapter ${chapter.id}</span>
+                                            <span>⏱️ ${chapter.time} min</span>
+                                            <span class="xp">+${chapter.xp} XP</span>
+                                        </div>
+                                        ${actionsHtml}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                });
+
+                roadmapContainer.innerHTML = html;
+            }
+
+            // ============================================================
+            // UPDATE STATS
+            // ============================================================
+            function updateStats() {
+                const total = CHAPTERS.length;
+                const completed = CHAPTERS.filter(c => c.status === 'completed').length;
+                const current = CHAPTERS.find(c => c.status === 'current');
+                const locked = CHAPTERS.filter(c => c.status === 'locked').length;
+
+                // Progress
+                const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+                courseProgress.style.width = pct + '%';
+                completedCount.textContent = completed;
+                headerChapters.textContent = completed;
+                headerTotal.textContent = total;
+                roadmapCount.textContent = `${completed} / ${total} chapters`;
+
+                // XP earned (sum of completed chapters)
+                const earned = CHAPTERS
+                    .filter(c => c.status === 'completed')
+                    .reduce((sum, c) => sum + c.xp, 0);
+                xpEarned.textContent = earned;
+
+                // Estimated remaining time
+                const remaining = CHAPTERS
+                    .filter(c => c.status !== 'completed')
+                    .reduce((sum, c) => sum + c.time, 0);
+                const hours = Math.floor(remaining / 60);
+                const mins = remaining % 60;
+                estRemaining.textContent = hours > 0 ? `~${hours}h ${mins}m` : `~${mins}m`;
+
+                // Header stats
+                headerLevel.textContent = `Level ${user.level || 1}`;
+                headerStreak.textContent = user.streak || 0;
+
+                // Continue card
+                if (current) {
+                    const currentIdx = CHAPTERS.indexOf(current);
+                    const prevCompleted = CHAPTERS
+                        .slice(0, currentIdx)
+                        .filter(c => c.status === 'completed').length;
+                    const totalInPath = currentIdx + 1;
+                    const pctComplete = totalInPath > 0 ? Math.round((prevCompleted / totalInPath) * 100) : 0;
+
+                    continueTitle.textContent = `Chapter ${current.id}: ${current.title}`;
+                    continueChapter.textContent = `Chapter ${current.id}`;
+                    continuePct.textContent = `${Math.min(pctComplete + 10, 100)}% complete`;
+                    continueTime.textContent = current.time;
+                    continueBtn.href = current.lessonUrl;
+                } else if (completed === total) {
+                    continueTitle.textContent = '🎉 You\'ve completed all chapters!';
+                    continueChapter.textContent = '🏁 Course Complete';
+                    continuePct.textContent = '100% complete';
+                    continueTime.textContent = '0';
+                    continueBtn.textContent = '🏆 View Certificate';
+                    continueBtn.href = '#';
+                } else {
+                    // Fallback: first locked chapter
+                    const firstLocked = CHAPTERS.find(c => c.status === 'locked');
+                    if (firstLocked) {
+                        continueTitle.textContent = `Chapter ${firstLocked.id}: ${firstLocked.title}`;
+                        continueChapter.textContent = `Chapter ${firstLocked.id}`;
+                        continuePct.textContent = '0% complete';
+                        continueTime.textContent = firstLocked.time;
+                        continueBtn.href = firstLocked.lessonUrl;
+                    }
+                }
+
+                // Render badges
+                renderBadges();
+            }
+
+            // ============================================================
+            // RENDER BADGES
+            // ============================================================
+            function renderBadges() {
+                const allBadges = [
+                    { icon: '🐍', name: 'Python Beginner', unlocked: CHAPTERS.filter(c => c.status === 'completed')
+                        .length >= 1 },
+                    { icon: '📚', name: 'Chapter Master', unlocked: CHAPTERS.filter(c => c.status === 'completed')
+                        .length >= 3 },
+                    { icon: '🧪', name: 'Challenge Solver', unlocked: (user.completedChallenges || 0) >= 3 },
+                    { icon: '🏗', name: 'Builder', unlocked: (user.completedProjects || 0) >= 1 },
+                    { icon: '🔥', name: '7-Day Streak', unlocked: (user.streak || 0) >= 7 },
+                    { icon: '🏆', name: 'Course Completed', unlocked: CHAPTERS.filter(c => c.status === 'completed')
+                        .length === CHAPTERS.length },
+                ];
+
+                const unlocked = allBadges.filter(b => b.unlocked);
+                const display = unlocked.length > 0 ? unlocked : allBadges.slice(0, 3);
+
+                courseBadges.innerHTML = display.map(b => `
+                        <div class="badge-mini" style="opacity:${b.unlocked ? 1 : 0.3};">
+                            <span class="icon">${b.icon}</span>
+                            <span class="name">${b.name}</span>
+                        </div>
+                    `).join('');
+            }
+
+            // ============================================================
+            // FILTER & SEARCH HANDLERS
+            // ============================================================
+            function applyFilters() {
+                renderRoadmap(currentFilter, searchQuery);
+            }
+
+            // Filter buttons
+            filterGroup.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterGroup.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.getAttribute('data-filter');
+                    applyFilters();
+                });
+            });
+
+            // Search input
+            searchInput.addEventListener('input', function() {
+                searchQuery = this.value;
+                applyFilters();
+            });
+
+            // ============================================================
+            // SIDEBAR TOGGLES (Mobile)
+            // ============================================================
+            function setupSidebars() {
+                const mobileHamburger = document.getElementById('mobileHamburger');
+                const sidebar = document.getElementById('sidebar');
+                const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+                // Create hamburger if it doesn't exist
+                if (!mobileHamburger) {
+                    const hamburger = document.createElement('button');
+                    hamburger.className = 'mobile-hamburger';
+                    hamburger.id = 'mobileHamburger';
+                    hamburger.setAttribute('aria-label', 'Toggle menu');
+                    hamburger.innerHTML = '<span></span><span></span><span></span>';
+                    document.querySelector('.page-header-top').appendChild(hamburger);
+                }
+
+                const hamburger = document.getElementById('mobileHamburger');
+                if (hamburger) {
+                    hamburger.addEventListener('click', function() {
+                        this.classList.toggle('active');
+                        sidebar.classList.toggle('open');
+                        sidebarOverlay.classList.toggle('active');
+                        document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+                    });
+                }
+
+                sidebarOverlay.addEventListener('click', function() {
+                    const h = document.getElementById('mobileHamburger');
+                    if (h) h.classList.remove('active');
+                    sidebar.classList.remove('open');
+                    sidebarOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
+
+            // ============================================================
+            // LOGOUT
+            // ============================================================
+            function setupLogout() {
+                const logoutBtn = document.getElementById('logoutBtn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        localStorage.removeItem('lumen_auth');
+                        window.location.href = 'index.html';
+                    });
+                }
+            }
+
+            // ============================================================
+            // AVATAR CLICK
+            // ============================================================
+            function setupAvatar() {
+                const avatar = document.getElementById('avatarBtn');
+                if (avatar) {
+                    avatar.addEventListener('click', function() {
+                        window.location.href = 'profile.html';
+                    });
+                }
+            }
+
+            // ============================================================
+            // INIT
+            // ============================================================
+            function init() {
+                setMotivation();
+                renderRoadmap('all', '');
+                updateStats();
+                setupSidebars();
+                setupLogout();
+                setupAvatar();
+
+                console.log('📚 Lumen Labs Academia — Learning Hub ready');
+                console.log(`📖 ${CHAPTERS.filter(c => c.status === 'completed').length}/${CHAPTERS.length} chapters completed`);
+            }
+
+            // Run
+            init();
+
+        })();
+    </script>
+
+</body>
+</html>

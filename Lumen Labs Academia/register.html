@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Your Account · Lumen Labs Academia</title>
+    <meta name="description" content="Join Lumen Labs Academia and start your coding journey. Create your free account today." />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ============================================================
+               CSS CUSTOM PROPERTIES
+               ============================================================ */
+        :root {
+            --color-navy: #0D1B3E;
+            --color-navy-light: #1a2d5a;
+            --color-navy-mid: #132a5e;
+            --color-royal: #4A7CF7;
+            --color-royal-light: #6b96f9;
+            --color-royal-glow: rgba(74, 124, 247, 0.25);
+            --color-white: #ffffff;
+            --color-off-white: #f0f4ff;
+            --color-gray: #8a9bb5;
+            --color-gray-light: #b8c7e0;
+            --color-glass: rgba(255, 255, 255, 0.06);
+            --color-glass-border: rgba(255, 255, 255, 0.10);
+            --color-card-bg: rgba(255, 255, 255, 0.04);
+            --color-success: #4ade80;
+            --color-error: #f87171;
+            --color-warning: #fbbf24;
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.35);
+            --shadow-soft: 0 12px 48px rgba(0, 0, 0, 0.25);
+            --shadow-glow: 0 0 60px rgba(74, 124, 247, 0.15);
+            --radius-card: 20px;
+            --radius-sm: 12px;
+            --radius-full: 9999px;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --transition-smooth: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --max-width: 1200px;
+            --nav-height: 72px;
+        }
+
+        /* ============================================================
+               RESET & BASE
+               ============================================================ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--color-navy);
+            color: var(--color-white);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        button {
+            cursor: pointer;
+            font-family: inherit;
+            border: none;
+            background: none;
+            color: inherit;
+        }
+        input {
+            font-family: inherit;
+        }
+
+        /* ============================================================
+               UTILITY
+               ============================================================ */
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 36px;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition-smooth);
+            border: 1px solid transparent;
+            letter-spacing: 0.01em;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--color-royal);
+            color: #fff;
+            box-shadow: 0 4px 24px rgba(74, 124, 247, 0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 8px 40px rgba(74, 124, 247, 0.45);
+            background: #5a8af8;
+        }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn-glow {
+            position: relative;
+        }
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: var(--radius-full);
+            background: linear-gradient(135deg, var(--color-royal), #a78bfa);
+            z-index: -1;
+            opacity: 0.3;
+            filter: blur(16px);
+            transition: var(--transition-smooth);
+        }
+        .btn-glow:hover::after {
+            opacity: 0.6;
+            filter: blur(24px);
+        }
+
+        /* ============================================================
+               NAVIGATION (mini, simplified)
+               ============================================================ */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: var(--nav-height);
+            background: rgba(13, 27, 62, 0.72);
+            backdrop-filter: blur(20px) saturate(1.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition-smooth);
+        }
+        .navbar.scrolled {
+            background: rgba(13, 27, 62, 0.92);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: -0.02em;
+            flex-shrink: 0;
+        }
+        .nav-logo .logo-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--color-royal), #7c5cfc);
+            color: #fff;
+            font-weight: 900;
+            font-size: 1rem;
+        }
+        .nav-logo span {
+            background: linear-gradient(135deg, #fff, var(--color-gray-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-back {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--color-gray-light);
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-back:hover {
+            color: #fff;
+        }
+
+        /* ============================================================
+               REGISTER PAGE LAYOUT
+               ============================================================ */
+        .register-page {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100vh;
+            padding-top: var(--nav-height);
+        }
+
+        /* ============================================================
+               LEFT PANEL
+               ============================================================ */
+        .register-left {
+            background: radial-gradient(ellipse at 30% 20%, rgba(74, 124, 247, 0.08), transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(167, 139, 250, 0.05), transparent 60%),
+                var(--color-navy);
+            padding: 60px 48px 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border-right: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .register-left .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            opacity: 0.15;
+        }
+        .register-left .glow-orb.orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--color-royal);
+            top: -100px;
+            right: -100px;
+        }
+        .register-left .glow-orb.orb-2 {
+            width: 300px;
+            height: 300px;
+            background: #a78bfa;
+            bottom: -80px;
+            left: -80px;
+        }
+
+        .left-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .left-hero {
+            margin-bottom: 40px;
+        }
+        .left-hero .badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--color-royal-light);
+            background: rgba(74, 124, 247, 0.10);
+            padding: 4px 16px;
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(74, 124, 247, 0.12);
+            margin-bottom: 16px;
+        }
+        .left-hero h1 {
+            font-size: clamp(2rem, 3.5vw, 3rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+        }
+        .left-hero h1 .highlight {
+            background: linear-gradient(135deg, var(--color-royal), #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .left-hero p {
+            color: var(--color-gray-light);
+            font-size: 1.05rem;
+            line-height: 1.7;
+            max-width: 420px;
+        }
+
+        /* Floating cards on left */
+        .float-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin: 24px 0 40px;
+            max-width: 480px;
+        }
+        .float-card-mini {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition-smooth);
+        }
+        .float-card-mini:hover {
+            transform: translateY(-2px);
+            border-color: rgba(74, 124, 247, 0.15);
+            background: rgba(74, 124, 247, 0.06);
+        }
+        .float-card-mini .icon {
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+        .float-card-mini .text {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--color-gray-light);
+            line-height: 1.3;
+        }
+        .float-card-mini .text strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .left-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 8px 0 24px;
+            max-width: 480px;
+        }
+        .left-divider .line {
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .left-divider .label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--color-gray);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 24px;
+            max-width: 480px;
+        }
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--color-gray-light);
+            padding: 4px 0;
+        }
+        .feature-list li .check {
+            color: var(--color-success);
+            font-weight: 700;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        /* ============================================================
+               RIGHT PANEL
+               ============================================================ */
+        .register-right {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 40px;
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .register-card {
+            background: var(--color-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-card);
+            padding: 48px 40px;
+            max-width: 480px;
+            width: 100%;
+            backdrop-filter: blur(8px);
+            box-shadow: var(--shadow-glass), var(--shadow-glow);
+            transition: var(--transition-smooth);
+        }
+
+        .register-card .card-header {
+            margin-bottom: 32px;
+        }
+        .register-card .card-header h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            margin-bottom: 6px;
+        }
+        .register-card .card-header h2 .highlight {
+            background: linear-gradient(135deg, var(--color-royal), #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .register-card .card-header p {
+            color: var(--color-gray);
+            font-size: 0.95rem;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-gray-light);
+            margin-bottom: 5px;
+            letter-spacing: 0.01em;
+        }
+
+        .form-group .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            transition: var(--transition-smooth);
+        }
+        .form-group .input-wrapper:focus-within {
+            border-color: var(--color-royal);
+            box-shadow: 0 0 0 3px rgba(74, 124, 247, 0.15);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .form-group .input-wrapper.error {
+            border-color: var(--color-error);
+            box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.12);
+        }
+        .form-group .input-wrapper.success {
+            border-color: var(--color-success);
+        }
+
+        .form-group .input-wrapper input {
+            width: 100%;
+            padding: 14px 16px;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 400;
+            letter-spacing: 0.01em;
+        }
+        .form-group .input-wrapper input::placeholder {
+            color: var(--color-gray);
+            font-weight: 400;
+        }
+
+        .form-group .input-wrapper .toggle-password {
+            position: absolute;
+            right: 14px;
+            background: none;
+            border: none;
+            color: var(--color-gray);
+            font-size: 1.1rem;
+            padding: 4px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            line-height: 1;
+        }
+        .form-group .input-wrapper .toggle-password:hover {
+            color: #fff;
+        }
+
+        .form-group .input-icon {
+            position: absolute;
+            left: 14px;
+            color: var(--color-gray);
+            font-size: 1.1rem;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        .form-group .input-wrapper input {
+            padding-left: 44px;
+        }
+        .form-group .input-wrapper input[type="password"] {
+            padding-right: 44px;
+        }
+        .form-group .input-wrapper input:not([type="password"]) {
+            padding-right: 16px;
+        }
+
+        .form-group .error-message {
+            font-size: 0.75rem;
+            color: var(--color-error);
+            margin-top: 4px;
+            display: none;
+            align-items: center;
+            gap: 4px;
+        }
+        .form-group .error-message.visible {
+            display: flex;
+        }
+
+        /* Password strength */
+        .password-strength {
+            margin-top: 8px;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .password-strength .bars {
+            display: flex;
+            gap: 4px;
+            flex: 1;
+            max-width: 140px;
+        }
+        .password-strength .bars span {
+            height: 3px;
+            flex: 1;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            transition: var(--transition-smooth);
+        }
+        .password-strength .bars span.active.weak {
+            background: var(--color-error);
+        }
+        .password-strength .bars span.active.medium {
+            background: var(--color-warning);
+        }
+        .password-strength .bars span.active.strong {
+            background: var(--color-success);
+        }
+        .password-strength .strength-text {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--color-gray);
+            min-width: 48px;
+            text-align: right;
+        }
+        .password-strength .strength-text.weak {
+            color: var(--color-error);
+        }
+        .password-strength .strength-text.medium {
+            color: var(--color-warning);
+        }
+        .password-strength .strength-text.strong {
+            color: var(--color-success);
+        }
+
+        /* Checkboxes */
+        .form-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 6px 0 4px;
+            cursor: pointer;
+        }
+        .form-check input[type="checkbox"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            position: relative;
+            margin-top: 2px;
+        }
+        .form-check input[type="checkbox"]:checked {
+            background: var(--color-royal);
+            border-color: var(--color-royal);
+        }
+        .form-check input[type="checkbox"]:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .form-check input[type="checkbox"]:focus-visible {
+            outline: 2px solid var(--color-royal);
+            outline-offset: 2px;
+        }
+        .form-check .check-label {
+            font-size: 0.85rem;
+            color: var(--color-gray-light);
+            line-height: 1.5;
+        }
+        .form-check .check-label a {
+            color: var(--color-royal-light);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+        .form-check .check-label a:hover {
+            color: #fff;
+        }
+
+        .form-actions {
+            margin-top: 24px;
+        }
+
+        .form-footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--color-gray);
+        }
+        .form-footer a {
+            color: var(--color-royal-light);
+            font-weight: 600;
+            transition: var(--transition-smooth);
+        }
+        .form-footer a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        /* ============================================================
+               LOADING SPINNER
+               ============================================================ */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ============================================================
+               WELCOME OVERLAY
+               ============================================================ */
+        .welcome-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(13, 27, 62, 0.95);
+            backdrop-filter: blur(24px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            animation: fadeIn 0.5s ease;
+        }
+        .welcome-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .welcome-card {
+            text-align: center;
+            max-width: 480px;
+            animation: welcomeBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes welcomeBounce {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.94);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .welcome-card .emoji {
+            font-size: 4.5rem;
+            display: block;
+            margin-bottom: 16px;
+        }
+        .welcome-card h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            margin-bottom: 12px;
+        }
+        .welcome-card h2 .highlight {
+            background: linear-gradient(135deg, var(--color-royal), #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .welcome-card p {
+            color: var(--color-gray-light);
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 6px;
+        }
+        .welcome-card .sub-message {
+            color: var(--color-gray);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+        .welcome-card .btn {
+            margin-top: 28px;
+            max-width: 240px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ============================================================
+               FOOTER
+               ============================================================ */
+        .footer-mini {
+            padding: 20px 24px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--color-gray);
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            background: rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
+        }
+        .footer-mini .heart {
+            color: #f87171;
+        }
+
+        /* ============================================================
+               RESPONSIVE
+               ============================================================ */
+        @media (max-width: 1024px) {
+            .register-page {
+                grid-template-columns: 1fr 1fr;
+            }
+            .register-left {
+                padding: 40px 32px;
+            }
+            .register-right {
+                padding: 32px 24px;
+            }
+            .register-card {
+                padding: 36px 28px;
+            }
+            .float-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+            .feature-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 820px) {
+            .register-page {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+
+            .register-left {
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+                padding: 100px 28px 40px;
+                min-height: auto;
+            }
+            .register-left .glow-orb {
+                display: none;
+            }
+            .left-hero p {
+                max-width: 100%;
+            }
+            .float-cards {
+                max-width: 100%;
+                grid-template-columns: 1fr 1fr;
+            }
+            .feature-list {
+                max-width: 100%;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .register-right {
+                padding: 32px 20px 48px;
+                min-height: auto;
+            }
+            .register-card {
+                max-width: 100%;
+                padding: 32px 24px;
+            }
+
+            .register-card .card-header h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .float-cards {
+                grid-template-columns: 1fr;
+            }
+            .feature-list {
+                grid-template-columns: 1fr;
+            }
+            .register-left {
+                padding: 88px 16px 32px;
+            }
+            .register-right {
+                padding: 24px 12px 40px;
+            }
+            .register-card {
+                padding: 24px 16px;
+            }
+            .register-card .card-header h2 {
+                font-size: 1.3rem;
+            }
+            .form-group .input-wrapper input {
+                font-size: 0.9rem;
+                padding: 12px 16px 12px 40px;
+            }
+            .form-group .input-wrapper input[type="password"] {
+                padding-right: 40px;
+            }
+            .form-group .input-icon {
+                left: 12px;
+                font-size: 1rem;
+            }
+            .welcome-card h2 {
+                font-size: 1.6rem;
+            }
+            .welcome-card .emoji {
+                font-size: 3.2rem;
+            }
+            .nav-logo span {
+                font-size: 1rem;
+            }
+            .nav-back span {
+                display: none;
+            }
+            .btn {
+                padding: 14px 24px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* ============================================================
+               KEYBOARD FOCUS
+               ============================================================ */
+        :focus-visible {
+            outline: 2px solid var(--color-royal);
+            outline-offset: 2px;
+        }
+
+        /* ============================================================
+               SCROLLBAR
+               ============================================================ */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--color-navy);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-royal);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-royal-light);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============================================================
+    NAVIGATION
+    ============================================================ -->
+    <header class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+        <div class="container">
+            <a href="index.html" class="nav-logo" aria-label="Lumen Labs Academia home">
+                <span class="logo-icon">L</span>
+                <span>Lumen Labs</span>
+            </a>
+
+            <a href="index.html" class="nav-back" aria-label="Back to home">
+                <span>←</span>
+                <span>Back to Home</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- ============================================================
+    REGISTER PAGE
+    ============================================================ -->
+    <main class="register-page" id="registerPage">
+
+        <!-- LEFT PANEL -->
+        <section class="register-left" aria-label="Why join Lumen Labs Academia">
+            <div class="glow-orb orb-1"></div>
+            <div class="glow-orb orb-2"></div>
+
+            <div class="left-content">
+                <div class="left-hero">
+                    <span class="badge">🚀 Start your journey</span>
+                    <h1>
+                        Your coding future<br />
+                        <span class="highlight">starts here.</span>
+                    </h1>
+                    <p>
+                        Join thousands of future developers building their skills
+                        one lesson at a time.
+                    </p>
+                </div>
+
+                <!-- Floating achievement cards -->
+                <div class="float-cards">
+                    <div class="float-card-mini">
+                        <span class="icon">🏆</span>
+                        <span class="text"><strong>First Badge</strong> Earned</span>
+                    </div>
+                    <div class="float-card-mini">
+                        <span class="icon">🔥</span>
+                        <span class="text"><strong>7-Day</strong> Learning Streak</span>
+                    </div>
+                    <div class="float-card-mini">
+                        <span class="icon">📚</span>
+                        <span class="text"><strong>Python Basics</strong> Completed</span>
+                    </div>
+                    <div class="float-card-mini">
+                        <span class="icon">💻</span>
+                        <span class="text"><strong>First Project</strong> Built</span>
+                    </div>
+                </div>
+
+                <div class="left-divider">
+                    <span class="line"></span>
+                    <span class="label">✨ Why join</span>
+                    <span class="line"></span>
+                </div>
+
+                <ul class="feature-list">
+                    <li><span class="check">✓</span> Learn at your own pace</li>
+                    <li><span class="check">✓</span> Read notes or watch videos</li>
+                    <li><span class="check">✓</span> Complete real coding challenges</li>
+                    <li><span class="check">✓</span> Build practical projects</li>
+                    <li><span class="check">✓</span> Track your learning progress</li>
+                    <li><span class="check">✓</span> Earn achievements and badges</li>
+                    <li><span class="check">✓</span> Learn with Lumen AI <span style="font-size:0.65rem;color:var(--color-royal-light);background:rgba(74,124,247,0.12);padding:1px 8px;border-radius:999px;margin-left:4px;">Coming Soon</span></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- RIGHT PANEL -->
+        <section class="register-right" aria-label="Registration form">
+            <div class="register-card" role="form" aria-labelledby="register-heading">
+
+                <div class="card-header">
+                    <h2 id="register-heading">
+                        Create Your <span class="highlight">Free Account</span>
+                    </h2>
+                    <p>Join thousands of future developers building their skills one lesson at a time.</p>
+                </div>
+
+                <form id="registerForm" novalidate autocomplete="off">
+
+                    <!-- Full Name -->
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">👤</span>
+                            <input
+                            type="text"
+                            id="fullName"
+                            name="fullName"
+                            placeholder="e.g. Alex Rivera"
+                            required
+                            autocomplete="name"
+                            aria-describedby="fullName-error"
+                            />
+                        </div>
+                        <div class="error-message" id="fullName-error">
+                            <span>⚠️</span> Please enter your full name.
+                        </div>
+                    </div>
+
+                    <!-- Username -->
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">@</span>
+                            <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="e.g. alex_coder"
+                            required
+                            autocomplete="username"
+                            aria-describedby="username-error"
+                            />
+                        </div>
+                        <div class="error-message" id="username-error">
+                            <span>⚠️</span> Username must be at least 3 characters.
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">✉️</span>
+                            <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="you@example.com"
+                            required
+                            autocomplete="email"
+                            aria-describedby="email-error"
+                            />
+                        </div>
+                        <div class="error-message" id="email-error">
+                            <span>⚠️</span> Please enter a valid email address.
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔒</span>
+                            <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Create a strong password"
+                            required
+                            autocomplete="new-password"
+                            aria-describedby="password-error password-strength-text"
+                            />
+                            <button
+                            type="button"
+                            class="toggle-password"
+                            aria-label="Toggle password visibility"
+                            data-target="password"
+                            >
+                            👁️
+                        </button>
+                    </div>
+                    <div class="error-message" id="password-error">
+                        <span>⚠️</span> Password must be at least 8 characters.
+                    </div>
+                    <!-- Password strength meter -->
+                    <div class="password-strength" id="passwordStrength" role="status" aria-live="polite">
+                        <div class="bars">
+                            <span id="str-1"></span>
+                            <span id="str-2"></span>
+                            <span id="str-3"></span>
+                            <span id="str-4"></span>
+                        </div>
+                        <span class="strength-text" id="strengthText">Weak</span>
+                    </div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">✓</span>
+                        <input
+                        type="password"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        placeholder="Re-enter your password"
+                        required
+                        autocomplete="new-password"
+                        aria-describedby="confirm-error"
+                        />
+                        <button
+                        type="button"
+                        class="toggle-password"
+                        aria-label="Toggle password visibility"
+                        data-target="confirmPassword"
+                        >
+                        👁️
+                    </button>
+                </div>
+                <div class="error-message" id="confirm-error">
+                    <span>⚠️</span> Passwords do not match.
+                </div>
+            </div>
+
+            <!-- Terms -->
+            <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-check">
+                    <input type="checkbox" id="termsCheck" required />
+                    <span class="check-label">
+                        I agree to the <a href="#" aria-label="Terms of Service">Terms of Service</a>.
+                    </span>
+                </label>
+                <div class="error-message" id="terms-error">
+                    <span>⚠️</span> You must agree to the Terms of Service.
+                </div>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="form-group" style="margin-bottom:20px;">
+                <label class="form-check">
+                    <input type="checkbox" id="newsletterCheck" />
+                    <span class="check-label">
+                        Send me The Lumen Letter newsletter <span style="color:var(--color-gray);font-weight:400;">(optional)</span>
+                    </span>
+                </label>
+            </div>
+
+            <!-- Submit -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-glow" id="submitBtn">
+                    🚀 Create My Free Account
+                </button>
+            </div>
+
+            <div class="form-footer">
+                Already have an account? <a href="login.html">Log In</a>
+            </div>
+
+        </form>
+    </div>
+</section>
+</main>
+
+<!-- ============================================================
+WELCOME OVERLAY
+============================================================ -->
+<div class="welcome-overlay" id="welcomeOverlay" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+    <div class="welcome-card">
+        <span class="emoji">🎉</span>
+        <h2 id="welcome-title">
+            Welcome to <span class="highlight">Lumen Labs Academia</span>
+        </h2>
+        <p>Your coding journey starts today.</p>
+        <p class="sub-message">
+            Every expert developer once created their first account.<br />
+            Let's build something amazing.
+        </p>
+        <button class="btn btn-primary" id="welcomeContinueBtn">
+            Continue →
+        </button>
+    </div>
+</div>
+
+<!-- ============================================================
+FOOTER
+============================================================ -->
+<footer class="footer-mini" role="contentinfo">
+    Built with <span class="heart">💙</span> by Lumen Labs
+</footer>
+
+<!-- ============================================================
+JAVASCRIPT
+============================================================ -->
+<script>
+    (function() {
+        'use strict';
+
+        // ============================================================
+        // DOM REFERENCES
+        // ============================================================
+        const form = document.getElementById('registerForm');
+        const fullName = document.getElementById('fullName');
+        const username = document.getElementById('username');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const termsCheck = document.getElementById('termsCheck');
+        const submitBtn = document.getElementById('submitBtn');
+
+        const fullNameError = document.getElementById('fullName-error');
+        const usernameError = document.getElementById('username-error');
+        const emailError = document.getElementById('email-error');
+        const passwordError = document.getElementById('password-error');
+        const confirmError = document.getElementById('confirm-error');
+        const termsError = document.getElementById('terms-error');
+
+        const strengthBars = [
+            document.getElementById('str-1'),
+            document.getElementById('str-2'),
+            document.getElementById('str-3'),
+            document.getElementById('str-4')
+        ];
+        const strengthText = document.getElementById('strengthText');
+
+        const welcomeOverlay = document.getElementById('welcomeOverlay');
+        const welcomeContinue = document.getElementById('welcomeContinueBtn');
+
+        // ============================================================
+        // TOGGLE PASSWORD VISIBILITY
+        // ============================================================
+        document.querySelectorAll('.toggle-password').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                if (!input) return;
+                const isPassword = input.getAttribute('type') === 'password';
+                input.setAttribute('type', isPassword ? 'text' : 'password');
+                this.textContent = isPassword ? '🙈' : '👁️';
+                this.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+            });
+        });
+
+        // ============================================================
+        // VALIDATION HELPERS
+        // ============================================================
+        function setFieldError(input, errorEl, message) {
+            const wrapper = input.closest('.input-wrapper');
+            if (wrapper) {
+                wrapper.classList.toggle('error', !!message);
+                wrapper.classList.toggle('success', !message && input.value.trim() !== '');
+            }
+            if (message) {
+                errorEl.textContent = '⚠️ ' + message;
+                errorEl.classList.add('visible');
+            } else {
+                errorEl.classList.remove('visible');
+            }
+        }
+
+        function validateFullName() {
+            const val = fullName.value.trim();
+            if (!val || val.length < 2) {
+                setFieldError(fullName, fullNameError, 'Please enter your full name.');
+                return false;
+            }
+            setFieldError(fullName, fullNameError, '');
+            return true;
+        }
+
+        function validateUsername() {
+            const val = username.value.trim();
+            if (!val || val.length < 3) {
+                setFieldError(username, usernameError, 'Username must be at least 3 characters.');
+                return false;
+            }
+            if (!/^[a-zA-Z0-9_]+$/.test(val)) {
+                setFieldError(username, usernameError, 'Only letters, numbers, and underscores.');
+                return false;
+            }
+            setFieldError(username, usernameError, '');
+            return true;
+        }
+
+        function validateEmail() {
+            const val = email.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!val || !emailRegex.test(val)) {
+                setFieldError(email, emailError, 'Please enter a valid email address.');
+                return false;
+            }
+            setFieldError(email, emailError, '');
+            return true;
+        }
+
+        function validatePassword() {
+            const val = password.value;
+            if (!val || val.length < 8) {
+                setFieldError(password, passwordError, 'Password must be at least 8 characters.');
+                return false;
+            }
+            setFieldError(password, passwordError, '');
+            return true;
+        }
+
+        function validateConfirm() {
+            const val = confirmPassword.value;
+            const pass = password.value;
+            if (!val || val !== pass) {
+                setFieldError(confirmPassword, confirmError, 'Passwords do not match.');
+                return false;
+            }
+            setFieldError(confirmPassword, confirmError, '');
+            return true;
+        }
+
+        function validateTerms() {
+            if (!termsCheck.checked) {
+                termsError.classList.add('visible');
+                termsError.textContent = '⚠️ You must agree to the Terms of Service.';
+                return false;
+            }
+            termsError.classList.remove('visible');
+            return true;
+        }
+
+        // ============================================================
+        // PASSWORD STRENGTH METER
+        // ============================================================
+        function evaluatePasswordStrength(pass) {
+            let score = 0;
+            if (pass.length >= 8) score++;
+            if (pass.length >= 12) score++;
+            if (/[a-z]/.test(pass) && /[A-Z]/.test(pass)) score++;
+            if (/\d/.test(pass)) score++;
+            if (/[^a-zA-Z0-9]/.test(pass)) score++;
+            return Math.min(score, 4);
+        }
+
+        function updateStrengthMeter() {
+            const pass = password.value;
+            const score = evaluatePasswordStrength(pass);
+
+            const labels = ['Weak', 'Weak', 'Medium', 'Strong', 'Strong'];
+            const classes = ['', 'weak', 'medium', 'strong', 'strong'];
+
+            strengthBars.forEach(function(bar, index) {
+                const isActive = index < score;
+                bar.classList.toggle('active', isActive);
+                bar.className = ''; // reset
+                if (isActive) {
+                    bar.classList.add('active', classes[score] || '');
+                }
+            });
+
+            const label = labels[score] || 'Weak';
+            strengthText.textContent = label;
+            strengthText.className = 'strength-text ' + (classes[score] || '');
+        }
+
+        password.addEventListener('input', updateStrengthMeter);
+
+        // ============================================================
+        // LIVE VALIDATION ON BLUR
+        // ============================================================
+        fullName.addEventListener('blur', validateFullName);
+        username.addEventListener('blur', validateUsername);
+        email.addEventListener('blur', validateEmail);
+        password.addEventListener('blur', validatePassword);
+        confirmPassword.addEventListener('blur', validateConfirm);
+        termsCheck.addEventListener('change', function() {
+            if (this.checked) {
+                termsError.classList.remove('visible');
+            } else {
+                termsError.classList.add('visible');
+                termsError.textContent = '⚠️ You must agree to the Terms of Service.';
+            }
+        });
+
+        // Re-validate confirm on password change
+        password.addEventListener('input', function() {
+            if (confirmPassword.value) validateConfirm();
+            updateStrengthMeter();
+        });
+
+        // ============================================================
+        // FORM SUBMISSION
+        // ============================================================
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Run all validations
+            const isFullNameValid = validateFullName();
+            const isUsernameValid = validateUsername();
+            const isEmailValid = validateEmail();
+            const isPasswordValid = validatePassword();
+            const isConfirmValid = validateConfirm();
+            const isTermsValid = validateTerms();
+
+            if (!isFullNameValid || !isUsernameValid || !isEmailValid ||
+                !isPasswordValid || !isConfirmValid || !isTermsValid) {
+                // Focus first error
+                const firstError = form.querySelector(
+                    '.input-wrapper.error input, .error-message.visible');
+                if (firstError) {
+                    const input = firstError.closest('.form-group')?.querySelector('input');
+                    if (input) input.focus();
+                }
+                return;
+            }
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> Creating account...';
+
+            // Simulate async registration
+            setTimeout(function() {
+                // Build user profile
+                const user = {
+                    fullName: fullName.value.trim(),
+                    username: username.value.trim(),
+                    email: email.value.trim(),
+                    password: password.value, // In production, hash this!
+                    createdAt: new Date().toISOString(),
+                    xp: 0,
+                    level: 1,
+                    streak: 0,
+                    completedLessons: 0,
+                    completedChallenges: 0,
+                    completedProjects: 0,
+                    membership: 'Free Explorer',
+                    newsletter: document.getElementById('newsletterCheck').checked,
+                    termsAccepted: true,
+                };
+
+                // Save to LocalStorage
+                try {
+                    localStorage.setItem('lumen_user', JSON.stringify(user));
+                    // Also store a simple auth token flag
+                    localStorage.setItem('lumen_auth', 'true');
+                } catch (err) {
+                    console.warn('LocalStorage not available:', err);
+                }
+
+                // Reset button state
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '🚀 Create My Free Account';
+
+                // Show welcome overlay
+                welcomeOverlay.classList.add('active');
+
+            }, 1500);
+        });
+
+        // ============================================================
+        // WELCOME CONTINUE → REDIRECT
+        // ============================================================
+        welcomeContinue.addEventListener('click', function() {
+            window.location.href = 'dashboard.html';
+        });
+
+        // Allow Enter key on welcome overlay
+        welcomeOverlay.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                window.location.href = 'dashboard.html';
+            }
+        });
+
+        // ============================================================
+        // NAVBAR SCROLL EFFECT
+        // ============================================================
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 20) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // ============================================================
+        // KEYBOARD SHORTCUT: Escape to close welcome (if needed)
+        // ============================================================
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && welcomeOverlay.classList.contains('active')) {
+                // Allow escape to continue
+                window.location.href = 'dashboard.html';
+            }
+        });
+
+        // ============================================================
+        // INIT: set initial strength meter state
+        // ============================================================
+        updateStrengthMeter();
+
+        console.log('🚀 Lumen Labs Academia — Register page ready');
+        console.log('📝 Built with 💙 by Lumen Labs');
+
+    })();
+</script>
+
+</body>
+</html>
