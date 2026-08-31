@@ -22,10 +22,9 @@ npm run build
 - The homepage is a single route with semantic anchor navigation. React Router is intentionally not included until multiple real pages exist.
 - Project and service content lives in `src/data/`; sections only handle presentation.
 - `Logo` and `BrandMark` are isolated in `src/components/brand/` so the temporary mark can be replaced without changing layout components.
-- The visual system uses a near-black foundation, warm off-white type, muted secondary text, and a single restrained amber accent (`#E7B56A`). The accent is reserved for actions, focus states, and controlled luminous details.
-- Display typography uses Space Grotesk Variable and body/UI typography uses Manrope Variable. Both are self-hosted through Fontsource and loaded with `font-display: swap`.
-- The hero light is a CSS/DOM interaction rather than a canvas or WebGL effect, keeping the memorable moment lightweight and optional.
 - The enquiry form currently validates locally and shows an honest local success state. It does not claim to send email until a real form provider or endpoint is connected.
+- Vite is pinned to the Vite 7 Rollup/esbuild toolchain instead of the Vite 8 Rolldown toolchain. This avoids installing the `@rolldown/binding-win32-x64-msvc` package that was blocked by Windows Application Control. The React plugin is pinned to the compatible 5.x line.
+- Tailwind CSS remains on the existing Tailwind 4 Vite integration. Its platform-specific packages are separate from the reported Rolldown failure; if an organisation blocks all native Node tooling, that would require a separate Tailwind 3/PostCSS migration rather than a security-policy bypass.
 
 ## Content and launch replacements
 
