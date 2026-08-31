@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#0B0D0D"/>
+  <circle cx="940" cy="140" r="250" fill="#E7B56A" fill-opacity=".08"/>
+  <circle cx="940" cy="140" r="112" fill="#E7B56A" fill-opacity=".12"/>
+  <path d="M80 480H1120" stroke="#E7B56A" stroke-opacity=".28"/>
+  <text x="80" y="235" fill="#F1EEE7" font-family="Arial, sans-serif" font-size="86" font-weight="700">Lumen Labs</text>
+  <text x="84" y="320" fill="#A9AAA3" font-family="Arial, sans-serif" font-size="32">Websites. Applications. Interfaces.</text>
+  <text x="84" y="540" fill="#E7B56A" font-family="Arial, sans-serif" font-size="24">Built with intention.</text>
+</svg>
