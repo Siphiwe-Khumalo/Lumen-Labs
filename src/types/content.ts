@@ -5,7 +5,9 @@ export type Project = {
   contribution: string
   image: string
   imageAlt: string
-  placeholder: boolean
+  imageNote: string
+  imageSourceName: string
+  imageSourceUrl: string
 }
 
 export type Service = {

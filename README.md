@@ -32,11 +32,11 @@ The current website was inspected only as a factual reference. Its unsupported e
 
 Before production launch, replace or confirm:
 
-- `https://lumenlabs.example/` in `index.html`, `public/robots.txt`, and `public/sitemap.xml` with the real domain.
+- The current canonical URL is set to the existing Netlify deployment URL. Replace it in `index.html`, `public/robots.txt`, and `public/sitemap.xml` when the final production domain is confirmed.
 - The social preview image if the final brand assets change.
-- The temporary SVGs in `src/assets/projects/` with approved project screenshots when available.
+- The real editorial reference photographs in `src/assets/projects/` with approved client screenshots when available; image licenses and source links are documented in `docs/IMAGE-SOURCES.md`.
 - Project descriptions and contribution details in `src/data/projects.ts` with client-approved facts.
 - Any contact/form endpoint and production contact details.
 - The temporary `Logo`/`BrandMark` implementation and `public/favicon.svg` when the new logo is final.
 
-The placeholders are deliberately isolated and labelled in the work section so they are difficult to mistake for approved project captures.
+The current project imagery is real photography from Pexels, clearly labelled as editorial reference imagery. It is not presented as client evidence. The homepage is ready to ship as a polished v1, but approved project captures, final branding, production contact details, and a final domain remain content inputs rather than facts that can be safely invented.

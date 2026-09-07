@@ -40,24 +40,49 @@ export function StartProject() {
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [submissionError, setSubmissionError] = useState('')
 
   const updateValue = (field: keyof FormValues, value: string) => {
     setValues((current) => ({ ...current, [field]: value }))
     setErrors((current) => ({ ...current, [field]: undefined }))
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const nextErrors = validate(values)
     setErrors(nextErrors)
+    setSubmissionError('')
     if (Object.keys(nextErrors).length > 0) return
 
     setIsSubmitting(true)
-    window.setTimeout(() => {
-      setIsSubmitting(false)
+
+    try {
+      if (import.meta.env.PROD) {
+        const response = await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            'form-name': 'project-enquiry',
+            ...values,
+          }).toString(),
+        })
+
+        if (!response.ok) throw new Error('Form submission failed')
+      }
+
       setIsSubmitted(true)
-    }, 650)
+    } catch {
+      setSubmissionError(
+        "Something went wrong while sending your enquiry. Please try again or use the studio's configured contact address.",
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
+
+  const successMessage = import.meta.env.PROD
+    ? 'Your enquiry has been sent. We will get back to you soon.'
+    : 'The local preview accepted your enquiry. Netlify Forms will deliver it after deployment.'
 
   return (
     <section
@@ -88,7 +113,7 @@ export function StartProject() {
                   <Check aria-hidden="true" />
                 </span>
                 <h3>Thanks for reaching out.</h3>
-                <p>Your message is ready to be connected to the Lumen Labs inbox.</p>
+                <p>{successMessage}</p>
                 <button
                   className="button-text-only"
                   type="button"
@@ -98,7 +123,26 @@ export function StartProject() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} noValidate>
+              <form
+                name="project-enquiry"
+                method="POST"
+                data-netlify="true"
+                data-netlify-honeypot="bot-field"
+                onSubmit={handleSubmit}
+                noValidate
+              >
+                <input type="hidden" name="form-name" value="project-enquiry" />
+                <div className="form-field form-field-hidden" aria-hidden="true">
+                  <label htmlFor="bot-field">
+                    Don&apos;t fill this out if you&apos;re human
+                  </label>
+                  <input
+                    id="bot-field"
+                    name="bot-field"
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
                 <div className="form-grid">
                   <Field
                     id="name"
@@ -155,6 +199,11 @@ export function StartProject() {
                   value={values.timeline}
                   onChange={(value) => updateValue('timeline', value)}
                 />
+                {submissionError && (
+                  <p className="submission-error" role="alert">
+                    {submissionError}
+                  </p>
+                )}
                 <div className="form-submit-row">
                   <p>We will only use these details to respond to your enquiry.</p>
                   <Button type="submit" showArrow={!isSubmitting} disabled={isSubmitting}>

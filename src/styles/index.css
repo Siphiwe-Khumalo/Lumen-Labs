@@ -521,7 +521,7 @@ button:disabled {
   filter: saturate(1.15);
 }
 
-.placeholder-badge {
+.image-note-badge {
   position: absolute;
   top: 1rem;
   left: 1rem;
@@ -572,7 +572,8 @@ button:disabled {
 }
 
 .project-summary,
-.project-contribution {
+.project-contribution,
+.project-source {
   grid-column: 1 / -1;
   max-width: 55rem;
   margin: 0.8rem 0 0;
@@ -588,6 +589,21 @@ button:disabled {
   font-weight: 500;
   letter-spacing: 0.01em;
   text-transform: none;
+}
+
+.project-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+  color: rgba(169, 170, 163, 0.72);
+  font-size: 0.66rem;
+  line-height: 1.4;
+}
+
+.project-source:hover,
+.project-source:focus-visible {
+  color: var(--color-accent);
 }
 
 .services-section {
@@ -808,6 +824,15 @@ button:disabled {
   margin-bottom: 1.5rem;
 }
 
+.form-field-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 .form-field label {
   color: var(--color-text);
   font-size: 0.7rem;
@@ -850,9 +875,14 @@ button:disabled {
   border-color: #e48f7a;
 }
 
-.field-error {
+.field-error,
+.submission-error {
   color: #f0a291;
   font-size: 0.72rem;
+}
+
+.submission-error {
+  margin: 0 0 1rem;
 }
 
 .form-submit-row {

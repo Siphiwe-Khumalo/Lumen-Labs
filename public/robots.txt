@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lumenlabs.example/sitemap.xml
+Sitemap: https://dancing-nasturtium-64628c.netlify.app/sitemap.xml

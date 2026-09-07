@@ -13,8 +13,9 @@ export function SelectedWork() {
             <h2 id="work-title">A closer look at what we build.</h2>
           </div>
           <p className="section-intro">
-            A selection of business-facing and technical interface work. Approved project
-            captures will replace the temporary visuals below.
+            A selection of business-facing and technical interface work. The images are
+            real editorial references, clearly credited until approved project captures
+            are available.
           </p>
         </div>
         <div className="work-grid">
@@ -31,8 +32,8 @@ export function SelectedWork() {
                   alt={project.imageAlt}
                   loading={index === 0 ? 'eager' : 'lazy'}
                 />
-                {project.placeholder && (
-                  <span className="placeholder-badge">Placeholder visual</span>
+                {project.imageNote && (
+                  <span className="image-note-badge">{project.imageNote}</span>
                 )}
               </div>
               <div className="project-card-body">
@@ -43,6 +44,15 @@ export function SelectedWork() {
                 <ArrowUpRight aria-hidden="true" className="project-arrow" />
                 <p className="project-summary">{project.summary}</p>
                 <p className="project-contribution">{project.contribution}</p>
+                <a
+                  className="project-source"
+                  href={project.imageSourceUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Image source: {project.imageSourceName}
+                  <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />
+                </a>
               </div>
             </article>
           ))}
