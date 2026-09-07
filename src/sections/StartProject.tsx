@@ -57,32 +57,28 @@ export function StartProject() {
     setIsSubmitting(true)
 
     try {
-      if (import.meta.env.PROD) {
-        const response = await fetch('/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: new URLSearchParams({
-            'form-name': 'project-enquiry',
-            ...values,
-          }).toString(),
-        })
-
-        if (!response.ok) throw new Error('Form submission failed')
+      if (!import.meta.env.VITE_FORM_ENDPOINT) {
+        throw new Error('A form endpoint has not been configured')
       }
 
+      const response = await fetch(import.meta.env.VITE_FORM_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(values).toString(),
+      })
+
+      if (!response.ok) throw new Error('Form submission failed')
       setIsSubmitted(true)
     } catch {
       setSubmissionError(
-        "Something went wrong while sending your enquiry. Please try again or use the studio's configured contact address.",
+        'Something went wrong while sending your enquiry. Configure VITE_FORM_ENDPOINT before deploying the enquiry form.',
       )
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const successMessage = import.meta.env.PROD
-    ? 'Your enquiry has been sent. We will get back to you soon.'
-    : 'The local preview accepted your enquiry. Netlify Forms will deliver it after deployment.'
+  const successMessage = 'Your enquiry has been sent. We will get back to you soon.'
 
   return (
     <section
@@ -123,26 +119,7 @@ export function StartProject() {
                 </button>
               </div>
             ) : (
-              <form
-                name="project-enquiry"
-                method="POST"
-                data-netlify="true"
-                data-netlify-honeypot="bot-field"
-                onSubmit={handleSubmit}
-                noValidate
-              >
-                <input type="hidden" name="form-name" value="project-enquiry" />
-                <div className="form-field form-field-hidden" aria-hidden="true">
-                  <label htmlFor="bot-field">
-                    Don&apos;t fill this out if you&apos;re human
-                  </label>
-                  <input
-                    id="bot-field"
-                    name="bot-field"
-                    tabIndex={-1}
-                    autoComplete="off"
-                  />
-                </div>
+              <form onSubmit={handleSubmit} noValidate>
                 <div className="form-grid">
                   <Field
                     id="name"

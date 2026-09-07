@@ -17,7 +17,17 @@ npm run format:check
 npm run build
 ```
 
-## Architecture notes
+## Deploy to GitHub Pages
+
+The site is configured for the repository URL:
+
+```text
+https://siphiwe-khumalo.github.io/Lumen-Labs/
+```
+
+Deployment is handled by `.github/workflows/deploy-pages.yml` after changes merge into `main`. The workflow installs dependencies, runs `npm run build`, uploads `dist/`, and deploys it through GitHub Pages. `vite.config.ts` uses `/Lumen-Labs/` only inside GitHub Actions and keeps `/` for local development.
+
+GitHub Pages is a static host. The enquiry form therefore expects an HTTPS endpoint in `VITE_FORM_ENDPOINT`; it will show a clear configuration error rather than pretending that a submission was delivered when no endpoint is configured. Netlify Forms attributes are not used by the GitHub Pages build.
 
 - The homepage is a single route with semantic anchor navigation. React Router is intentionally not included until multiple real pages exist.
 - Project and service content lives in `src/data/`; sections only handle presentation.
@@ -32,7 +42,7 @@ The current website was inspected only as a factual reference. Its unsupported e
 
 Before production launch, replace or confirm:
 
-- The current canonical URL is set to the existing Netlify deployment URL. Replace it in `index.html`, `public/robots.txt`, and `public/sitemap.xml` when the final production domain is confirmed.
+- The current canonical URL is the GitHub Pages URL. Replace it in `index.html`, `public/robots.txt`, and `public/sitemap.xml` if a custom domain is added.
 - The social preview image if the final brand assets change.
 - The real editorial reference photographs in `src/assets/projects/` with approved client screenshots when available; image licenses and source links are documented in `docs/IMAGE-SOURCES.md`.
 - Project descriptions and contribution details in `src/data/projects.ts` with client-approved facts.
