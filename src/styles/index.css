@@ -824,15 +824,6 @@ button:disabled {
   margin-bottom: 1.5rem;
 }
 
-.form-field-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-
 .form-field label {
   color: var(--color-text);
   font-size: 0.7rem;
