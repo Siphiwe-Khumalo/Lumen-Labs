@@ -17,7 +17,7 @@ export function WhyLumen() {
         <div ref={revealRef}>
           <div className="why-layout">
             <div data-reveal>
-              <SectionLabel>Why Lumen / 04</SectionLabel>
+              <SectionLabel>Why Lumen / 07</SectionLabel>
               <h2 className="section-title mt-6" id="why-title">
                 Small enough to care. Technical enough to build.
               </h2>

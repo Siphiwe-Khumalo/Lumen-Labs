@@ -1,54 +1,40 @@
-import type { Capability, MetaItem, NavItem, Principle } from '../types/content'
+import type { EngagementOption, MetaItem, NavItem, Principle } from '../types/content'
 
 export const navigation: NavItem[] = [
+  { label: 'Expertise', href: '#expertise' },
+  { label: 'Build', href: '#solutions' },
   { label: 'Work', href: '#work' },
-  { label: 'Services', href: '#services' },
-  { label: 'Approach', href: '#capability' },
+  { label: 'Stack', href: '#stack' },
+  { label: 'Process', href: '#process' },
   { label: 'About', href: '#about' },
   { label: 'Contact', href: '#contact' },
 ]
 
 export const heroMeta: MetaItem[] = [
   { label: 'Based in', value: 'South Africa' },
-  { label: 'Focus', value: 'Web, apps, interfaces' },
-  { label: 'You work with', value: 'The developer directly' },
+  { label: 'Disciplines', value: 'Software, infrastructure, control' },
+  { label: 'You work with', value: 'The engineer directly' },
 ]
 
 /**
- * Marquee wording is limited to tools this studio genuinely works with and
- * capabilities described in the brief. No claims beyond that.
+ * Marquee wording is limited to tools, protocols, and disciplines this studio
+ * genuinely works with. No claims beyond that.
  */
 export const marqueeItems: string[] = [
   'React',
   'TypeScript',
-  'Design systems',
+  'Networking',
+  'Microsoft 365',
+  'SCADA',
+  'Modbus',
+  'Cybersecurity',
   'Dashboards',
-  'SCADA interfaces',
+  'IoT',
+  'VoIP',
+  'Automation',
+  'Cloud',
+  'Linux',
   'Accessibility',
-  'Performance',
-  'Web applications',
-  'Digital identity',
-]
-
-export const capabilities: Capability[] = [
-  {
-    number: '01',
-    title: 'Industrial interfaces',
-    description:
-      'Experience with SCADA-related interface work, where an operator needs the right information without hunting for it.',
-  },
-  {
-    number: '02',
-    title: 'Dashboards and internal tools',
-    description:
-      'Data-dense screens built to stay legible as the amount of information grows.',
-  },
-  {
-    number: '03',
-    title: 'Business-facing web',
-    description:
-      'Marketing sites and digital presences that hold up next to much larger companies.',
-  },
 ]
 
 export const principles: Principle[] = [
@@ -69,5 +55,27 @@ export const principles: Principle[] = [
     title: 'Direct collaboration',
     description:
       'A focused working relationship keeps decisions clear and momentum practical.',
+  },
+]
+
+export const engagementOptions: EngagementOption[] = [
+  {
+    title: 'Start a project',
+    description: 'You know roughly what needs building and want it scoped properly.',
+    action: 'New build',
+    href: '#contact',
+  },
+  {
+    title: 'Discuss a problem',
+    description:
+      'Something is unreliable, manual, or disconnected and needs diagnosing first.',
+    action: 'Diagnosis',
+    href: '#contact',
+  },
+  {
+    title: 'Get in touch',
+    description: 'A question, a second opinion, or an introduction for later.',
+    action: 'General',
+    href: '#contact',
   },
 ]

@@ -1,10 +1,13 @@
 import { Footer } from './components/layout/Footer'
 import { Header } from './components/layout/Header'
-import { Capability } from './sections/Capability'
+import { CaseStudies } from './sections/CaseStudies'
+import { Expertise } from './sections/Expertise'
 import { Hero } from './sections/Hero'
 import { Marquee } from './sections/Marquee'
-import { SelectedWork } from './sections/SelectedWork'
-import { Services } from './sections/Services'
+import { Mindset } from './sections/Mindset'
+import { Process } from './sections/Process'
+import { Solutions } from './sections/Solutions'
+import { Stack } from './sections/Stack'
 import { StartProject } from './sections/StartProject'
 import { WhyLumen } from './sections/WhyLumen'
 
@@ -15,9 +18,12 @@ export function App() {
       <main id="main-content">
         <Hero />
         <Marquee />
-        <SelectedWork />
-        <Services />
-        <Capability />
+        <Expertise />
+        <Solutions />
+        <CaseStudies />
+        <Stack />
+        <Process />
+        <Mindset />
         <WhyLumen />
         <StartProject />
       </main>

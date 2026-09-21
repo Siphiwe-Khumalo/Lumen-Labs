@@ -3,16 +3,25 @@ import { navigation } from '../../data/site'
 import { Logo } from '../brand/Logo'
 import { Container } from './Container'
 
+const disciplines = [
+  'Software development',
+  'Web applications & PWAs',
+  'Networking & infrastructure',
+  'Cloud & Microsoft 365',
+  'Automation & control',
+  'Cybersecurity',
+]
+
 export function Footer() {
   return (
     <footer className="site-footer">
       <Container>
         <div className="footer-top">
-          <div>
+          <div className="footer-brand">
             <Logo />
             <p className="footer-intro">
-              A focused digital development studio building websites, web applications,
-              and the technical interfaces behind them.
+              A focused technology studio working across software, infrastructure, and
+              control systems — from a business website to the interface on a plant floor.
             </p>
           </div>
 
@@ -28,6 +37,17 @@ export function Footer() {
           </nav>
 
           <div className="footer-col">
+            <h4>Disciplines</h4>
+            <ul>
+              {disciplines.map((discipline) => (
+                <li key={discipline}>
+                  <span>{discipline}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="footer-col">
             <h4>Studio</h4>
             <ul>
               <li>
@@ -35,6 +55,9 @@ export function Footer() {
               </li>
               <li>
                 <a href="#contact">Start a project</a>
+              </li>
+              <li>
+                <a href="#contact">Discuss a problem</a>
               </li>
               <li>
                 <span>Contact details to be confirmed</span>
