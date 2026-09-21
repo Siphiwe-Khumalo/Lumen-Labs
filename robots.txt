@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lumenlabcreatives.spartangroup.co.za/sitemap.xml
