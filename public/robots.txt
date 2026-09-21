@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lumen-labs.onrender.com/sitemap.xml
+Sitemap: https://lumenlabcreatives.spartangroup.co.za/sitemap.xml
