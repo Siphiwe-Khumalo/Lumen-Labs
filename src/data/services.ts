@@ -1,4 +1,7 @@
 import type { Service } from '../types/content'
+import websites from '../assets/media/service-websites.jpg'
+import applications from '../assets/media/service-applications.jpg'
+import identity from '../assets/media/service-identity.jpg'
 
 export const services: Service[] = [
   {
@@ -11,17 +14,21 @@ export const services: Service[] = [
       'Responsive frontend development',
       'A considered digital presence',
     ],
+    image: websites,
+    imageAlt: 'Workspace with a laptop and monitors showing website layouts in progress',
   },
   {
     number: '02',
     title: 'Web applications',
     description:
-      'Custom platforms, dashboards, internal tools, and digital applications built around how a business works.',
+      'Custom platforms, dashboards, internal tools, and digital applications built around how a business actually works.',
     details: [
       'Clear interface systems',
       'Practical technical foundations',
       'Room to grow without overbuilding',
     ],
+    image: applications,
+    imageAlt: 'Close-up of application markup and styles on a dark editor screen',
   },
   {
     number: '03',
@@ -33,5 +40,7 @@ export const services: Service[] = [
       'Web-ready brand expression',
       'A consistent online presence',
     ],
+    image: identity,
+    imageAlt: 'Colour palette sheets and printed swatches laid out on a studio desk',
   },
 ]

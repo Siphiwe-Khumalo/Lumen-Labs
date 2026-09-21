@@ -1,8 +1,12 @@
-import { FormEvent, useState } from 'react'
-import { Check, LoaderCircle, Send } from 'lucide-react'
+import { useState } from 'react'
+import type { FormEvent } from 'react'
+import { AlertCircle, Check, LoaderCircle, Mail, MapPin, Send } from 'lucide-react'
+import texture from '../assets/media/texture-network.jpg'
 import { Container } from '../components/layout/Container'
 import { Button } from '../components/ui/Button'
 import { SectionLabel } from '../components/ui/SectionLabel'
+import { useReveal } from '../hooks/useReveal'
+import { stagger } from '../lib/reveal'
 
 type FormValues = {
   name: string
@@ -36,6 +40,7 @@ function validate(values: FormValues): FormErrors {
 }
 
 export function StartProject() {
+  const revealRef = useReveal<HTMLDivElement>()
   const [values, setValues] = useState(initialValues)
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -57,6 +62,9 @@ export function StartProject() {
     setIsSubmitting(true)
 
     try {
+      // GitHub Pages is a static host, so delivery needs an explicit endpoint.
+      // Without one we surface a configuration error rather than implying the
+      // message was sent.
       if (!import.meta.env.VITE_FORM_ENDPOINT) {
         throw new Error('A form endpoint has not been configured')
       }
@@ -71,14 +79,12 @@ export function StartProject() {
       setIsSubmitted(true)
     } catch {
       setSubmissionError(
-        'Something went wrong while sending your enquiry. Configure VITE_FORM_ENDPOINT before deploying the enquiry form.',
+        'This enquiry form is not connected to a delivery endpoint yet. Set VITE_FORM_ENDPOINT before launch.',
       )
     } finally {
       setIsSubmitting(false)
     }
   }
-
-  const successMessage = 'Your enquiry has been sent. We will get back to you soon.'
 
   return (
     <section
@@ -86,32 +92,48 @@ export function StartProject() {
       id="contact"
       aria-labelledby="contact-title"
     >
+      <div className="contact-texture" aria-hidden="true">
+        <img src={texture} alt="" loading="lazy" decoding="async" />
+      </div>
+
       <Container>
-        <div className="contact-layout">
-          <div className="contact-copy">
+        <div className="contact-layout" ref={revealRef}>
+          <div className="contact-copy" data-reveal>
             <SectionLabel>Start a project / 05</SectionLabel>
-            <h2 id="contact-title">Have something worth building?</h2>
-            <p>
+            <h2 className="section-title" id="contact-title">
+              Have something worth building?
+            </h2>
+            <p className="lead">
               Share a little about what you need. Enough to start a useful conversation,
               nothing more.
             </p>
-            <div className="contact-note">
-              <span className="contact-note-dot" aria-hidden="true" />
-              <span>
-                Usually best for websites, applications, and technical interfaces.
-              </span>
-            </div>
+
+            <ul className="contact-points">
+              <li>
+                <Send aria-hidden="true" />
+                Websites, web applications, dashboards, and technical interfaces.
+              </li>
+              <li>
+                <MapPin aria-hidden="true" />
+                Working with South African businesses, and remotely beyond that.
+              </li>
+              <li>
+                <Mail aria-hidden="true" />
+                Your details are only used to reply to this enquiry.
+              </li>
+            </ul>
           </div>
-          <div className="form-panel">
+
+          <div className="glass form-panel" data-reveal style={stagger(1)}>
             {isSubmitted ? (
               <div className="form-success" role="status">
-                <span className="success-icon">
+                <span className="success-badge">
                   <Check aria-hidden="true" />
                 </span>
                 <h3>Thanks for reaching out.</h3>
-                <p>{successMessage}</p>
+                <p>Your enquiry has been sent. We will get back to you soon.</p>
                 <button
-                  className="button-text-only"
+                  className="button-quiet"
                   type="button"
                   onClick={() => setIsSubmitted(false)}
                 >
@@ -124,6 +146,7 @@ export function StartProject() {
                   <Field
                     id="name"
                     label="Name"
+                    placeholder="Your name"
                     value={values.name}
                     error={errors.name}
                     onChange={(value) => updateValue('name', value)}
@@ -133,6 +156,7 @@ export function StartProject() {
                     id="email"
                     label="Email"
                     type="email"
+                    placeholder="you@company.co.za"
                     value={values.email}
                     error={errors.email}
                     onChange={(value) => updateValue('email', value)}
@@ -141,17 +165,20 @@ export function StartProject() {
                   <Field
                     id="company"
                     label="Company"
+                    placeholder="Optional"
                     value={values.company}
                     onChange={(value) => updateValue('company', value)}
                   />
                   <Field
                     id="budget"
-                    label="Budget (optional)"
+                    label="Budget"
+                    placeholder="Optional"
                     value={values.budget}
                     onChange={(value) => updateValue('budget', value)}
                   />
                 </div>
-                <div className="form-field">
+
+                <div className="field">
                   <label htmlFor="project">
                     What are you looking to build? <span aria-hidden="true">*</span>
                   </label>
@@ -159,6 +186,7 @@ export function StartProject() {
                     id="project"
                     name="project"
                     rows={5}
+                    placeholder="A sentence or two about the project, the problem, or the system involved."
                     value={values.project}
                     aria-invalid={Boolean(errors.project)}
                     aria-describedby={errors.project ? 'project-error' : undefined}
@@ -170,31 +198,37 @@ export function StartProject() {
                     </span>
                   )}
                 </div>
+
                 <Field
                   id="timeline"
-                  label="Timeline (optional)"
+                  label="Timeline"
+                  placeholder="Optional"
                   value={values.timeline}
                   onChange={(value) => updateValue('timeline', value)}
                 />
+
                 {submissionError && (
-                  <p className="submission-error" role="alert">
+                  <p className="form-error" role="alert">
+                    <AlertCircle aria-hidden="true" />
                     {submissionError}
                   </p>
                 )}
-                <div className="form-submit-row">
-                  <p>We will only use these details to respond to your enquiry.</p>
+
+                <div className="form-footer">
+                  <p>No newsletter, no follow-up sequence. Just a reply.</p>
                   <Button type="submit" showArrow={!isSubmitting} disabled={isSubmitting}>
                     {isSubmitting ? (
                       <>
                         <LoaderCircle
                           aria-hidden="true"
                           className="h-4 w-4 animate-spin"
-                        />{' '}
+                        />
                         Sending
                       </>
                     ) : (
                       <>
-                        <Send aria-hidden="true" className="h-4 w-4" /> Send enquiry
+                        <Send aria-hidden="true" className="h-4 w-4" />
+                        Send enquiry
                       </>
                     )}
                   </Button>
@@ -212,6 +246,7 @@ type FieldProps = {
   id: keyof FormValues
   label: string
   value: string
+  placeholder?: string
   type?: 'text' | 'email'
   error?: string
   required?: boolean
@@ -222,14 +257,16 @@ function Field({
   id,
   label,
   value,
+  placeholder,
   type = 'text',
   error,
   required = false,
   onChange,
 }: FieldProps) {
   const errorId = `${id}-error`
+
   return (
-    <div className="form-field">
+    <div className="field">
       <label htmlFor={id}>
         {label} {required && <span aria-hidden="true">*</span>}
       </label>
@@ -238,6 +275,7 @@ function Field({
         name={id}
         type={type}
         value={value}
+        placeholder={placeholder}
         required={required}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? errorId : undefined}

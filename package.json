@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@fontsource-variable/manrope": "latest",
     "@fontsource-variable/space-grotesk": "latest",
     "lucide-react": "latest",

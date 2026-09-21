@@ -1,5 +1,6 @@
-import '@fontsource-variable/manrope'
 import '@fontsource-variable/space-grotesk'
+import '@fontsource-variable/manrope'
+import '@fontsource-variable/jetbrains-mono'
 import './styles/index.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'

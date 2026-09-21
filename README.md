@@ -1,6 +1,6 @@
-# Lumen Labs v1
+# Lumen Labs
 
-A focused, single-page React + TypeScript website for Lumen Labs. The implementation is intentionally small: it explains the studio, shows selected work, describes the three core offerings, communicates the studio's technical/craft balance, and provides a low-friction project enquiry experience.
+A single-page React + TypeScript site for Lumen Labs — a small digital development studio building websites, web applications, and technical interfaces.
 
 ## Run locally
 
@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Production checks:
+Checks:
 
 ```bash
 npm run lint
@@ -17,36 +17,59 @@ npm run format:check
 npm run build
 ```
 
-## Deploy to GitHub Pages
+## Design system
 
-The site is configured for the repository URL:
+The visual language is meant to read as an engineering studio rather than a SaaS template: a cool graphite foundation, one warm signature accent, sharp corners, hairline rules, and photography graded into the palette.
+
+- **Tokens** live at the top of `src/styles/index.css`. Surfaces are cool graphite (`--ink` → `--surface-3`), with one warm "lumen" accent (`--accent`) for actions and focus, and one cool technical accent (`--steel`) for metadata. Both are used sparingly; no second competing colour.
+- **Three materials, used deliberately.** `.panel` is solid and bordered, `.glass` is a blurred surface with a specular top edge, and `.liquid` is a pair of very low-contrast light lobes that drift slowly behind the hero. Glass and liquid appear in a handful of places, not everywhere.
+- **Typography** is three families with distinct jobs: Space Grotesk for display, Manrope for body, and JetBrains Mono for metadata, labels, and buttons. The mono is what gives the interface its technical voice; all three are self-hosted through Fontsource with `font-display: swap`.
+- **Corners stay sharp** (2–10px) apart from glass panels, and there are no decorative gradients, glowing cards, or floating 3D objects.
+
+### Motion
+
+Movement is handled by three small hooks rather than an animation library:
+
+- `useReveal` — one shared `IntersectionObserver` per section reveals `[data-reveal]` elements once. `stagger(i)` in `src/lib/reveal.ts` sets `--d` for sequencing.
+- `usePointerGlow` — writes pointer position to `--px`/`--py` on an animation frame so the highlight is pure CSS. Skipped for coarse pointers.
+- `useScrollState` — drives the header's glass treatment and the reading-progress line.
+
+Everything meaningful is disabled under `prefers-reduced-motion`, and the layout is designed to hold up if the luminous effects are removed entirely. Glass surfaces have `@supports` fallbacks because some GPUs silently drop `backdrop-filter`.
+
+## Architecture
+
+```text
+src/
+├── assets/media/      Editorial photography
+├── assets/projects/   Project reference imagery
+├── components/        brand/ (replaceable logo), layout/, ui/
+├── data/              projects, services, site content
+├── hooks/             reveal, pointer glow, scroll state
+├── lib/               cn, reveal helpers
+├── sections/          Hero, Marquee, SelectedWork, Services, Capability, WhyLumen, StartProject
+├── styles/            index.css (tokens, materials, sections)
+└── types/             content types
+```
+
+- One route with anchor navigation. React Router is intentionally absent until there are real pages.
+- Copy and imagery live in `src/data/`; sections handle presentation only.
+- `Logo` and `BrandMark` are isolated in `src/components/brand/` so the final logo can replace them without touching layout.
+- Vite is pinned to the Vite 7 Rollup/esbuild toolchain rather than the Vite 8 Rolldown toolchain, which avoids the `@rolldown/binding-win32-x64-msvc` native binary that Windows Application Control blocks.
+
+## Deploy
+
+GitHub Actions builds and publishes to GitHub Pages on every push to `main` (`.github/workflows/deploy-pages.yml`):
 
 ```text
 https://siphiwe-khumalo.github.io/Lumen-Labs/
 ```
 
-Deployment is handled by `.github/workflows/deploy-pages.yml` after changes merge into `main`. The workflow installs dependencies, runs `npm run build`, uploads `dist/`, and deploys it through GitHub Pages. `vite.config.ts` uses `/Lumen-Labs/` only inside GitHub Actions and keeps `/` for local development.
+`vite.config.ts` only applies the `/Lumen-Labs/` base inside GitHub Actions, so local development stays at `/`.
 
-GitHub Pages is a static host. The enquiry form therefore expects an HTTPS endpoint in `VITE_FORM_ENDPOINT`; it will show a clear configuration error rather than pretending that a submission was delivered when no endpoint is configured. Netlify Forms attributes are not used by the GitHub Pages build.
+## Honesty and remaining inputs
 
-- The homepage is a single route with semantic anchor navigation. React Router is intentionally not included until multiple real pages exist.
-- Project and service content lives in `src/data/`; sections only handle presentation.
-- `Logo` and `BrandMark` are isolated in `src/components/brand/` so the temporary mark can be replaced without changing layout components.
-- The enquiry form currently validates locally and shows an honest local success state. It does not claim to send email until a real form provider or endpoint is connected.
-- Vite is pinned to the Vite 7 Rollup/esbuild toolchain instead of the Vite 8 Rolldown toolchain. This avoids installing the `@rolldown/binding-win32-x64-msvc` package that was blocked by Windows Application Control. The React plugin is pinned to the compatible 5.x line.
-- Tailwind CSS remains on the existing Tailwind 4 Vite integration. Its platform-specific packages are separate from the reported Rolldown failure; if an organisation blocks all native Node tooling, that would require a separate Tailwind 3/PostCSS migration rather than a security-policy bypass.
+Nothing on the site claims a result that cannot be defended. There are no invented metrics, testimonials, client quotes, or awards.
 
-## Content and launch replacements
-
-The current website was inspected only as a factual reference. Its unsupported enterprise-scale claims and fictional-looking Finora/TaskFlow case studies were not carried forward.
-
-Before production launch, replace or confirm:
-
-- The current canonical URL is the GitHub Pages URL. Replace it in `index.html`, `public/robots.txt`, and `public/sitemap.xml` if a custom domain is added.
-- The social preview image if the final brand assets change.
-- The real editorial reference photographs in `src/assets/projects/` with approved client screenshots when available; image licenses and source links are documented in `docs/IMAGE-SOURCES.md`.
-- Project descriptions and contribution details in `src/data/projects.ts` with client-approved facts.
-- Any contact/form endpoint and production contact details.
-- The temporary `Logo`/`BrandMark` implementation and `public/favicon.svg` when the new logo is final.
-
-The current project imagery is real photography from Pexels, clearly labelled as editorial reference imagery. It is not presented as client evidence. The homepage is ready to ship as a polished v1, but approved project captures, final branding, production contact details, and a final domain remain content inputs rather than facts that can be safely invented.
+- **Imagery is real photography from Pexels, not AI-generated.** Sources and licensing are documented in `docs/IMAGE-SOURCES.md`. The project cards are labelled **Editorial reference** and link to their source, so no visitor can mistake them for captures of the named projects.
+- **The enquiry form** needs `VITE_FORM_ENDPOINT` (see `.env.example`). GitHub Pages is static, so without an endpoint the form reports a configuration error instead of implying a message was delivered.
+- Still to supply: approved project captures and details, the final logo, production contact details, and a custom domain if one is planned. `docs/CONTENT-REPLACEMENTS.md` tracks these.

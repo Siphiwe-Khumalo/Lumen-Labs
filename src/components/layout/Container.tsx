@@ -6,5 +6,5 @@ type ContainerProps = PropsWithChildren<{
 }>
 
 export function Container({ children, className }: ContainerProps) {
-  return <div className={cn('container-shell', className)}>{children}</div>
+  return <div className={cn('shell', className)}>{children}</div>
 }

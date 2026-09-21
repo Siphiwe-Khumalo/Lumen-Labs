@@ -1,80 +1,111 @@
-import { useState } from 'react'
-import { ArrowDown, ArrowUpRight } from 'lucide-react'
+import { ArrowDown, Radio } from 'lucide-react'
+import serverRoom from '../assets/media/infrastructure-servers.jpg'
 import { Container } from '../components/layout/Container'
 import { LinkButton } from '../components/ui/Button'
-import { SectionLabel } from '../components/ui/SectionLabel'
-
-function HeroLight() {
-  const [position, setPosition] = useState({ x: 50, y: 50 })
-
-  return (
-    <div
-      className="hero-visual"
-      aria-hidden="true"
-      onPointerMove={(event) => {
-        const bounds = event.currentTarget.getBoundingClientRect()
-        setPosition({
-          x: ((event.clientX - bounds.left) / bounds.width) * 100,
-          y: ((event.clientY - bounds.top) / bounds.height) * 100,
-        })
-      }}
-    >
-      <div className="hero-visual-grid" />
-      <div
-        className="hero-light"
-        style={
-          {
-            '--light-x': `${position.x}%`,
-            '--light-y': `${position.y}%`,
-          } as React.CSSProperties
-        }
-      />
-      <div className="hero-visual-core" />
-      <div className="hero-visual-caption">
-        <span>Focus / 01</span>
-        <span>Light finds a way</span>
-      </div>
-    </div>
-  )
-}
+import { heroMeta } from '../data/site'
+import { usePointerGlow } from '../hooks/usePointerGlow'
+import { useReveal } from '../hooks/useReveal'
+import { stagger } from '../lib/reveal'
 
 export function Hero() {
+  const revealRef = useReveal<HTMLDivElement>()
+  const glow = usePointerGlow<HTMLDivElement>()
+
   return (
-    <section className="hero-section" id="top" aria-labelledby="hero-title">
-      <Container className="hero-layout">
-        <div className="hero-copy">
-          <SectionLabel>Digital development studio / South Africa</SectionLabel>
-          <h1 id="hero-title">
-            Websites. <em>Applications.</em> Interfaces.
-            <span>Built with intention.</span>
-          </h1>
-          <p className="hero-description">
-            Lumen Labs builds clear, capable digital experiences for businesses that need
-            more than a generic template.
-          </p>
-          <div className="hero-actions">
-            <LinkButton href="#contact" showArrow>
-              Start a project
-            </LinkButton>
-            <LinkButton href="#work" variant="text" showArrow>
-              View our work
-            </LinkButton>
+    <section className="hero" id="top" aria-labelledby="hero-title">
+      <div className="hero-bg" aria-hidden="true">
+        <div className="grid-wash" />
+        <div className="liquid">
+          <span />
+          <span />
+        </div>
+      </div>
+
+      <Container>
+        <div className="hero-grid-layout" ref={revealRef}>
+          <div className="hero-copy">
+            <p className="hero-eyebrow mono" data-reveal style={stagger(0)}>
+              <span className="pulse-dot" aria-hidden="true" />
+              Digital development studio
+            </p>
+
+            <h1 className="hero-title" id="hero-title" data-reveal style={stagger(1)}>
+              <span>Websites.</span>
+              <span className="title-accent">Applications.</span>
+              <span>Interfaces.</span>
+              <span className="title-muted">Built with intention.</span>
+            </h1>
+
+            <p className="lead hero-lead" data-reveal style={stagger(2)}>
+              Lumen Labs is a small studio building clear, capable digital work — from
+              business websites to the technical interfaces behind them.
+            </p>
+
+            <div className="hero-actions" data-reveal style={stagger(3)}>
+              <LinkButton href="#contact" showArrow>
+                Start a project
+              </LinkButton>
+              <LinkButton href="#work" variant="text" showArrow>
+                View our work
+              </LinkButton>
+            </div>
+
+            <dl className="hero-meta" data-reveal style={stagger(4)}>
+              {heroMeta.map((item) => (
+                <div key={item.label}>
+                  <dt>{item.label}</dt>
+                  <dd>{item.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          <div className="hero-visual" data-reveal style={stagger(2)}>
+            <div className="media media-hoverable spotlight" {...glow}>
+              <img
+                src={serverRoom}
+                alt="Racked servers and patch cabling inside a working data centre"
+                width={1800}
+                height={1200}
+                loading="eager"
+                decoding="async"
+              />
+            </div>
+            <div className="hero-scan" aria-hidden="true" />
+
+            <p className="glass hero-badge">
+              <Radio aria-hidden="true" />
+              <span className="mono">Systems &amp; interfaces</span>
+            </p>
+
+            <figure className="glass hero-readout">
+              <div className="hero-readout-head">
+                <span className="mono">Studio focus</span>
+                <span className="mono">03</span>
+              </div>
+              <ul>
+                <li>
+                  <span>Frontend craft</span>
+                  <span>Design + build</span>
+                </li>
+                <li>
+                  <span>Technical interfaces</span>
+                  <span>Dashboards, SCADA</span>
+                </li>
+                <li>
+                  <span>Engagement</span>
+                  <span>Direct, small team</span>
+                </li>
+              </ul>
+            </figure>
           </div>
         </div>
-        <HeroLight />
-        <a className="hero-scroll-hint" href="#work">
-          <ArrowDown aria-hidden="true" className="h-4 w-4" />
-          <span>Scroll to explore</span>
+
+        <a className="link-quiet hero-scroll" href="#work">
+          <ArrowDown aria-hidden="true" className="h-3.5 w-3.5" />
+          Scroll to selected work
         </a>
       </Container>
-      <div className="hero-rule" />
-      <div className="hero-meta container-shell">
-        <span>01 / 05</span>
-        <span>Websites · Applications · Interfaces</span>
-        <a href="#work" aria-label="Jump to selected work">
-          <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
-        </a>
-      </div>
     </section>
   )
 }
