@@ -1,4 +1,4 @@
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from 'react'
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react'
 import { ArrowUpRight } from 'lucide-react'
 import { cn } from '../../lib/cn'
 
@@ -8,15 +8,15 @@ type BaseButtonProps = {
   variant?: ButtonVariant
   showArrow?: boolean
   className?: string
-  children: React.ReactNode
+  children: ReactNode
 }
 
 type ButtonProps = BaseButtonProps & ButtonHTMLAttributes<HTMLButtonElement>
 type LinkButtonProps = BaseButtonProps & AnchorHTMLAttributes<HTMLAnchorElement>
 
-const buttonStyles: Record<ButtonVariant, string> = {
-  primary: 'button-primary',
-  secondary: 'button-secondary',
+const variantClass: Record<ButtonVariant, string> = {
+  primary: 'button-primary sheen',
+  secondary: 'button-secondary sheen',
   text: 'button-text',
 }
 
@@ -28,7 +28,7 @@ export function Button({
   ...props
 }: ButtonProps) {
   return (
-    <button className={cn('button-base', buttonStyles[variant], className)} {...props}>
+    <button className={cn('button-base', variantClass[variant], className)} {...props}>
       {children}
       {showArrow && <ArrowUpRight aria-hidden="true" className="h-4 w-4" />}
     </button>
@@ -43,7 +43,7 @@ export function LinkButton({
   ...props
 }: LinkButtonProps) {
   return (
-    <a className={cn('button-base', buttonStyles[variant], className)} {...props}>
+    <a className={cn('button-base', variantClass[variant], className)} {...props}>
       {children}
       {showArrow && <ArrowUpRight aria-hidden="true" className="h-4 w-4" />}
     </a>

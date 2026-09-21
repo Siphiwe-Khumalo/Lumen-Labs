@@ -1,8 +1,22 @@
-import { FormEvent, useState } from 'react'
-import { Check, LoaderCircle, Send } from 'lucide-react'
+import { useRef, useState } from 'react'
+import type { FormEvent } from 'react'
+import {
+  AlertCircle,
+  ArrowRight,
+  Check,
+  LoaderCircle,
+  Mail,
+  MapPin,
+  Send,
+} from 'lucide-react'
+import texture from '../assets/media/texture-network.jpg'
 import { Container } from '../components/layout/Container'
 import { Button } from '../components/ui/Button'
 import { SectionLabel } from '../components/ui/SectionLabel'
+import { engagementOptions } from '../data/site'
+import { useReveal } from '../hooks/useReveal'
+import { cn } from '../lib/cn'
+import { stagger } from '../lib/reveal'
 
 type FormValues = {
   name: string
@@ -36,8 +50,11 @@ function validate(values: FormValues): FormErrors {
 }
 
 export function StartProject() {
+  const revealRef = useReveal<HTMLDivElement>()
+  const formRef = useRef<HTMLFormElement>(null)
   const [values, setValues] = useState(initialValues)
   const [errors, setErrors] = useState<FormErrors>({})
+  const [enquiryType, setEnquiryType] = useState(engagementOptions[0].action)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submissionError, setSubmissionError] = useState('')
@@ -45,6 +62,13 @@ export function StartProject() {
   const updateValue = (field: keyof FormValues, value: string) => {
     setValues((current) => ({ ...current, [field]: value }))
     setErrors((current) => ({ ...current, [field]: undefined }))
+  }
+
+  /** Choosing a route sets the enquiry type and moves focus to the message. */
+  const chooseRoute = (action: string) => {
+    setEnquiryType(action)
+    const field = formRef.current?.querySelector<HTMLTextAreaElement>('#project')
+    field?.focus({ preventScroll: false })
   }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -57,6 +81,9 @@ export function StartProject() {
     setIsSubmitting(true)
 
     try {
+      // GitHub Pages is a static host, so delivery needs an explicit endpoint.
+      // Without one we surface a configuration error rather than implying the
+      // message was sent.
       if (!import.meta.env.VITE_FORM_ENDPOINT) {
         throw new Error('A form endpoint has not been configured')
       }
@@ -64,21 +91,19 @@ export function StartProject() {
       const response = await fetch(import.meta.env.VITE_FORM_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(values).toString(),
+        body: new URLSearchParams({ ...values, enquiryType }).toString(),
       })
 
       if (!response.ok) throw new Error('Form submission failed')
       setIsSubmitted(true)
     } catch {
       setSubmissionError(
-        'Something went wrong while sending your enquiry. Configure VITE_FORM_ENDPOINT before deploying the enquiry form.',
+        'This enquiry form is not connected to a delivery endpoint yet. Set VITE_FORM_ENDPOINT before launch.',
       )
     } finally {
       setIsSubmitting(false)
     }
   }
-
-  const successMessage = 'Your enquiry has been sent. We will get back to you soon.'
 
   return (
     <section
@@ -86,121 +111,203 @@ export function StartProject() {
       id="contact"
       aria-labelledby="contact-title"
     >
+      <div className="contact-texture" aria-hidden="true">
+        <img src={texture} alt="" loading="lazy" decoding="async" />
+      </div>
+
       <Container>
-        <div className="contact-layout">
-          <div className="contact-copy">
-            <SectionLabel>Start a project / 05</SectionLabel>
-            <h2 id="contact-title">Have something worth building?</h2>
-            <p>
-              Share a little about what you need. Enough to start a useful conversation,
-              nothing more.
+        <div ref={revealRef}>
+          <header className="contact-head" data-reveal>
+            <SectionLabel>Engagement / 08</SectionLabel>
+            <h2 className="section-title contact-title" id="contact-title">
+              Have a technical problem worth solving?
+            </h2>
+            <p className="lead">
+              Let&apos;s build the solution. Pick the route that fits — all three reach
+              the same inbox.
             </p>
-            <div className="contact-note">
-              <span className="contact-note-dot" aria-hidden="true" />
-              <span>
-                Usually best for websites, applications, and technical interfaces.
-              </span>
-            </div>
-          </div>
-          <div className="form-panel">
-            {isSubmitted ? (
-              <div className="form-success" role="status">
-                <span className="success-icon">
-                  <Check aria-hidden="true" />
-                </span>
-                <h3>Thanks for reaching out.</h3>
-                <p>{successMessage}</p>
+          </header>
+
+          <div className="routes" data-reveal>
+            {engagementOptions.map((option, index) => {
+              const selected = option.action === enquiryType
+              return (
                 <button
-                  className="button-text-only"
+                  key={option.action}
                   type="button"
-                  onClick={() => setIsSubmitted(false)}
+                  className={cn('route glass sheen', selected && 'is-selected')}
+                  aria-pressed={selected}
+                  onClick={() => chooseRoute(option.action)}
+                  data-reveal
+                  style={stagger(index)}
                 >
-                  Send another enquiry
+                  <span className="mono route-tag">{option.action}</span>
+                  <span className="route-title">{option.title}</span>
+                  <span className="route-description">{option.description}</span>
+                  <span className="route-cue mono">
+                    Select <ArrowRight aria-hidden="true" />
+                  </span>
                 </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} noValidate>
-                <div className="form-grid">
-                  <Field
-                    id="name"
-                    label="Name"
-                    value={values.name}
-                    error={errors.name}
-                    onChange={(value) => updateValue('name', value)}
-                    required
-                  />
-                  <Field
-                    id="email"
-                    label="Email"
-                    type="email"
-                    value={values.email}
-                    error={errors.email}
-                    onChange={(value) => updateValue('email', value)}
-                    required
-                  />
-                  <Field
-                    id="company"
-                    label="Company"
-                    value={values.company}
-                    onChange={(value) => updateValue('company', value)}
-                  />
-                  <Field
-                    id="budget"
-                    label="Budget (optional)"
-                    value={values.budget}
-                    onChange={(value) => updateValue('budget', value)}
-                  />
+              )
+            })}
+          </div>
+
+          <div className="contact-layout">
+            <div className="contact-copy" data-reveal>
+              <h3 className="contact-sub">What happens next</h3>
+              <ol className="contact-steps">
+                <li>
+                  <span className="mono">01</span>A reply to understand the problem
+                  properly.
+                </li>
+                <li>
+                  <span className="mono">02</span>A short scope with an honest view of
+                  effort.
+                </li>
+                <li>
+                  <span className="mono">03</span>A start date, or a straight answer if it
+                  is not a fit.
+                </li>
+              </ol>
+
+              <ul className="contact-points">
+                <li>
+                  <Send aria-hidden="true" />
+                  Software, infrastructure, automation, and technical interfaces.
+                </li>
+                <li>
+                  <MapPin aria-hidden="true" />
+                  Working with South African businesses, and remotely beyond that.
+                </li>
+                <li>
+                  <Mail aria-hidden="true" />
+                  Your details are only used to reply to this enquiry.
+                </li>
+              </ul>
+            </div>
+
+            <div className="glass form-panel" data-reveal style={stagger(1)}>
+              {isSubmitted ? (
+                <div className="form-success" role="status">
+                  <span className="success-badge">
+                    <Check aria-hidden="true" />
+                  </span>
+                  <h3>Thanks for reaching out.</h3>
+                  <p>Your enquiry has been sent. We will get back to you soon.</p>
+                  <button
+                    className="button-quiet"
+                    type="button"
+                    onClick={() => setIsSubmitted(false)}
+                  >
+                    Send another enquiry
+                  </button>
                 </div>
-                <div className="form-field">
-                  <label htmlFor="project">
-                    What are you looking to build? <span aria-hidden="true">*</span>
-                  </label>
-                  <textarea
-                    id="project"
-                    name="project"
-                    rows={5}
-                    value={values.project}
-                    aria-invalid={Boolean(errors.project)}
-                    aria-describedby={errors.project ? 'project-error' : undefined}
-                    onChange={(event) => updateValue('project', event.target.value)}
-                  />
-                  {errors.project && (
-                    <span className="field-error" id="project-error">
-                      {errors.project}
-                    </span>
-                  )}
-                </div>
-                <Field
-                  id="timeline"
-                  label="Timeline (optional)"
-                  value={values.timeline}
-                  onChange={(value) => updateValue('timeline', value)}
-                />
-                {submissionError && (
-                  <p className="submission-error" role="alert">
-                    {submissionError}
+              ) : (
+                <form ref={formRef} onSubmit={handleSubmit} noValidate>
+                  <p className="form-context mono">
+                    Enquiry type
+                    <span>{enquiryType}</span>
                   </p>
-                )}
-                <div className="form-submit-row">
-                  <p>We will only use these details to respond to your enquiry.</p>
-                  <Button type="submit" showArrow={!isSubmitting} disabled={isSubmitting}>
-                    {isSubmitting ? (
-                      <>
-                        <LoaderCircle
-                          aria-hidden="true"
-                          className="h-4 w-4 animate-spin"
-                        />{' '}
-                        Sending
-                      </>
-                    ) : (
-                      <>
-                        <Send aria-hidden="true" className="h-4 w-4" /> Send enquiry
-                      </>
+
+                  <div className="form-grid">
+                    <Field
+                      id="name"
+                      label="Name"
+                      placeholder="Your name"
+                      value={values.name}
+                      error={errors.name}
+                      onChange={(value) => updateValue('name', value)}
+                      required
+                    />
+                    <Field
+                      id="email"
+                      label="Email"
+                      type="email"
+                      placeholder="you@company.co.za"
+                      value={values.email}
+                      error={errors.email}
+                      onChange={(value) => updateValue('email', value)}
+                      required
+                    />
+                    <Field
+                      id="company"
+                      label="Company"
+                      placeholder="Optional"
+                      value={values.company}
+                      onChange={(value) => updateValue('company', value)}
+                    />
+                    <Field
+                      id="budget"
+                      label="Budget"
+                      placeholder="Optional"
+                      value={values.budget}
+                      onChange={(value) => updateValue('budget', value)}
+                    />
+                  </div>
+
+                  <div className="field">
+                    <label htmlFor="project">
+                      What are you looking to build or solve?{' '}
+                      <span aria-hidden="true">*</span>
+                    </label>
+                    <textarea
+                      id="project"
+                      name="project"
+                      rows={5}
+                      placeholder="A sentence or two about the project, the problem, or the system involved."
+                      value={values.project}
+                      aria-invalid={Boolean(errors.project)}
+                      aria-describedby={errors.project ? 'project-error' : undefined}
+                      onChange={(event) => updateValue('project', event.target.value)}
+                    />
+                    {errors.project && (
+                      <span className="field-error" id="project-error">
+                        {errors.project}
+                      </span>
                     )}
-                  </Button>
-                </div>
-              </form>
-            )}
+                  </div>
+
+                  <Field
+                    id="timeline"
+                    label="Timeline"
+                    placeholder="Optional"
+                    value={values.timeline}
+                    onChange={(value) => updateValue('timeline', value)}
+                  />
+
+                  {submissionError && (
+                    <p className="form-error" role="alert">
+                      <AlertCircle aria-hidden="true" />
+                      {submissionError}
+                    </p>
+                  )}
+
+                  <div className="form-footer">
+                    <p>No newsletter, no follow-up sequence. Just a reply.</p>
+                    <Button
+                      type="submit"
+                      showArrow={!isSubmitting}
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <LoaderCircle
+                            aria-hidden="true"
+                            className="h-4 w-4 animate-spin"
+                          />
+                          Sending
+                        </>
+                      ) : (
+                        <>
+                          <Send aria-hidden="true" className="h-4 w-4" />
+                          Send enquiry
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              )}
+            </div>
           </div>
         </div>
       </Container>
@@ -212,6 +319,7 @@ type FieldProps = {
   id: keyof FormValues
   label: string
   value: string
+  placeholder?: string
   type?: 'text' | 'email'
   error?: string
   required?: boolean
@@ -222,14 +330,16 @@ function Field({
   id,
   label,
   value,
+  placeholder,
   type = 'text',
   error,
   required = false,
   onChange,
 }: FieldProps) {
   const errorId = `${id}-error`
+
   return (
-    <div className="form-field">
+    <div className="field">
       <label htmlFor={id}>
         {label} {required && <span aria-hidden="true">*</span>}
       </label>
@@ -238,6 +348,7 @@ function Field({
         name={id}
         type={type}
         value={value}
+        placeholder={placeholder}
         required={required}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? errorId : undefined}

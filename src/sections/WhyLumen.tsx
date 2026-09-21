@@ -1,54 +1,78 @@
 import { ArrowUpRight } from 'lucide-react'
+import studioNight from '../assets/media/studio-night.jpg'
 import { Container } from '../components/layout/Container'
 import { SectionLabel } from '../components/ui/SectionLabel'
+import { principles } from '../data/site'
+import { usePointerGlow } from '../hooks/usePointerGlow'
+import { useReveal } from '../hooks/useReveal'
+import { stagger } from '../lib/reveal'
 
 export function WhyLumen() {
+  const revealRef = useReveal<HTMLDivElement>()
+  const glow = usePointerGlow<HTMLDivElement>()
+
   return (
-    <section className="section why-section" id="about" aria-labelledby="why-title">
+    <section className="section" id="about" aria-labelledby="why-title">
       <Container>
-        <div className="why-layout">
-          <div>
-            <SectionLabel>Why Lumen / 04</SectionLabel>
-            <h2 id="why-title">Small enough to care. Technical enough to build.</h2>
+        <div ref={revealRef}>
+          <div className="why-layout">
+            <div data-reveal>
+              <SectionLabel>Why Lumen / 07</SectionLabel>
+              <h2 className="section-title mt-6" id="why-title">
+                Small enough to care. Technical enough to build.
+              </h2>
+              <div className="why-copy">
+                <p className="why-statement">
+                  Lumen sits between the limits of a template and the overhead of a{' '}
+                  <em>large agency</em>.
+                </p>
+                <p>
+                  You work directly with a developer who cares about the details: how an
+                  interface feels, how a system holds together, and how the finished thing
+                  behaves once real people are using it.
+                </p>
+                <p>
+                  That means fewer handovers, clearer decisions, and work that stays
+                  maintainable after launch.
+                </p>
+                <a className="inline-link mt-2 justify-self-start" href="#contact">
+                  Start a conversation
+                  <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />
+                </a>
+              </div>
+            </div>
+
+            <div className="why-visual" data-reveal style={stagger(1)}>
+              <div className="media media-hoverable spotlight" {...glow}>
+                <img
+                  src={studioNight}
+                  alt="A developer reviewing code on a monitor in a darkened room"
+                  loading="lazy"
+                  decoding="async"
+                  width={1600}
+                  height={1067}
+                />
+              </div>
+              <p className="glass why-caption">Late-stage review — the part that shows</p>
+            </div>
           </div>
-          <div className="why-copy">
-            <p className="why-lead">
-              Lumen sits between the limits of a template and the overhead of a large
-              agency.
-            </p>
-            <p>
-              You work directly with a developer who cares about the details: how an
-              interface feels, how a system holds together, and how the final thing works
-              in the real world.
-            </p>
-            <a className="inline-link" href="#contact">
-              Start a conversation
-              <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
-            </a>
-          </div>
-        </div>
-        <div className="principles-grid" aria-label="Lumen Labs principles">
-          <div className="principle-card">
-            <span>01</span>
-            <h3>Craft matters</h3>
-            <p>
-              Strong structure and considered details make digital work easier to trust.
-            </p>
-          </div>
-          <div className="principle-card">
-            <span>02</span>
-            <h3>Technical clarity</h3>
-            <p>
-              Build what is useful, keep it understandable, and avoid complexity for its
-              own sake.
-            </p>
-          </div>
-          <div className="principle-card">
-            <span>03</span>
-            <h3>Direct collaboration</h3>
-            <p>
-              A focused working relationship keeps decisions clear and momentum practical.
-            </p>
+
+          <div className="principles">
+            {principles.map((principle, index) => (
+              <article
+                className="panel principle"
+                key={principle.number}
+                data-reveal
+                style={stagger(index)}
+              >
+                <p className="principle-index mono">
+                  {principle.number}
+                  <ArrowUpRight aria-hidden="true" />
+                </p>
+                <h3>{principle.title}</h3>
+                <p>{principle.description}</p>
+              </article>
+            ))}
           </div>
         </div>
       </Container>

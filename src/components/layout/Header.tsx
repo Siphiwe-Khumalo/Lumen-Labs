@@ -1,49 +1,59 @@
 import { useEffect, useState } from 'react'
 import { Menu, X } from 'lucide-react'
+import { navigation } from '../../data/site'
+import { useScrollState } from '../../hooks/useScrollState'
+import { cn } from '../../lib/cn'
 import { Logo } from '../brand/Logo'
+import { LinkButton } from '../ui/Button'
 import { Container } from './Container'
-
-const navigation = [
-  { label: 'Work', href: '#work' },
-  { label: 'Services', href: '#services' },
-  { label: 'About', href: '#about' },
-  { label: 'Contact', href: '#contact' },
-]
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const { isScrolled, progress } = useScrollState()
 
   useEffect(() => {
-    const closeOnEscape = (event: KeyboardEvent) => {
+    const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setIsOpen(false)
     }
 
-    window.addEventListener('keydown', closeOnEscape)
-    return () => window.removeEventListener('keydown', closeOnEscape)
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
   }, [])
 
+  // Hold the page still while the mobile menu covers it.
+  useEffect(() => {
+    if (!isOpen) return
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previous
+    }
+  }, [isOpen])
+
   return (
-    <header className="site-header">
-      <Container className="flex h-full items-center justify-between">
-        <a href="#top" aria-label="Lumen Labs home" onClick={() => setIsOpen(false)}>
+    <header className={cn('site-header', (isScrolled || isOpen) && 'is-scrolled')}>
+      <button
+        type="button"
+        className={cn('nav-scrim', isOpen && 'is-open')}
+        tabIndex={-1}
+        aria-hidden="true"
+        onClick={() => setIsOpen(false)}
+      />
+
+      <Container className="header-inner">
+        <a
+          className="brand-link"
+          href="#top"
+          aria-label="Lumen Labs — back to top"
+          onClick={() => setIsOpen(false)}
+        >
           <Logo />
         </a>
 
-        <button
-          type="button"
-          className="mobile-menu-button"
-          aria-expanded={isOpen}
-          aria-controls="primary-navigation"
-          aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
-          onClick={() => setIsOpen((current) => !current)}
-        >
-          {isOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
-        </button>
-
         <nav
           id="primary-navigation"
-          aria-label="Primary navigation"
-          className={isOpen ? 'site-nav is-open' : 'site-nav'}
+          aria-label="Primary"
+          className={cn('header-nav', isOpen && 'is-open')}
         >
           {navigation.map((item) => (
             <a key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
@@ -52,11 +62,28 @@ export function Header() {
           ))}
         </nav>
 
-        <a className="header-cta" href="#contact">
-          Start a project
-          <span aria-hidden="true">↗</span>
-        </a>
+        <div className="header-actions">
+          <LinkButton className="header-cta" href="#contact" showArrow>
+            Start a project
+          </LinkButton>
+          <button
+            type="button"
+            className="menu-button"
+            aria-expanded={isOpen}
+            aria-controls="primary-navigation"
+            aria-label={isOpen ? 'Close menu' : 'Open menu'}
+            onClick={() => setIsOpen((open) => !open)}
+          >
+            {isOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+          </button>
+        </div>
       </Container>
+
+      <div
+        className="progress-line"
+        aria-hidden="true"
+        style={{ width: '100%', transform: `scaleX(${progress})` }}
+      />
     </header>
   )
 }
