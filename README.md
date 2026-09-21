@@ -58,13 +58,15 @@ src/
 
 ## Deploy
 
-GitHub Actions builds and publishes to GitHub Pages on every push to `main` (`.github/workflows/deploy-pages.yml`):
+**Render** (primary): `render.yaml` defines a static site that runs `npm ci && npm run build` and publishes `dist/`. Connect the repo in the Render dashboard and it deploys on every push to `main`.
+
+**GitHub Pages** (secondary): GitHub Actions builds and publishes on every push to `main` (`.github/workflows/deploy-pages.yml`), served from:
 
 ```text
 https://siphiwe-khumalo.github.io/Lumen-Labs/
 ```
 
-`vite.config.ts` only applies the `/Lumen-Labs/` base inside GitHub Actions, so local development stays at `/`.
+`vite.config.ts` only applies the `/Lumen-Labs/` base inside GitHub Actions; Render and local development both serve from `/`.
 
 ## Honesty and remaining inputs
 
