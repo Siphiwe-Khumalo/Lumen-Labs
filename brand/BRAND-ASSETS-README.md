@@ -13,7 +13,7 @@ new or reinvented identity.
 02-Invoice-Template/     Lumen-Labs-Invoice-Template.docx
 03-Quotation-Template/   Lumen-Labs-Quotation-Template.docx
 04-Business-Card/        Print-ready PDFs, front + back, with a bleed/guide version
-05-Email-Signature/      HTML signature + a hostable logo PNG
+05-Email-Signature/      A single flat PNG signature, ready to insert
 ```
 
 ## Brand source (why everything looks the way it does)
@@ -96,25 +96,25 @@ Standard 89×51mm card, 2mm bleed. Two versions of each side:
 - `*-front.pdf` / `*-back.pdf` — clean, ready to send to a printer as final art
 - `*-front-PRINT.pdf` / `*-back-PRINT.pdf` — same art with trim and safe-margin guide lines visible, for checking layout before removing guides at print time
 
-### Email signature (HTML)
-`lumen-labs-email-signature.html` is table-based with inline styles only —
-built to survive Outlook, Gmail, and Apple Mail, which all strip `<style>`
-blocks and custom web fonts from signatures. Fonts fall back to system sans
-and monospace stacks in the spirit of the brand pairing, since email clients
-cannot load the site's actual webfonts.
+### Email signature (PNG)
+`lumen-labs-email-signature.png` is a single flat image containing the whole
+signature — mark, name, title, and contact rows — rendered at high
+resolution (3x) so it stays crisp at normal signature display size
+(~380–480px wide on screen).
 
-**Before this works, you must host the logo image and update one line:**
-the file references `src="LOGO_URL"` as a placeholder. Upload
-`lumen-labs-mark-signature.png` (in the same folder) somewhere public — for
-example into the website's own `public/` folder so it deploys to
-`https://lumenlabcreatives.spartangroup.co.za/lumen-labs-mark-signature.png`
-— then replace `LOGO_URL` in the HTML with that address. Most email clients
-block base64-embedded images in signatures, which is why this uses a hosted
-URL instead.
+A flat image avoids the two real weaknesses of an HTML signature: email
+clients (Outlook especially) strip `<style>` blocks and custom webfonts, and
+many block or strip embedded/hosted logo images outright. Because this PNG
+is rendered once from the site's actual brand fonts (Space Grotesk, Manrope,
+JetBrains Mono) rather than relying on the recipient's client to render
+anything, it looks identical everywhere it's inserted, with no separate logo
+file or hosted URL to manage.
 
-To install: open the HTML file in a browser, select the rendered signature
-block, copy it, and paste into your email client's signature editor (Gmail
-Settings → Signature; Outlook → Signatures).
+To install: insert the image directly into your email client's signature
+editor (Gmail Settings → Signature → image icon; Outlook → Signatures →
+insert picture), then add a `mailto:`/`tel:` hyperlink over it if your
+client supports linking an image, since a flat image has no clickable text
+underneath.
 
 ## Still to confirm before business use
 
@@ -122,4 +122,3 @@ Settings → Signature; Outlook → Signatures).
 - [ ] VAT / company registration number, if applicable, added to invoice & quote
 - [ ] Bank branch code / SWIFT confirmed directly with ABSA if different from the universal codes used here
 - [ ] Domain re-checked against the live site if it changes again (currently `lumenlabcreatives.spartangroup.co.za`)
-- [ ] Logo hosted at a public URL for the email signature to display correctly
