@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 28">
+  <g>
+  
+  <rect x="0.5" y="0.5" width="27" height="27" rx="6" stroke="#06080a" stroke-opacity="0.2" fill="none"/>
+  <path d="M8 7h3.1v10.9H20V21H8V7Z" fill="#06080a"/>
+  <path d="M14.4 7H20v3.1h-5.6V7Z" fill="#e9b978"/>
+</g>
+  <text x="36" y="19.5" font-family="Space Grotesk, sans-serif" font-weight="600"
+        font-size="15.5" letter-spacing="-0.4" fill="#06080a">Lumen Labs</text>
+</svg>
