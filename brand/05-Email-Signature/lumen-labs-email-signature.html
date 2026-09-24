@@ -1,0 +1,89 @@
+<!--
+  Lumen Labs — Email Signature (HTML)
+
+  Built for real-world email client compatibility (Outlook, Gmail, Apple Mail):
+  table-based layout, inline styles only, no @font-face / custom fonts (email
+  clients strip these), no background-images, no CSS positioning tricks.
+
+  Type: falls back to system sans-serif stacks that are close in spirit to the
+  website's Space Grotesk / Manrope / JetBrains Mono trio, since email clients
+  cannot reliably load the brand's actual webfonts.
+
+  Colours are the exact hex values from src/styles/index.css:
+    --ink #06080a  --text #f3f2ee  --muted #98a1ac  --accent #e9b978  --steel #a9c8d8
+
+  ============================================================================
+  BEFORE USE — logo hosting (read this):
+  Email clients block/strip embedded (base64) images from signatures far more
+  aggressively than from regular email bodies, so this signature references
+  the logo via a hosted URL rather than embedding it. Do ONE of the following:
+
+    1. (Recommended) Upload `lumen-labs-mark-signature.png` (in this same
+       folder) to the Lumen Labs site's `public/` folder and deploy, e.g.:
+         https://lumenlabcreatives.spartangroup.co.za/lumen-labs-mark-signature.png
+       then set LOGO_URL below to that address.
+    2. Upload it to any static host/CDN you control and point LOGO_URL there.
+
+  Until LOGO_URL points to a real, publicly reachable image, most email
+  clients will show a broken image icon or nothing at all — this is normal
+  and expected for any email signature logo, not specific to this file.
+  ============================================================================
+-->
+<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse; font-family:Arial,Helvetica,sans-serif;">
+  <tr>
+    <!-- Logo -->
+    <td style="padding:0 16px 0 0; border-right:2px solid #e9b978; vertical-align:top;">
+      <!--
+        LOGO_URL — replace with your hosted image URL (see note above).
+        Width/height match the mark's 1:1 aspect ratio at signature scale.
+      -->
+      <img src="LOGO_URL"
+           alt="Lumen Labs"
+           width="46" height="46"
+           style="display:block; border:0; border-radius:8px;" />
+    </td>
+
+    <!-- Details -->
+    <td style="padding:0 0 0 16px; vertical-align:top;">
+      <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+        <tr>
+          <td style="padding:0 0 2px 0;">
+            <span style="font-family:Arial,Helvetica,sans-serif; font-size:16px; font-weight:700; color:#06080a; letter-spacing:-0.2px;">
+              Siphiwe Khumalo
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 0 8px 0;">
+            <span style="font-family:'Courier New',Courier,monospace; font-size:11px; letter-spacing:0.5px; color:#c8964c; text-transform:uppercase;">
+              Founder&nbsp;&middot;&nbsp;Lumen&nbsp;Labs
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 0 2px 0; font-family:'Courier New',Courier,monospace; font-size:12px; color:#5b6169;">
+            <span style="color:#98a1ac;">Email&nbsp;</span>
+            <a href="mailto:Lumenlabs.creatives@gmail.com" style="color:#06080a; text-decoration:none;">Lumenlabs.creatives@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 0 2px 0; font-family:'Courier New',Courier,monospace; font-size:12px; color:#5b6169;">
+            <span style="color:#98a1ac;">Phone&nbsp;</span>
+            <a href="tel:+27638776984" style="color:#06080a; text-decoration:none;">+27 63 877 6984</a>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 0 10px 0; font-family:'Courier New',Courier,monospace; font-size:12px; color:#5b6169;">
+            <span style="color:#98a1ac;">Web&nbsp;</span>
+            <a href="https://lumenlabcreatives.spartangroup.co.za/" style="color:#06080a; text-decoration:none;">lumenlabcreatives.spartangroup.co.za</a>
+          </td>
+        </tr>
+        <tr>
+          <td style="font-family:Arial,Helvetica,sans-serif; font-size:11px; color:#98a1ac; font-style:italic;">
+            Websites. Applications. Interfaces. — Built with intention.
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
