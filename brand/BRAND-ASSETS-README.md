@@ -14,6 +14,7 @@ new or reinvented identity.
 03-Quotation-Template/   Lumen-Labs-Quotation-Template.docx
 04-Business-Card/        Print-ready PDFs, front + back, with a bleed/guide version
 05-Email-Signature/      A single flat PNG signature, ready to insert
+06-Business-Profile/     Lumen-Labs-Business-Profile.pdf — 8-page company profile
 ```
 
 ## Brand source (why everything looks the way it does)
@@ -116,9 +117,47 @@ insert picture), then add a `mailto:`/`tel:` hyperlink over it if your
 client supports linking an image, since a flat image has no clickable text
 underneath.
 
+### Business Profile (PDF)
+`Lumen-Labs-Business-Profile.pdf` is an 8-page, A4, print- and screen-ready
+company profile suitable for sending to a client, partner, or investor. It
+uses the exact same masthead, mono contact strip, gold hairline, and
+Space Grotesk / Manrope / JetBrains Mono type system as every other document
+in this pack, so it reads as the same company as the letterhead, invoice,
+and card.
+
+Page structure:
+
+1. Cover
+2. Company Overview / Who We Are
+3. What We Do (6 disciplines)
+4. Technical Expertise / Technologies (stack groups + signal-path reference)
+5. Our Approach (Discover → Support)
+6–7. Projects / Case Studies (5 real, sourced case studies, split across two pages)
+8. Why Lumen Labs / Contact Details / Website & Location, closing with the site's own call-to-action
+
+**Content sourcing — every fact traces back to the live website's own
+source code**, not invented: company description from `Hero.tsx` and
+`index.html`; "What We Do" grouped from the 12 real disciplines in
+`src/data/expertise.ts`; the technology stack and signal-path diagram from
+`src/data/stack.ts`; the six-step process from `src/data/process.ts`; the
+five case studies from `src/data/caseStudies.ts`; and the seven "Why Lumen
+Labs" principles from `src/data/mindset.ts`.
+
+**On "SafeHold" and "Alerta":** these two project names were requested for
+the case studies section but do not appear anywhere in the website's current
+source content under those names. Rather than invent a mapping to the site's
+real projects, the profile uses the five case studies that are actually
+documented and sourced on the site (ARC Glasshouse, the women's safety
+application, the internal IT service desk, Ingcebo Enhle, and Spartcon
+Technologies), and includes an explicit, visible note in the PDF itself
+flagging the gap so it can be corrected once confirmed — the same disclosure
+approach the live site uses for its own unverified project imagery.
+
 ## Still to confirm before business use
 
 - [ ] Final logo, if the placeholder mark is ever replaced
 - [ ] VAT / company registration number, if applicable, added to invoice & quote
 - [ ] Bank branch code / SWIFT confirmed directly with ABSA if different from the universal codes used here
 - [ ] Domain re-checked against the live site if it changes again (currently `lumenlabcreatives.spartangroup.co.za`)
+- [ ] "SafeHold" and "Alerta" case studies added to the Business Profile once confirmed against the site's actual project names/details
+- [ ] Social links added to the Business Profile's "Website & Location" section once the studio has published social accounts
