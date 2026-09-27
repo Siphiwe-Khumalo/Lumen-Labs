@@ -15,6 +15,7 @@ new or reinvented identity.
 04-Business-Card/        Print-ready PDFs, front + back, with a bleed/guide version
 05-Email-Signature/      A single flat PNG signature, ready to insert
 06-Business-Profile/     Lumen-Labs-Business-Profile.pdf — 8-page company profile
+07-Founder-Banner/        Founder banner + transparent founder graphic (PNG/SVG)
 ```
 
 ## Brand source (why everything looks the way it does)
@@ -143,15 +144,14 @@ source code**, not invented: company description from `Hero.tsx` and
 five case studies from `src/data/caseStudies.ts`; and the seven "Why Lumen
 Labs" principles from `src/data/mindset.ts`.
 
-**On "SafeHold" and "Alerta":** these two project names were requested for
-the case studies section but do not appear anywhere in the website's current
-source content under those names. Rather than invent a mapping to the site's
-real projects, the profile uses the five case studies that are actually
-documented and sourced on the site (ARC Glasshouse, the women's safety
-application, the internal IT service desk, Ingcebo Enhle, and Spartcon
-Technologies), and includes an explicit, visible note in the PDF itself
-flagging the gap so it can be corrected once confirmed — the same disclosure
-approach the live site uses for its own unverified project imagery.
+**On the founder assets:** `07-Founder-Banner/` contains a wide opaque PNG for
+LinkedIn/social/website use and a standalone RGBA transparent PNG, plus SVG
+sources with editable text, frame, mark, and accent elements. The supplied
+founder photo was background-removed, cleaned of a mirror-frame artifact,
+subtly cooled/desaturated to match the site's graphite photography treatment,
+and cropped to face/shoulders so the phone does not dominate the composition.
+The final text is `RONNIE`, `Founder — Lumen Labs Creatives`, and `Building
+Ideas Into Technology`.
 
 ## Still to confirm before business use
 
