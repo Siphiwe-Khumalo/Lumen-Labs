@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="fonts.css" />
+<style>
+  :root {
+    --ink: #06080a;
+    --graphite: #0a0d11;
+    --surface: #10141a;
+    --surface-2: #161b22;
+    --surface-3: #1c222b;
+    --text: #f3f2ee;
+    --muted: #98a1ac;
+    --faint: #6c747f;
+    --accent: #e9b978;
+    --accent-deep: #c8964c;
+    --steel: #a9c8d8;
+    --line: rgba(243, 242, 238, 0.09);
+    --line-2: rgba(243, 242, 238, 0.16);
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Manrope', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { background: #06080a; }
+
+  .page {
+    position: relative;
+    width: 1600px;
+    height: 1131px;
+    background:
+      radial-gradient(130% 100% at 85% -10%, rgba(233,185,120,0.055) 0%, rgba(233,185,120,0.0) 42%),
+      radial-gradient(120% 120% at 0% 110%, rgba(169,200,216,0.045) 0%, rgba(169,200,216,0) 40%),
+      linear-gradient(180deg, #0b0f14 0%, #080b0f 55%, #06080a 100%);
+    color: var(--text);
+    font-family: var(--font-body);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* faint engineering grid */
+  .grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(243,242,238,0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(243,242,238,0.022) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(120% 100% at 50% 40%, #000 55%, transparent 100%);
+    -webkit-mask-image: radial-gradient(120% 100% at 50% 40%, #000 55%, transparent 100%);
+  }
+
+  /* outer frame hairline */
+  .frame {
+    position: absolute;
+    inset: 54px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    pointer-events: none;
+  }
+  .corner {
+    position: absolute;
+    width: 16px; height: 16px;
+    border-color: var(--accent);
+    opacity: 0.85;
+  }
+  .corner.tl { top: 54px; left: 54px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+  .corner.tr { top: 54px; right: 54px; border-top: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+  .corner.bl { bottom: 54px; left: 54px; border-bottom: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+  .corner.br { bottom: 54px; right: 54px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+
+  .inner {
+    position: absolute;
+    inset: 54px;
+    padding: 76px 92px 66px 92px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---- Header ---- */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo-lockup { display: flex; align-items: center; gap: 16px; }
+  .logo-lockup svg { display: block; }
+  .logo-word {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 30px;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+  .doc-meta {
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing: 2.5px;
+    color: var(--faint);
+    text-transform: uppercase;
+    line-height: 1.7;
+  }
+  .doc-meta .accent { color: var(--accent); }
+
+  /* ---- Title block ---- */
+  .title-block { margin-top: 66px; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .eyebrow::after {
+    content: "";
+    flex: 0 0 90px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent-deep), transparent);
+  }
+  .title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 76px;
+    line-height: 1.02;
+    letter-spacing: -2px;
+    margin-top: 20px;
+    color: var(--text);
+  }
+  .title .amp { color: var(--accent); font-weight: 500; }
+  .subtitle {
+    margin-top: 20px;
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--muted);
+    max-width: 760px;
+  }
+
+  /* ---- Columns ---- */
+  .columns {
+    margin-top: 70px;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    gap: 64px;
+    align-content: start;
+  }
+  .divider { background: linear-gradient(180deg, transparent, var(--line-2) 18%, var(--line-2) 82%, transparent); }
+
+  .block { display: flex; flex-direction: column; }
+  .block-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .block-index {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: var(--accent);
+  }
+  .block-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 27px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .block-tag {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .block-body {
+    margin-top: 28px;
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 18.5px;
+    line-height: 1.8;
+    color: #d7d8d4;
+    position: relative;
+    padding-left: 24px;
+  }
+  .block-body::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 4px; bottom: 4px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-deep));
+    border-radius: 2px;
+    opacity: 0.8;
+  }
+  .block-body .lead {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* ---- Footer ---- */
+  .footer {
+    margin-top: auto;
+    padding-top: 26px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .footer .pillars { display: flex; gap: 12px; align-items: center; }
+  .footer .dot { color: var(--accent); }
+  .footer .right { color: var(--muted); letter-spacing: 1.5px; }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="grid"></div>
+    <div class="frame"></div>
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+
+    <div class="inner">
+      <!-- Header -->
+      <div class="header">
+        <div class="logo-lockup">
+          <svg width="54" height="54" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0.5" y="0.5" width="27" height="27" rx="6" stroke="#f3f2ee" stroke-opacity="0.2" fill="none"/>
+            <path d="M8 7h3.1v10.9H20V21H8V7Z" fill="#f3f2ee"/>
+            <path d="M14.4 7H20v3.1h-5.6V7Z" fill="#e9b978"/>
+          </svg>
+          <span class="logo-word">Lumen&nbsp;Labs</span>
+        </div>
+        <div class="doc-meta">
+          <div>Company Statement</div>
+          <div><span class="accent">Lumen Labs (Pty) Ltd</span></div>
+        </div>
+      </div>
+
+      <!-- Title -->
+      <div class="title-block">
+        <div class="eyebrow">What we work toward</div>
+        <h1 class="title">Mission <span class="amp">&amp;</span> Vision</h1>
+        <p class="subtitle">
+          Practical technology, built around how a business actually operates &mdash; and
+          supported long after it goes live.
+        </p>
+      </div>
+
+      <!-- Columns -->
+      <div class="columns">
+        <div class="block">
+          <div class="block-head">
+            <span class="block-index">01</span>
+            <span class="block-title">Mission</span>
+            <span class="block-tag">What we do today</span>
+          </div>
+          <p class="block-body">
+            <span class="lead">Our mission is to help businesses identify and solve the practical challenges that limit how they operate, grow, and serve their customers.</span>
+            We use software, automation, infrastructure, and reliable technology to turn inefficient processes and everyday business problems into systems that are simpler, more connected, and easier to manage. We work closely with businesses to understand how they operate, build solutions around their actual needs, and provide technology that delivers lasting practical value rather than technology for its own sake.
+          </p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="block">
+          <div class="block-head">
+            <span class="block-index">02</span>
+            <span class="block-title">Vision</span>
+            <span class="block-tag">Where we are going</span>
+          </div>
+          <p class="block-body">
+            <span class="lead">Our vision is to build Lumen Labs into a trusted technology partner for businesses across South Africa and beyond</span>
+            &mdash; one that understands the realities of running a business and uses technology to make those businesses more capable, efficient, and resilient. We aim to build practical systems that continue working beyond the initial implementation, reduce unnecessary complexity, create new opportunities for growth, and help businesses operate with greater visibility and confidence. Over time, we want Lumen Labs to become known not simply for building software or providing technical services, but for understanding problems, building the right systems to solve them, and remaining there to support what we build.
+          </p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <div class="pillars">
+          <span>Practical technology</span><span class="dot">&middot;</span>
+          <span>Business understanding</span><span class="dot">&middot;</span>
+          <span>Reliable systems</span><span class="dot">&middot;</span>
+          <span>Long-term value</span>
+        </div>
+        <div class="right">Built with intention.</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
