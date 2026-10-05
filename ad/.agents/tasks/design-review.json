@@ -1,0 +1,27 @@
+{
+  "verdict": "APPROVED",
+  "findings": [
+    {
+      "id": 1,
+      "severity": "NIT",
+      "location": "§8 Grain",
+      "problem": "Grain implementation offered as 'tiled PNG OR procedural SVG feTurbulence' — an unresolved 'X or Y' choice.",
+      "fix": "Pick one. Recommended: fixed SVG feTurbulence (baseFrequency 0.9, numOctaves 2) tiled, 5% opacity, mix-blend-mode: overlay, static (not reseeded per frame) to avoid flicker and avoid vendoring a binary asset."
+    },
+    {
+      "id": 2,
+      "severity": "NIT",
+      "location": "§7.4 / §11 copy.s04",
+      "problem": "S04 category titles and list items are given in prose but the exact copy.ts object shape is not defined, and §11's snapshot test does not assert these verbatim strings against drift.",
+      "fix": "Define copy.s04 = { software:{index:'01',title:'SOFTWARE',items:['Custom software','Web applications','Integrations','IoT']}, infrastructure:{index:'02',title:'INFRASTRUCTURE',items:['IT','Networking','Cloud','Microsoft 365']}, control:{index:'03',title:'CONTROL + SECURITY',items:['Automation','SCADA','Cybersecurity','CCTV','VoIP']} } and extend the §11 copy snapshot test to assert it."
+    },
+    {
+      "id": 3,
+      "severity": "NIT",
+      "location": "§7.1 vs §7.2/§7.7",
+      "problem": "§7.1 offers an 'optional' amber foreshadow tick at S01 f100, which conflicts with 'amber is earned at S03', 'first deliberate amber' (S02), and 'first appears as S02's underline' (§7.7).",
+      "fix": "Resolve the option: drop the S01 f100 tick so S02's underline-under-'build' is unambiguously the first amber; or, if kept, reword §7.2/§7.7 to 'first amber rule' so the statements do not conflict."
+    }
+  ],
+  "reviewDoc": "/projects/sandbox/Lumen-Labs/.worktrees/launch-film/ad/.agents/tasks/design-review.md"
+}
