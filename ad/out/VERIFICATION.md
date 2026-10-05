@@ -20,8 +20,9 @@ npm test            # vitest run
 ```
 
 Result: **PASS** — 5 files, 16 tests. Covers:
-- `timeline` contiguous / non-overlapping / sums to 810f;
-- `copy` exact storyboard strings (incl. `s06Meta` and uppercase `LUMEN LABS`);
+- `timeline` contiguous / non-overlapping / sums to 885f;
+- `copy` exact storyboard strings (incl. `s06Meta`, uppercase `LUMEN LABS`, and
+  the S07 sign-off strings `s07Name` / `s07Role` / `s07Site`);
 - `layout` safeBox/anchor/col per format;
 - `interpolate` clamp behaviour + Ken-Burns max-scale cap;
 - `assets` every key maps to a file, focal points in [0,1].
@@ -33,9 +34,9 @@ npx remotion compositions
 ```
 
 ```
-LaunchFilm-Vertical    30   1080x1920   810 (27.00 sec)
-LaunchFilm-Wide        30   1920x1080   810 (27.00 sec)
-LaunchFilm-Square      30   1080x1080   810 (27.00 sec)
+LaunchFilm-Vertical    30   1080x1920   885 (29.50 sec)
+LaunchFilm-Wide        30   1920x1080   885 (29.50 sec)
+LaunchFilm-Square      30   1080x1080   885 (29.50 sec)
 ```
 
 Result: **PASS** — all three formats registered; only the vertical is rendered
@@ -57,6 +58,7 @@ npx remotion still LaunchFilm-Vertical out/frames/<name>.png --frame=<n>
 | `out/frames/s04c-f600.png`| 600 | S04 beat C — 03 / CONTROL + SECURITY, 5-item list, amber tick on VoIP |
 | `out/frames/s05-f730.png` | 730 | S05 — both philosophy lines + amber seam over the hard-hat hero |
 | `out/frames/s06-f805.png` | 805 | S06 — final lockup + "Built with intention." + mono title-block, single amber node |
+| `out/frames/s07-f880.png` | 880 | S07 — founder sign-off: "Siphiwe Khumalo" (Space Grotesk), single amber hairline, "FOUNDER" mono label, muted website footer — held final frame |
 
 Result: **PASS** — fonts load locally (no network), all assets resolve, every
 scene composes with correct type.
@@ -76,11 +78,11 @@ codec_name=h264
 width=1080
 height=1920
 r_frame_rate=30/1
-nb_frames=810
-duration=27.000000
+nb_frames=885
+duration=29.500000
 ```
 
-Result: **PASS** — H.264, 1080×1920, 30fps, 810 frames, 27.000s exactly.
+Result: **PASS** — H.264, 1080×1920, 30fps, 885 frames, 29.500s exactly.
 
 ## 6. Visual inspection notes (iterated on rendered output)
 
@@ -95,6 +97,18 @@ the first render pass:
   discipline (earlier it doubled up with the S02 underline / S04 tick).
 - Shifted the S04 image plate right and trimmed the SectionTitle size so the
   longest title ("CONTROL + SECURITY") no longer collides with the photo plate.
+
+S07 sign-off (added after S06, 810–885f / 75f):
+- `out/frames/s07-f880.png` was opened and judged. The name "Siphiwe Khumalo"
+  renders sharp in Space Grotesk (clip-mask rise + tracking-in, consistent with
+  AnimatedText usage elsewhere); "FOUNDER" reads clearly in letter-spaced mono
+  beneath it; exactly ONE amber element is present (a single `LineReveal`
+  hairline that draws in under the name — the recurring amber motif resolving a
+  final time); the website line
+  `lumenlabcreatives.spartangroup.co.za` is legible in the muted/faint mono
+  footer treatment used in S06; generous negative space on the graphite ground.
+  It reads as a signature, not a credits roll. No new motion vocabulary, no
+  neon / glow / particles. The scene holds on a still final frame.
 
 Verified against the brief: type is sharp with real negative space; amber is
 restrained (a single hairline / tick / node at a time); each scene reads in its

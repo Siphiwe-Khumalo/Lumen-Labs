@@ -28,6 +28,9 @@ export const COPY = {
   s05b: 'Technical enough to build.',
   s06Tagline: 'Built with intention.',
   s06Meta: ['LUMEN LABS', 'SOUTH AFRICAN TECHNOLOGY STUDIO'],
+  s07Name: 'Siphiwe Khumalo',
+  s07Role: 'FOUNDER',
+  s07Site: 'lumenlabcreatives.spartangroup.co.za',
 } as const
 
 export type Copy = typeof COPY

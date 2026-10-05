@@ -15,6 +15,7 @@ import { Scene03_Lumen } from './scenes/Scene03_Lumen'
 import { Scene04_Build } from './scenes/Scene04_Build'
 import { Scene05_Philosophy } from './scenes/Scene05_Philosophy'
 import { Scene06_Launch } from './scenes/Scene06_Launch'
+import { Scene07_Founder } from './scenes/Scene07_Founder'
 import { SceneTransition } from './components/SceneTransition'
 import { Grain } from './components/Grain'
 
@@ -58,6 +59,9 @@ export const LaunchFilm: React.FC<{ format: Format }> = ({ format }) => {
           </Series.Sequence>
           <Series.Sequence durationInFrames={sceneDuration('s06')}>
             <Scene06_Launch />
+          </Series.Sequence>
+          <Series.Sequence durationInFrames={sceneDuration('s07')}>
+            <Scene07_Founder />
           </Series.Sequence>
         </Series>
 

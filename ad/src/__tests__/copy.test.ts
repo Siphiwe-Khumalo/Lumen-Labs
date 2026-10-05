@@ -12,6 +12,9 @@ describe('copy', () => {
     expect(COPY.s05b).toBe('Technical enough to build.')
     expect(COPY.s06Tagline).toBe('Built with intention.')
     expect(COPY.s06Meta).toEqual(['LUMEN LABS', 'SOUTH AFRICAN TECHNOLOGY STUDIO'])
+    expect(COPY.s07Name).toBe('Siphiwe Khumalo')
+    expect(COPY.s07Role).toBe('FOUNDER')
+    expect(COPY.s07Site).toBe('lumenlabcreatives.spartangroup.co.za')
   })
 
   it('has the exact S04 categories and lists', () => {

@@ -1,12 +1,13 @@
 # Lumen Labs — Launch Brand Film (Remotion)
 
-A code-driven motion-graphics launch film for Lumen Labs. ~27s, 9:16 vertical
+A code-driven motion-graphics launch film for Lumen Labs. ~29.5s, 9:16 vertical
 (1080×1920 @30fps), built with [Remotion](https://remotion.dev). This is an
 **isolated subproject** — it has its own `package.json`, `node_modules`, and
 `tsconfig` and never touches the website at the repo root.
 
-Story (six beats): **Problem → Technology → Lumen → What we build → Philosophy →
-Launch.** Design spec: `DESIGN.md`. Implementation plan: `.agents/tasks/plan.md`.
+Story (six beats + sign-off): **Problem → Technology → Lumen → What we build →
+Philosophy → Launch → Founder sign-off.** Design spec: `DESIGN.md`.
+Implementation plan: `.agents/tasks/plan.md`.
 
 ---
 
@@ -59,7 +60,7 @@ node "$NPM" run studio          # opens Remotion Studio in the browser
 # Delivered 9:16 MP4 → out/lumen-labs-launch-9x16.mp4
 node "$NPM" run render
 
-# A single still at any frame (0..809)
+# A single still at any frame (0..884)
 node "$NPM" exec -- remotion still LaunchFilm-Vertical out/frames/example.png --frame=354
 ```
 
@@ -81,11 +82,11 @@ Rendered evidence and the exact commands used are recorded in
 ad/
   src/
     Root.tsx            # registers the three <Composition> format entries
-    LaunchFilm.tsx      # the <Series> composing Scene01..06 + carry-line + grain
+    LaunchFilm.tsx      # the <Series> composing Scene01..07 + carry-line + grain
     config/             # ALL data: see below
     lib/                # easing, interpolate helpers, layout, useScene
     components/         # reusable primitives + brand components
-    scenes/             # Scene01_Opening .. Scene06_Launch
+    scenes/             # Scene01_Opening .. Scene07_Founder
     __tests__/          # vitest specs for the pure config/lib invariants
   public/               # media/, projects/, fonts/ (served via staticFile)
   out/                  # rendered MP4 + frames + VERIFICATION.md
@@ -99,13 +100,13 @@ ad/
 | `formats.ts`    | `FORMATS` presets (vertical/wide/square): dimensions, fps, safe-area fractions, type anchor. `PRIMARY='vertical'`. Validated at load. |
 | `brand.ts`      | `COLOR` tokens (verbatim from the site `:root`) + `GRADE` photo-grade tokens. |
 | `typography.ts` | Font family names + `typeScale(S)` (sizes relative to the short side). |
-| `timeline.ts`   | `FPS`, `TIMELINE` scene frame ranges, `DURATION_IN_FRAMES=810`, `validateTimeline()`. |
+| `timeline.ts`   | `FPS`, `TIMELINE` scene frame ranges, `DURATION_IN_FRAMES=885`, `validateTimeline()`. |
 | `assets.ts`     | `ASSETS` map (key → file + focal point) + `getAsset()`. |
 | `copy.ts`       | EVERY on-screen string, verbatim from the storyboard. Guarded by a snapshot test. |
 | `fonts.ts`      | `@font-face` CSS over the vendored WOFF2 via `staticFile()`. |
 
-Timeline (30fps, 810 frames / 27s): S01 0–120 · S02 120–240 · S03 240–360 ·
-S04 360–630 · S05 630–750 · S06 750–810.
+Timeline (30fps, 885 frames / 29.5s): S01 0–120 · S02 120–240 · S03 240–360 ·
+S04 360–630 · S05 630–750 · S06 750–810 · S07 810–885.
 
 ### Asset map (key → file → scene)
 
@@ -143,7 +144,7 @@ centred lockups) switch layout on `format.id`; motion and timing are shared.
 ## Notes
 
 - **No audio file** is created or embedded. The timing lands on clean 30fps beat
-  points (cuts at 0/120/240/360/630/750/810) so an ambient/electronic track can be
+  points (cuts at 0/120/240/360/630/750/810/885) so an ambient/electronic track can be
   synced later, but none is generated here (DESIGN §8, §12).
 - The website root project, its build, and its dependencies are never modified.
 - Fonts are the site's own vendored `@fontsource-variable` WOFF2, loaded locally

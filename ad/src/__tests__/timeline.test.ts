@@ -16,11 +16,11 @@ describe('timeline', () => {
     expect(cursor).toBe(DURATION_IN_FRAMES)
   })
 
-  it('sums to 810 frames (27s @30fps)', () => {
+  it('sums to 885 frames (29.5s @30fps)', () => {
     const total = Object.keys(TIMELINE).reduce(
       (sum, k) => sum + sceneDuration(k as keyof typeof TIMELINE),
       0,
     )
-    expect(total).toBe(810)
+    expect(total).toBe(885)
   })
 })

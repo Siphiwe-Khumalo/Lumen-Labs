@@ -14,9 +14,10 @@ export const TIMELINE = {
   s04: { start: 360, end: 630 }, // 12.0 – 21.0s (270f)
   s05: { start: 630, end: 750 }, // 21.0 – 25.0s (120f)
   s06: { start: 750, end: 810 }, // 25.0 – 27.0s (60f)
+  s07: { start: 810, end: 885 }, // 27.0 – 29.5s (75f)
 } as const satisfies Record<string, SceneRange>
 
-export const DURATION_IN_FRAMES = 810 as const
+export const DURATION_IN_FRAMES = 885 as const
 
 export type SceneKey = keyof typeof TIMELINE
 
