@@ -1,0 +1,14 @@
+{
+  "name": "lumen-labs-wallpaper-build",
+  "private": true,
+  "type": "module",
+  "description": "Vector generator for the Lumen Labs desktop wallpaper. Isolated from the website's dependencies.",
+  "scripts": {
+    "fonts": "bash fetch-fonts.sh",
+    "build": "node poster.mjs"
+  },
+  "dependencies": {
+    "opentype.js": "1.3.4",
+    "sharp": "^0.33.5"
+  }
+}
