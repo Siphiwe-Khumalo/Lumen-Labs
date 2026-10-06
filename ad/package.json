@@ -9,6 +9,7 @@
     "still": "remotion still",
     "render": "remotion render LaunchFilm-Vertical out/lumen-labs-launch-9x16.mp4",
     "render:film": "remotion render BrandFilm out/lumen-labs-brand-film.mp4 --binaries-directory=\"$(bash scripts/setup-render-binaries.sh)\"",
+    "render:tiktok": "remotion render TikTok-Vertical out/lumen-labs-tiktok-9x16.mp4",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "fonts": "bash scripts/copy-fonts.sh"

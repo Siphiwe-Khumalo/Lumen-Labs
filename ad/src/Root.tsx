@@ -8,7 +8,9 @@ import { FORMATS } from './config/formats'
 import { DURATION_IN_FRAMES, FPS } from './config/timeline'
 import { LaunchFilm } from './LaunchFilm'
 import { BrandFilm } from './BrandFilm'
+import { TikTokFilm } from './TikTokFilm'
 import { FILM_DURATION, FILM_FPS } from './config/filmTimeline'
+import { TIKTOK_DURATION, TIKTOK_FPS } from './TikTokFilm'
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -51,6 +53,17 @@ export const RemotionRoot: React.FC = () => {
         width={FORMATS.wide.width}
         height={FORMATS.wide.height}
         defaultProps={{ format: FORMATS.wide }}
+      />
+      {/* TikTok cut — same LaunchFilm sequence, padded to a clean 30.0s
+          (900f @30fps) vertical. Silent, 1080×1920. */}
+      <Composition
+        id="TikTok-Vertical"
+        component={TikTokFilm as React.FC<Record<string, unknown>>}
+        durationInFrames={TIKTOK_DURATION}
+        fps={TIKTOK_FPS}
+        width={FORMATS.vertical.width}
+        height={FORMATS.vertical.height}
+        defaultProps={{ format: FORMATS.vertical }}
       />
     </>
   )
