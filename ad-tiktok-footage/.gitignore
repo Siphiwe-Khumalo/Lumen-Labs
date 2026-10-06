@@ -1,0 +1,19 @@
+# Regenerable heavy media — NOT committed (too large; reproduced via scripts/)
+assets/
+clips_v2/
+text_overlays_v2/
+frames/
+previews/
+
+# Intermediate build artifacts
+out/master-audio.wav
+out/base_video*.mp4
+out/video_with_text*.mp4
+out/pass_*.mp4
+out/frames_v2/
+
+# Keep in git (lightweight proof + deliverable):
+#   out/lumen-labs-tiktok-footage-30s.mp4
+#   out/timeline-proof.jpg
+#   scripts/*
+#   README.md
