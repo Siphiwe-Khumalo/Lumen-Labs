@@ -1,0 +1,30 @@
+{
+  "id": "FEAT-001",
+  "type": "chore",
+  "description": "Establish and confirm the green baseline for the ad/ subproject and add the isolated vitest config so the test suite runs reliably. This unblocks every later feature's verification. All commands run from /projects/sandbox/Lumen-Labs/.worktrees/cinematic-film/ad using the full node/npm path (npm is NOT on PATH).",
+  "status": "completed",
+  "steps": [
+    "Set NPM=\"/opt/toolchains/.nvm/versions/node/v22.23.3/lib/node_modules/npm/bin/npm-cli.js\". Confirm `node --version` is v22.x and `node \"$NPM\" --version` works from the ad/ dir.",
+    "Confirm baseline is already installed: node_modules exists and public/fonts/ already has the three vendored WOFF2 files (npm install + `npm run fonts` were done at baseline). If node_modules is missing, run `node \"$NPM\" install` then `node \"$NPM\" run fonts`.",
+    "Run `node \"$NPM\" run typecheck` and confirm it passes with zero errors (baseline green).",
+    "Add a new file ad/vitest.config.ts containing a minimal neutral config `export default {}` (as a proper TS default export, e.g. `import { defineConfig } from 'vitest/config'; export default defineConfig({})` is fine too, but a bare `export default {}` is sufficient and matches baseline.md's neutral-config workaround). This stops vitest from walking up and auto-discovering the OUTER website's vite.config.ts. This is the ONE acceptable isolated config addition in the ad/ subproject.",
+    "Verify the existing test suite now runs via `node \"$NPM\" run test` (which runs `vitest run`) AND via the explicit neutral config `node \"$NPM\" exec -- vitest run --config /tmp/empty-vitest.config.ts` (create /tmp/empty-vitest.config.ts with `printf 'export default {}\\n' > /tmp/empty-vitest.config.ts`). Both must show the existing 5 files / 16 tests passing (copy 2, timeline 3, assets 2, layout 4, interpolate 5).",
+    "Verify the bundled ffprobe is runnable: `node_modules/@remotion/compositor-linux-x64-gnu/ffprobe -version` prints a version. Verify edge-tts: `/root/.local/bin/edge-tts --list-voices | grep en-US-AndrewMultilingualNeural` returns a line. Do NOT depend on bare `edge-tts` or bare `npm` being on PATH.",
+    "Commit on branch feat/cinematic-brand-film with a clear message (e.g. 'chore(ad): add isolated vitest config for cinematic film suite'). Stage only ad/vitest.config.ts (and package-lock.json only if it legitimately changed). Do NOT push."
+  ],
+  "acceptance_criteria": [
+    "`node \"$NPM\" run typecheck` exits 0 with zero errors.",
+    "ad/vitest.config.ts exists and `node \"$NPM\" run test` starts vitest without the 'Cannot find package vite' error and passes all existing tests (5 files, 16 tests).",
+    "The neutral-config invocation `node \"$NPM\" exec -- vitest run --config /tmp/empty-vitest.config.ts` also passes all existing tests.",
+    "The bundled ffprobe prints a version and edge-tts lists the Andrew voice.",
+    "Only ad/vitest.config.ts (and optionally package-lock.json) is added; no existing source file is modified; a commit exists on feat/cinematic-brand-film."
+  ],
+  "verification": [
+    "node \"$NPM\" run typecheck",
+    "node \"$NPM\" run test",
+    "node \"$NPM\" exec -- vitest run --config /tmp/empty-vitest.config.ts",
+    "node_modules/@remotion/compositor-linux-x64-gnu/ffprobe -version"
+  ],
+  "blocked_reason": null,
+  "findings": "Baseline confirmed green and isolated vitest config added. Details: Node v22.23.3; npm 11.4.2 via full path node \"$NPM\" (NPM=/opt/toolchains/.nvm/versions/node/v22.23.3/lib/node_modules/npm/bin/npm-cli.js). node_modules present and public/fonts/ has all three vendored WOFF2 (manrope, space-grotesk, jetbrains-mono) — no reinstall/fonts rerun needed. typecheck exits 0 zero-error. Added ad/vitest.config.ts as `export default defineConfig({})` from 'vitest/config' (proper TS default export). After adding it, `node \"$NPM\" run test` (= vitest run) starts WITHOUT the 'Cannot find package vite' error and passes 5 files / 16 tests (copy 2, timeline 3, assets 2, layout 4, interpolate 5). The explicit neutral-config invocation `node \"$NPM\" exec -- vitest run --config /tmp/empty-vitest.config.ts` also passes the same 5 files / 16 tests. Bundled ffprobe at node_modules/@remotion/compositor-linux-x64-gnu/ffprobe prints 'ffprobe version n7.1' (no system ffmpeg). edge-tts at /root/.local/bin/edge-tts (NOT on bare PATH) lists en-US-AndrewMultilingualNeural (Male, Warm/Confident/Authentic/Honest). Only ad/vitest.config.ts added; no existing source modified; package-lock.json unchanged (ad/ uses none — no lockfile in repo). Committed as dcc9d41 on feat/cinematic-brand-film. REMINDER for later features: run all commands from the ad/ dir with the full node \"$NPM\" path; npm notice about npm 12.2.0 upgrade is harmless noise."
+}

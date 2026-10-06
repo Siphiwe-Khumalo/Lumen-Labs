@@ -1,0 +1,40 @@
+{
+  "id": "FEAT-005",
+  "type": "feat",
+  "description": "Render the final MP4 end-to-end, prove it meets the verification bar, confirm the existing film is untouched, and write ad/out/VERIFICATION.md with evidence and key-beat stills. This is CINEMATIC-FILM.md build order §14 step 9 and §12 integration checks. Depends on FEAT-004.",
+  "status": "completed",
+  "steps": [
+    "Render key-beat stills first (cheap sanity): `node \"$NPM\" exec -- remotion still BrandFilm out/stills/f0200.png --frame=200` (struggle), f1140 (the turn), f1700 (a capability beat), f2699 (final logo lockup). Also render f1620 and f2460 if useful. Eyeball each for cinematic/on-brand/non-AI quality: real-world footage reads as one graded world, the turn visibly warms, captions are readable with air, the lockup settles like a film's final frame. If any beat is generic/cramped/rushed/off-brand, fix it (adjust scene/caption timing, swap a reserve clip, re-grade) and re-render the still before the full render.",
+    "Run the full render: `node \"$NPM\" exec -- remotion render BrandFilm out/lumen-labs-brand-film.mp4` (or `node \"$NPM\" run render:film`). Remotion's bundled ffmpeg muxes the <Audio> tracks — no system ffmpeg needed. Confirm it completes without error.",
+    "Probe the output with the bundled ffprobe node_modules/@remotion/compositor-linux-x64-gnu/ffprobe: assert resolution is exactly 1920x1080, duration is within 75-90s (~90s/2700f@30), there is a VIDEO stream AND an AUDIO stream (prove <Audio> muxing). Capture the ffprobe output for VERIFICATION.md.",
+    "Prove the existing composition is untouched: `node \"$NPM\" exec -- remotion still LaunchFilm-Vertical out/legacy/f0.png --frame=0` and a mid-frame (e.g. --frame=440). Both must render successfully. Confirm Root.tsx still registers all three LaunchFilm-* ids and git diff shows only the single additive Composition + the render:film script line as behavioural changes to existing files.",
+    "Write ad/out/VERIFICATION.md recording: the exact render command; ffprobe evidence (duration, 1920x1080, both streams present) with the raw output; the key-beat stills referenced by path with a one-line visual sanity note each (f200, f1140, f1700, f2699); confirmation the LaunchFilm-Vertical stills rendered (untouched); and the full ad test-suite + typecheck results.",
+    "Final cleanup: remove unused downloaded footage reserves that are not referenced by any scene (keep only used clips + any reserve actually swapped in), remove throwaway probe/still scratch dirs you do not want committed (keep the VERIFICATION.md evidence stills), and ensure the committed MP4 is the final one. Commit on feat/cinematic-brand-film (e.g. 'feat(ad): render final cinematic brand film MP4 + verification'). Do NOT push, rebase, or merge."
+  ],
+  "acceptance_criteria": [
+    "ad/out/lumen-labs-brand-film.mp4 exists, is 1920x1080, duration within 75-90s, and contains BOTH a video and an audio stream (ffprobe-confirmed).",
+    "Key-beat stills (f200, f1140, f1700, f2699) were rendered and visually sanity-checked; any generic/cramped/rushed/off-brand beat was fixed before the final render.",
+    "LaunchFilm-Vertical still renders at frame 0 and a mid-frame (existing film untouched); git diff to existing files is limited to the one additive Root.tsx composition + the one render:film script line.",
+    "ad/out/VERIFICATION.md records the render command, ffprobe evidence (duration/resolution/both streams), the key-beat stills with sanity notes, and the typecheck+test results.",
+    "Unused reserve downloads removed; final MP4 + VERIFICATION.md committed on feat/cinematic-brand-film."
+  ],
+  "verification": [
+    "node \"$NPM\" exec -- remotion render BrandFilm out/lumen-labs-brand-film.mp4",
+    "node_modules/@remotion/compositor-linux-x64-gnu/ffprobe -v error -show_entries format=duration:stream=codec_type,width,height -of default=nk=0 out/lumen-labs-brand-film.mp4",
+    "node \"$NPM\" exec -- remotion still LaunchFilm-Vertical out/legacy/f0.png --frame=0",
+    "node \"$NPM\" run typecheck && node \"$NPM\" run test"
+  ],
+  "blocked_reason": null,
+  "findings": {
+    "status": "completed",
+    "render": "node \"$NPM\" run render:film rendered 2700/2700 frames + encoded 2700/2700 to out/lumen-labs-brand-film.mp4 (~86 MB).",
+    "ffprobe": "duration=90.005s (within 75-90s), video stream h264 1920x1080, audio stream aac 48000Hz stereo -> BOTH streams present (VO + music muxed). Raw output saved to out/film-stills/ffprobe.txt and quoted in out/VERIFICATION-BRANDFILM.md.",
+    "key_beat_stills": "out/film-stills/{f200,f1140,f1620,f1700,f2460,f2699}.png eyeballed: f200 struggle (cool, hands+laptop, readable caption), f1140 the turn (warm meeting footage, visibly warmer than f200), f1700 software capability (code + SOFTWARE title + mono sub incl. IoT), f2460 lockup open (Built with intention.), f2699 clean final lockup (BrandMark amber accent + LUMEN LABS + studio sub). All cinematic/on-brand/non-AI; graphite grounds, restrained amber, the three brand fonts.",
+    "fixes_before_full_render": "(1) f1140 the turn was black because shot 3.1 used a wipeLR mask at the cut -> removed the mask so the turn lands on footage. (2) final sign-off caption lingered on f2699 -> fade-out now completes ~6f before 2700. Re-rendered both stills to confirm before the full render.",
+    "existing_untouched": "LaunchFilm-Vertical still rendered at f0 and f440 (both PASS). git diff to existing files limited to Root.tsx (2 imports + 1 appended BrandFilm Composition) and package.json (1 added render:film script). The three LaunchFilm-* ids unchanged.",
+    "cleanup": "Removed the 8 unused reserve-*.mp4 + their _contact JPGs (git rm) to keep the asset footprint reasonable; SOURCES.md updated to mark reserves as removed-from-shipped-set (re-fetchable). 15 cut clips remain. Scratch out/_probe and out/legacy dirs removed; curated evidence kept under out/film-stills/.",
+    "env_note": "Rendering required a glibc-2.35 compositor shim (host glibc 2.34). See FEAT-004 findings + out/VERIFICATION-BRANDFILM.md section 0. scripts/setup-render-binaries.sh is idempotent and fetches the loader into node_modules (gitignored).",
+    "verification_doc": "Written to out/VERIFICATION-BRANDFILM.md (NOT out/VERIFICATION.md, to preserve the pre-existing LaunchFilm verification doc committed on this branch).",
+    "typecheck_test": "typecheck zero-error; 55/55 tests green (neutral vitest config); existing copy.test.ts snapshot unchanged."
+  }
+}

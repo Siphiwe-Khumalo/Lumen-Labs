@@ -1,0 +1,7 @@
+{
+  "task_id": "task-cinematic-brand-film",
+  "task_description": "Implement the APPROVED (rev 4) cinematic 1:15-1:30 Lumen Labs brand film as a NEW additive Remotion composition (BrandFilm, 1920x1080@30, 2700 frames / 90s) in the ad/ subproject: three-act story (struggle -> turn @f1140 -> transformation) using real licensed Mixkit stock footage, an edge-tts voice-over (Andrew voice), and a two-track music bed with a mid-film shift, rendered to ad/out/lumen-labs-brand-film.mp4 with embedded audio. Everything is additive — the existing LaunchFilm-* compositions, DESIGN.md, copy.ts, and the outer website stay unchanged (only one Composition appended to Root.tsx and one render:film script added). Work in the git worktree on branch feat/cinematic-brand-film.",
+  "status": "completed",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004", "FEAT-005"],
+  "blocked_reason": null
+}

@@ -7,6 +7,8 @@ import { Composition } from 'remotion'
 import { FORMATS } from './config/formats'
 import { DURATION_IN_FRAMES, FPS } from './config/timeline'
 import { LaunchFilm } from './LaunchFilm'
+import { BrandFilm } from './BrandFilm'
+import { FILM_DURATION, FILM_FPS } from './config/filmTimeline'
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -37,6 +39,18 @@ export const RemotionRoot: React.FC = () => {
         width={FORMATS.square.width}
         height={FORMATS.square.height}
         defaultProps={{ format: FORMATS.square }}
+      />
+      {/* Additive: the NEW cinematic brand film (CINEMATIC-FILM.md §3.4). A
+          1920x1080@30 / 2700-frame composition sibling to the LaunchFilm-*
+          entries above, which are left byte-for-byte unchanged. */}
+      <Composition
+        id="BrandFilm"
+        component={BrandFilm as React.FC<Record<string, unknown>>}
+        durationInFrames={FILM_DURATION}
+        fps={FILM_FPS}
+        width={FORMATS.wide.width}
+        height={FORMATS.wide.height}
+        defaultProps={{ format: FORMATS.wide }}
       />
     </>
   )

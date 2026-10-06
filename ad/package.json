@@ -8,6 +8,7 @@
     "studio": "remotion studio",
     "still": "remotion still",
     "render": "remotion render LaunchFilm-Vertical out/lumen-labs-launch-9x16.mp4",
+    "render:film": "remotion render BrandFilm out/lumen-labs-brand-film.mp4 --binaries-directory=\"$(bash scripts/setup-render-binaries.sh)\"",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "fonts": "bash scripts/copy-fonts.sh"
