@@ -11,6 +11,45 @@ Implementation plan: `.agents/tasks/plan.md`.
 
 ---
 
+## Second composition: the cinematic brand film (`BrandFilm`)
+
+Alongside the launch film, this subproject also contains a **cinematic 90-second
+brand film** — a three-act short-film-style piece (struggle → the turn →
+transformation) in **16:9 1920×1080 @30fps**, composed over real licensed stock
+footage with a neural voice-over and a two-track score that shifts at the
+discovery moment. Design spec: `CINEMATIC-FILM.md`. It is fully additive — the
+`LaunchFilm-*` compositions and the website root are untouched.
+
+### Reproducing the media (one-time, after a fresh checkout)
+
+The heavy media (stock footage, voice-over, music, and the rendered master) is
+**git-ignored** and regenerated from scripts — the repo keeps only the scripts,
+`SOURCES.md` provenance, the measured VO durations, and lightweight proof stills:
+
+```sh
+bash scripts/fetch-footage.sh    # licensed Mixkit 1080p clips → public/footage/
+bash scripts/fetch-music.sh      # licensed Mixkit tracks       → public/audio/music/
+bash scripts/generate-vo.sh      # edge-tts neural VO           → public/audio/vo/
+```
+
+See `AUDIO.md` for voice/music/footage details and licensing.
+
+### Render the brand film
+
+```sh
+node "$NPM" run render:film      # → out/lumen-labs-brand-film.mp4 (1920×1080, 90s, VO+music)
+```
+
+Render evidence (duration/resolution/audio-stream + key-beat stills) is in
+`out/VERIFICATION-BRANDFILM.md` and `out/film-stills/`.
+
+> **Render host note:** on a host with glibc < 2.35, `render:film` runs the
+> Remotion compositor under a fetched glibc-2.35 loader via
+> `scripts/setup-render-binaries.sh` (invoked by the script; no binaries
+> committed). On glibc ≥ 2.35 a plain `remotion render BrandFilm` works.
+
+---
+
 ## Prerequisites
 
 `npm` is not on PATH in this environment. Invoke it via its full cli path:

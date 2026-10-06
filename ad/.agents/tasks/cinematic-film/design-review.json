@@ -1,0 +1,35 @@
+{
+  "verdict": "APPROVED",
+  "approvedBy": "orchestrator",
+  "approvedRevision": 4,
+  "reviewDoc": "/projects/sandbox/Lumen-Labs/.worktrees/cinematic-film/ad/.agents/tasks/cinematic-film/design-review.md",
+  "note": "The rev-3 review returned CHANGES_REQUESTED (1 HIGH, 2 MEDIUM, 6 NIT). The design loop hit its iteration cap, but every remaining finding was a tight numeric/timing fix, not re-architecture (the reviewer stated this explicitly). The orchestrator resolved all three blockers plus the two actionable NITs directly in CINEMATIC-FILM.md revision 4, verified the frame math (sum = 2700, contiguous), and approves the design so planning/implementation can proceed.",
+  "resolvedFindings": [
+    {
+      "severity": "HIGH",
+      "was": "VO 'ends >=6f before beat boundary' invariant violated by 3 of 4 lockup beats (gaps 2f/4f/4f).",
+      "resolution": "film07/film08 trimmed 180->156 each; film09 grown 240->288 (total unchanged at 2700). Lockup beats re-timed to 72/84/66/66f; vo13-vo16 windows now clear their boundaries by 14/16/16/18f. narration.test.ts must assert beatEnd-(voStart+voDuration) >= 6 for all 16 VO lines."
+    },
+    {
+      "severity": "MEDIUM",
+      "was": "Signature closing lines got only ~0.6s full-opacity hold (rushed).",
+      "resolution": "Every sign-off beat now holds at full opacity for >=48f/1.6s (9.1=48, 9.2=60, 9.3=48, 9.4=48), fades 12f/12f on 9.1-9.2 and 9f/9f on 9.3-9.4. Full-opacity hold is stated per beat and is checkable."
+    },
+    {
+      "severity": "MEDIUM",
+      "was": "Track A automation ramped to 0.3 at f1140 with no HELD near-silent beat, contradicting prose.",
+      "resolution": "Curve is now clipN(f,[0,60,1020,1080,1140,1200],[0,0.9,0.9,0.3,0.3,0]) - ramp 1020->1080, HOLD 0.3 across 1080->1140, fade out 1140->1200. Matches sections 1/2/5/7."
+    },
+    {
+      "severity": "NIT",
+      "was": "trimAfter presented as a current prop.",
+      "resolution": "Documented as deprecated in 4.0.533; spec uses trimBefore + durationInFrames."
+    },
+    {
+      "severity": "NIT",
+      "was": "Copy-bearing hero clip 914 not in the re-checked content set.",
+      "resolution": "Added an explicit 'eyeball before authoring' list: 8739, 914, 4840, 4831."
+    }
+  ],
+  "remainingNits": "Editorial only (VO durations are estimates until generate-vo.sh runs - guarded by a load-time assert and the >=6f test; Caption.tsx fade-out ownership; grade warm-up window naming). None block implementation."
+}

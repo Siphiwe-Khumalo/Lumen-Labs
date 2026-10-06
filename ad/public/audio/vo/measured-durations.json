@@ -1,0 +1,66 @@
+{
+  "vo01": {
+    "endSeconds": 3.22,
+    "durationInFrames": 97
+  },
+  "vo02": {
+    "endSeconds": 3.233,
+    "durationInFrames": 97
+  },
+  "vo03": {
+    "endSeconds": 3.831,
+    "durationInFrames": 115
+  },
+  "vo04": {
+    "endSeconds": 4.646,
+    "durationInFrames": 140
+  },
+  "vo05": {
+    "endSeconds": 1.671,
+    "durationInFrames": 51
+  },
+  "vo06": {
+    "endSeconds": 3.994,
+    "durationInFrames": 120
+  },
+  "vo07": {
+    "endSeconds": 4.021,
+    "durationInFrames": 121
+  },
+  "vo08": {
+    "endSeconds": 3.192,
+    "durationInFrames": 96
+  },
+  "vo09": {
+    "endSeconds": 5.108,
+    "durationInFrames": 154
+  },
+  "vo10": {
+    "endSeconds": 4.687,
+    "durationInFrames": 141
+  },
+  "vo11": {
+    "endSeconds": 3.07,
+    "durationInFrames": 93
+  },
+  "vo12": {
+    "endSeconds": 3.6,
+    "durationInFrames": 108
+  },
+  "vo13": {
+    "endSeconds": 1.739,
+    "durationInFrames": 53
+  },
+  "vo14": {
+    "endSeconds": 3.994,
+    "durationInFrames": 120
+  },
+  "vo15": {
+    "endSeconds": 1.535,
+    "durationInFrames": 47
+  },
+  "vo16": {
+    "endSeconds": 2.01,
+    "durationInFrames": 61
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Acquire and commit all real licensed assets with provenance, and prove each matches its storyboard beat. This produces: 15 Mixkit stock footage MP4s (+ reserves) in ad/public/footage/, 2 Mixkit music MP3s in ad/public/audio/music/, 16 edge-tts VO MP3s+VTTs in ad/public/audio/vo/, each dir with a SOURCES.md, plus the three fetch/generate scripts and ad/AUDIO.md. VO durations measured from the VTTs are recorded for later use by FEAT-003's narration config. This is the asset pipeline from CINEMATIC-FILM.md §6/§7/§8 and build order §14 steps 1-5. Network is OPEN_INTERNET. Depends on FEAT-001.",
+  "status": "completed",
+  "steps": [
+    "Create scripts/fetch-footage.sh (set -euo pipefail; curl -fL --retry 3): download each Mixkit footage id from https://assets.mixkit.co/videos/<id>/<id>-1080.mp4 into ad/public/footage/<local-name>.mp4 using the exact id->local-file->role mapping in CINEMATIC-FILM.md §8 table (8739 struggle-worried, 914 office-open, 221 office-glasses-reflection, 308 laptop-work, 918 office-busy, 4840 rooftop-sunset, 4809 meeting-collab, 30012 handshake, 29991 engineer-workshop, 1728 dev-code, 1735 dev-topview, 41642 multiscreen, 49878 city-aerial-night, 41637 ops-twoscreen, 4831 park-sunrise). Also download the reserves listed in §8 (1808, 41640, 41654, 1781, 242, 4915, 49845, 49846) so a swap needs no re-fetch. After each download assert the file is non-empty and MP4 (magic bytes / content-type), failing fast on a 0-byte or HTML response naming the id+URL.",
+    "In fetch-footage.sh, after each download probe the clip's real duration using @remotion/media-parser parseMedia (fallback: node_modules/@remotion/compositor-linux-x64-gnu/ffprobe) and emit each clip's durationInFrames @30fps so FEAT-003 can populate footage.ts. Write ad/public/footage/SOURCES.md recording per id: source URL, license URL https://mixkit.co/license/, 'Mixkit Free License — commercial use, no attribution', and the Mixkit title from §8.",
+    "CONTENT-VERIFY the clips: grab one still per downloaded clip into ad/public/footage/_contact/ (via a tiny OffthreadVideo single-frame `remotion still` probe, or ffprobe/ffmpeg-bundled frame extract via @remotion/renderer). Eyeball the stills. The four copy-bearing hero clips MUST be looked at explicitly: 8739 (worried owner), 914 (cold empty office before anyone arrives), 4840 (low-point silhouette), 4831 (warm resolution). On ANY mismatch with the storyboard role, swap in a reserve id, update SOURCES.md + the id->local mapping, and re-grab the still. Record in FEAT-002 findings which ids were kept vs swapped. Do NOT author scenes on a mismatched clip. NO AI-generated/synthetic footage — reject id 99786 and anything 'generic futuristic tech'.",
+    "Create scripts/fetch-music.sh (same curl discipline): download Track A id 18 -> ad/public/audio/music/track-a-tension.mp3 and Track B id 158 -> track-b-hope.mp3 from https://assets.mixkit.co/music/<id>/<id>.mp3. Confirm each is non-empty audio/mpeg. Write ad/public/audio/music/SOURCES.md with the scraped track title/page per id, license 'Mixkit Free Stock Music — no attribution'. Backups 168 (A) / 187 (B) noted but not required unless A/B are a poor fit by ear.",
+    "Create scripts/generate-vo.sh exactly per CINEMATIC-FILM.md §6: EDGE=\"${EDGE_TTS:-/root/.local/bin/edge-tts}\" (never bare edge-tts); VOICE=en-US-AndrewMultilingualNeural; hard-fail if the tool or voice is missing; for each VO line (ids+text from the narration config / an inline table matching §6) run edge-tts --voice $VOICE --rate=-8% --pitch=-2Hz --text <line> --write-media public/audio/vo/<id>.mp3 --write-subtitles public/audio/vo/<id>.vtt. The 16 lines (vo01..vo16) and their text are the §6 table; vo13='Built with intention.', vo15='Small enough to care.', vo16='Technical enough to build.' MUST be the verbatim copy.ts strings, and vo14='Your business has a vision. We build what brings it to life.' (the one new line).",
+    "Run generate-vo.sh to produce all 16 MP3s + VTTs in ad/public/audio/vo/. Parse each VTT's last-cue end time into durationInFrames @30fps and record the measured values (write them into a small JSON or directly into the findings) so FEAT-003 can set narration.ts durationInFrames to the MEASURED values (not estimates). Commit the MP3s and VTTs (render must not depend on network/pip).",
+    "Write ad/AUDIO.md documenting: the chosen voice + tuning (--rate=-8% --pitch=-2Hz), that edge-tts is at /root/.local/bin/edge-tts and NOT on bare PATH, how to regenerate VO (scripts/generate-vo.sh) and music/footage (the other two scripts), the committed-audio fallback, and the music track roles + ids.",
+    "Trim/select to only the clips actually used plus the realistic reserves; the design permits large real files but remove clearly-unused downloads before committing. Commit assets + scripts + SOURCES.md files + AUDIO.md on feat/cinematic-brand-film in a logical chunk (e.g. 'feat(ad): acquire licensed footage, music, and edge-tts VO for brand film'). Do NOT push."
+  ],
+  "acceptance_criteria": [
+    "ad/public/footage/ contains the 15 named MP4s (post content-verify, with any swaps recorded) plus a SOURCES.md listing per-id URL + Mixkit Free License; each MP4 is a valid non-empty video file.",
+    "ad/public/audio/music/ contains track-a-tension.mp3 and track-b-hope.mp3 + SOURCES.md.",
+    "ad/public/audio/vo/ contains vo01..vo16 .mp3 and .vtt; vo13/vo14/vo15/vo16 texts match the required verbatim/new strings.",
+    "Measured durationInFrames for all 16 VO lines are recorded (from the VTT last-cue end times) for FEAT-003 to consume.",
+    "scripts/fetch-footage.sh, scripts/fetch-music.sh, scripts/generate-vo.sh, and ad/AUDIO.md exist; generate-vo.sh invokes edge-tts by absolute path and hard-fails if the tool/voice is missing.",
+    "The four hero clips (8739, 914, 4840, 4831) were explicitly eyeballed and confirmed (or swapped with the swap recorded in findings). No AI/synthetic footage used.",
+    "Assets + scripts + docs committed on feat/cinematic-brand-film."
+  ],
+  "verification": [
+    "ls ad/public/footage/*.mp4 && head -40 ad/public/footage/SOURCES.md",
+    "ls ad/public/audio/music/*.mp3 && ls ad/public/audio/vo/vo*.mp3 ad/public/audio/vo/vo*.vtt",
+    "node_modules/@remotion/compositor-linux-x64-gnu/ffprobe -v error -show_entries stream=codec_type,width,height -of default=nk=1 ad/public/footage/struggle-worried.mp4",
+    "Confirm each VO .vtt has a last cue end time and the measured frame counts are recorded for FEAT-003"
+  ],
+  "blocked_reason": null,
+  "findings": {
+    "commit": "9435065 feat(ad): acquire licensed footage, music, and edge-tts VO for brand film (on feat/cinematic-brand-film)",
+    "footage_kept_vs_swapped": {
+      "all_four_hero_clips_eyeballed": "8739 struggle-worried (worried woman at dusk, hands to forehead) KEPT; 4840 rooftop-sunset (lone silhouette against orange sunset) KEPT; 4831 park-sunrise (warm golden-hour light through trees over a park/river) KEPT; 914 office-open SWAPPED.",
+      "swap": {
+        "beat": "film01 1.2 (HERO, cold/empty open office before anyone arrives)",
+        "out": "914 (Mixkit 'Open office space')",
+        "reason": "914 content is a BUSY, fully populated open-plan office across its entire runtime (eyeballed at t=0.2/5/10/18s) — the opposite of the storyboard's 'empty desks, cold light, realities waiting'. Would wrongly read as a thriving workplace in the Act-1 struggle.",
+        "in": "1781 (quiet lone-desk laptop macro) -> renamed to quiet-desk-dawn.mp4; reads cold/isolated for the beat and does not duplicate the wider 308 'man working on his laptop' shot. 1781 remains available as a reserve copy too (reserve-1781-laptop-close.mp4).",
+        "actions": "removed 914 from the committed set (not a listed reserve); updated scripts/fetch-footage.sh CUT list + SOURCES.md swap note; re-grabbed the _contact still as quiet-desk-dawn.jpg.",
+        "note_for_FEAT-003": "footage.ts key 'office-open' should map to quiet-desk-dawn.mp4 (NOT office-open.mp4, which no longer exists). durationInFrames for this clip = 360."
+      },
+      "other_clips": "All other 14 cut clips eyeballed via _contact/*.jpg and KEPT as-is (match their storyboard roles). No AI/synthetic footage used; id 99786 was never downloaded (rejected per design).",
+      "candidates_tried_and_rejected_for_empty_office": "Blind Mixkit ids 4835 (woman on bench), 4836 (people+charts at desk), 1086 (ocean sunset), 2720/2721 (vertical Christmas trees) all fetched+eyeballed and rejected; none was an empty office. Chose the approved reserve 1781 rather than ship an off-spec/unverified clip."
+    },
+    "clip_durationInFrames_at_30fps": {
+      "comment": "Probed at fetch time via @remotion/media-parser (fallback bundled ffprobe). FEAT-003's footage.ts consumes these. Reserves listed too for swap headroom.",
+      "cut": {
+        "struggle-worried.mp4 (8739)": 450,
+        "quiet-desk-dawn.mp4 (1781, swapped in for 914)": 360,
+        "office-glasses-reflection.mp4 (221)": 603,
+        "laptop-work.mp4 (308)": 639,
+        "office-busy.mp4 (918)": 355,
+        "rooftop-sunset.mp4 (4840)": 460,
+        "meeting-collab.mp4 (4809)": 1122,
+        "handshake.mp4 (30012)": 222,
+        "engineer-workshop.mp4 (29991)": 451,
+        "dev-code.mp4 (1728)": 550,
+        "dev-topview.mp4 (1735)": 450,
+        "multiscreen.mp4 (41642)": 247,
+        "city-aerial-night.mp4 (49878)": 428,
+        "ops-twoscreen.mp4 (41637)": 307,
+        "park-sunrise.mp4 (4831)": 247
+      },
+      "reserves": {
+        "reserve-1808-close-typing.mp4": 426,
+        "reserve-41640-hands-programming.mp4": 240,
+        "reserve-41654-code-on-screen.mp4": 213,
+        "reserve-1781-laptop-close.mp4": 360,
+        "reserve-242-typing-laptop.mp4": 271,
+        "reserve-4915-hands-phone.mp4": 450,
+        "reserve-49845-aerial-city.mp4": 626,
+        "reserve-49846-aerial-city.mp4": 1312
+      },
+      "window_le_clip_check": "All §5 storyboard shot windows fit their clip durations with margin (tightest: 4831 window 156f <= 247f; 30012 window 150f <= 222f). The window<=clip invariant holds for every shot with the current mapping."
+    },
+    "measured_vo_durationInFrames_at_30fps": {
+      "comment": "Measured from each VTT last-cue end time (Math.ceil(sec*30)). FEAT-003 MUST set narration.ts durationInFrames to THESE values. Also written to public/audio/vo/measured-durations.json.",
+      "vo01": 97, "vo02": 97, "vo03": 115, "vo04": 140, "vo05": 51,
+      "vo06": 120, "vo07": 121, "vo08": 96, "vo09": 154, "vo10": 141,
+      "vo11": 93, "vo12": 108, "vo13": 53, "vo14": 120, "vo15": 47, "vo16": 61
+    },
+    "lockup_retime_flag_for_FEAT-003": "The measured vo14 (120f, est was ~62f) and vo16 (61f, est was ~42f) are LONGER than the §6 estimates. With the §5 lockup starts as drafted, vo14 (start 2490) overruns beat-9.2 end (2568) by 42f and vo16 (start 2640) overruns the 2700 film end by 1f. This is the bounded, design-flagged re-time (§6 build-order dependency): FEAT-003 must start those lockup lines earlier within their beats and/or rebalance film09's sub-beats (keeping film09 total), gated by narration.test.ts's beatEnd-(voStart+voDuration)>=6 assertion. vo13 (53f) and vo15 (47f) fit their beats fine. Documented in ad/AUDIO.md.",
+    "verbatim_vo_text_confirmed": "vo13='Built with intention.' (==COPY.s06Tagline), vo15='Small enough to care.' (==COPY.s05a), vo16='Technical enough to build.' (==COPY.s05b), vo14='Your business has a vision. We build what brings it to life.' (the one new line). Confirmed against src/config/copy.ts lines 8/27/28/29 and the generated VTTs.",
+    "music": "Track A id 18 -> track-a-tension.mp3 (131.7s), Track B id 158 -> track-b-hope.mp3 (100.1s); both longer than the 90s film, probe as audio/mpeg. Primary A/B kept (not swapped to backups 168/187).",
+    "verification": "typecheck clean; existing vitest suite 16/16 green via `npm run test` (FEAT-001 config). ffprobe confirms struggle-worried.mp4 = video 1920x1080. All asset files are git-tracked (none gitignored).",
+    "env_notes": "edge-tts voice-check `--list-voices | grep -q` triggered a SIGPIPE/BrokenPipe under `set -o pipefail`; fixed generate-vo.sh to capture the voice list into a variable first before grepping. edge-tts invoked by absolute path /root/.local/bin/edge-tts. No system ffmpeg; used bundled @remotion/compositor-linux-x64-gnu/ffmpeg for still extraction."
+  }
+}

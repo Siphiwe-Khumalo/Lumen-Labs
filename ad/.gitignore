@@ -1,1 +1,21 @@
 node_modules/
+
+# Reproducible heavy media — NOT committed to git (too large; regenerable).
+# Footage: run `bash scripts/fetch-footage.sh` (licensed Mixkit clips, see
+#   public/footage/SOURCES.md).
+# Voice-over: run `bash scripts/generate-vo.sh` (edge-tts, see AUDIO.md).
+# Music: run `bash scripts/fetch-music.sh` (licensed Mixkit, see
+#   public/audio/music/SOURCES.md).
+# Rendered master: run `npm run render:film`.
+public/footage/*.mp4
+public/footage/_contact/
+public/audio/vo/*.mp3
+public/audio/vo/*.vtt
+public/audio/music/*.mp3
+out/*.mp4
+out/frames/
+
+# Keep in git (lightweight proof + reproducibility):
+#   scripts/*, public/**/SOURCES.md, public/audio/vo/measured-durations.json,
+#   out/film-stills/*.png, out/*.md
+!out/film-stills/
