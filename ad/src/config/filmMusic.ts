@@ -12,8 +12,13 @@ import { FILM_DURATION } from './filmTimeline'
 
 export const SHIFT_FRAME = 1140 as const // the discovery moment / A->B cross-fade
 
-/** Duck multiplier applied to the active track across each VO window (~ -7 dB). */
-export const DUCK = 0.45 as const
+/**
+ * Duck multiplier applied to the active track across each VO window (~ -13 dB).
+ * Deepened from 0.45 to 0.22 so the narration always sits clearly on top of the
+ * bed; combined with the lower base holds below (0.72 / 0.62), the music swells
+ * in the gaps between lines but never overshadows the voice.
+ */
+export const DUCK = 0.22 as const
 
 export interface MusicTrack {
   id: string
@@ -25,23 +30,25 @@ export interface MusicTrack {
   volumes: readonly number[]
 }
 
-// Track A — tension bed (Act 1). Fades up, holds 0.9, ramps down 1020->1080,
+// Track A — tension bed (Act 1). Fades up, holds 0.72, ramps down 1020->1080,
 // HOLDS the near-silent floor 0.3 across 1080->1140, then cross-fades out
-// 1140->1200. This single keyframe list is authoritative (§7).
+// 1140->1200. This single keyframe list is authoritative (§7). Base hold
+// lowered from 0.9 to 0.72 so the bed leaves headroom for the narration.
 export const TRACK_A: MusicTrack = {
   id: 'A',
   file: 'audio/music/track-a-tension.mp3',
   times: [0, 60, 1020, 1080, 1140, 1200],
-  volumes: [0, 0.9, 0.9, 0.3, 0.3, 0],
+  volumes: [0, 0.72, 0.72, 0.3, 0.3, 0],
 }
 
 // Track B — hopeful/uplifting (Act 2-3). Fades in over the shift 1140->1200,
-// holds 0.85, soft tail 2520->2700 under the lockup (§7).
+// holds 0.62, soft tail 2520->2700 under the lockup (§7). Base hold lowered
+// from 0.85 to 0.62 for the same voice-first headroom.
 export const TRACK_B: MusicTrack = {
   id: 'B',
   file: 'audio/music/track-b-hope.mp3',
   times: [1140, 1200, 2520, 2700],
-  volumes: [0, 0.85, 0.85, 0.0],
+  volumes: [0, 0.62, 0.62, 0.0],
 }
 
 /** The cross-fade window at the shift (equal-power A->B). */

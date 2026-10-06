@@ -28,9 +28,12 @@ describe('filmMusic', () => {
     const [cf0, cf1] = CROSSFADE
     expect(trackAVolume(cf1)).toBeLessThan(trackAVolume(cf0))
     expect(trackBVolume(cf1)).toBeGreaterThan(trackBVolume(cf0))
-    // A is silent and B is near full at the end of the cross-fade.
+    // A is silent and B has risen to its configured full bed level at the end
+    // of the cross-fade (TRACK_B's hold keyframe — not a hardcoded magic number,
+    // so an intentional bed-level change for the mix doesn't break this).
     expect(trackAVolume(cf1)).toBe(0)
-    expect(trackBVolume(cf1)).toBeGreaterThan(0.8)
+    expect(trackBVolume(cf1)).toBeCloseTo(TRACK_B.volumes[1], 5)
+    expect(trackBVolume(cf1)).toBeGreaterThan(0.5)
   })
 
   it('Track A holds the near-silent floor 0.3 across 1080->1140', () => {
