@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="3000" viewBox="0 0 2400 3000" role="img" aria-label="Front view graphite heavyweight T-shirt with Lumen Labs embroidered at the wearer’s left chest">
+    
+  <defs>
+    <linearGradient id="studio" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e9e4dc"/>
+      <stop offset="0.56" stop-color="#ddd7cd"/>
+      <stop offset="1" stop-color="#d0c9be"/>
+    </linearGradient>
+    <radialGradient id="studioGlow" cx="50%" cy="30%" r="68%">
+      <stop offset="0" stop-color="#f5f1eb" stop-opacity=".78"/>
+      <stop offset=".66" stop-color="#ddd6cc" stop-opacity=".14"/>
+      <stop offset="1" stop-color="#bcb4aa" stop-opacity=".34"/>
+    </radialGradient>
+    <linearGradient id="cloth" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#202326"/>
+      <stop offset=".2" stop-color="#131618"/>
+      <stop offset=".48" stop-color="#1b1e20"/>
+      <stop offset=".73" stop-color="#101214"/>
+      <stop offset="1" stop-color="#191c1e"/>
+    </linearGradient>
+    <linearGradient id="collar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a2d30"/>
+      <stop offset=".48" stop-color="#171a1c"/>
+      <stop offset="1" stop-color="#090b0c"/>
+    </linearGradient>
+    <linearGradient id="foldLight" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#000" stop-opacity="0"/>
+      <stop offset=".46" stop-color="#5d6265" stop-opacity=".12"/>
+      <stop offset=".53" stop-color="#08090a" stop-opacity=".23"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="jersey" width="10" height="12" patternUnits="userSpaceOnUse">
+      <path d="M1 0 C1 5 4 5 5 10 M9 0 C9 5 6 5 5 10" fill="none" stroke="#73777a" stroke-opacity=".115" stroke-width=".65"/>
+      <path d="M5 0 L5 12" stroke="#050607" stroke-opacity=".2" stroke-width=".55"/>
+    </pattern>
+    <pattern id="rib" width="8" height="8" patternUnits="userSpaceOnUse">
+      <path d="M1 0V8 M5 0V8" stroke="#555a5d" stroke-opacity=".28" stroke-width="1"/>
+      <path d="M3 0V8 M7 0V8" stroke="#060708" stroke-opacity=".33" stroke-width="1.4"/>
+    </pattern>
+    <pattern id="amberThread" width="2.4" height="2.4" patternUnits="userSpaceOnUse" patternTransform="rotate(-12)">
+      <rect width="2.4" height="2.4" fill="#c99c5c"/>
+      <path d="M0 .32H2.4 M0 1.18H2.4 M0 2.05H2.4" stroke="#edc989" stroke-width=".33"/>
+      <path d="M0 .68H2.4 M0 1.58H2.4" stroke="#9a6b35" stroke-opacity=".72" stroke-width=".24"/>
+    </pattern>
+    <pattern id="ivoryThread" width="2.4" height="2.4" patternUnits="userSpaceOnUse" patternTransform="rotate(-12)">
+      <rect width="2.4" height="2.4" fill="#e6e3d7"/>
+      <path d="M0 .32H2.4 M0 1.18H2.4 M0 2.05H2.4" stroke="#fffdf2" stroke-width=".33"/>
+      <path d="M0 .68H2.4 M0 1.58H2.4" stroke="#b9b5a8" stroke-opacity=".76" stroke-width=".24"/>
+    </pattern>
+    <filter id="shirtShadow" x="-30%" y="-30%" width="160%" height="180%">
+      <feGaussianBlur stdDeviation="36"/>
+    </filter>
+    <filter id="clothSurface" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency=".008 .08" numOctaves="3" seed="23" result="noise"/>
+      <feColorMatrix in="noise" type="saturate" values="0" result="mono"/>
+      <feComponentTransfer in="mono" result="softNoise">
+        <feFuncA type="table" tableValues="0 .16"/>
+      </feComponentTransfer>
+      <feBlend in="SourceGraphic" in2="softNoise" mode="soft-light"/>
+    </filter>
+    <filter id="threadDepth" x="-20%" y="-50%" width="140%" height="210%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation=".8" result="blur"/>
+      <feOffset in="blur" dx="0" dy="1.2" result="offset"/>
+      <feFlood flood-color="#000" flood-opacity=".72" result="shadowColor"/>
+      <feComposite in="shadowColor" in2="offset" operator="in" result="shadow"/>
+      <feSpecularLighting in="blur" surfaceScale="1.8" specularConstant=".42" specularExponent="17" lighting-color="#fff5df" result="spec">
+        <feDistantLight azimuth="225" elevation="55"/>
+      </feSpecularLighting>
+      <feComposite in="spec" in2="SourceAlpha" operator="in" result="specClip"/>
+      <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/><feMergeNode in="specClip"/></feMerge>
+    </filter>
+    <filter id="softBlur"><feGaussianBlur stdDeviation="12"/></filter>
+    <clipPath id="shirtClip">
+      <path d="M920 430 C820 458 738 486 642 540 L312 744 C255 779 235 835 264 902 L442 1250 C464 1292 512 1305 555 1282 L604 1255 L571 2608 C570 2651 601 2674 647 2679 C983 2713 1418 2713 1753 2679 C1799 2674 1830 2651 1829 2608 L1796 1255 L1845 1282 C1888 1305 1936 1292 1958 1250 L2136 902 C2165 835 2145 779 2088 744 L1758 540 C1662 486 1580 458 1480 430 C1437 548 1327 608 1200 608 C1073 608 963 548 920 430 Z"/>
+    </clipPath>
+    <symbol id="wordmark" viewBox="-3 -4 181 37" overflow="visible">
+      <g font-family="'Noto Sans', Arial, sans-serif" font-size="24" font-weight="600" letter-spacing="0" filter="url(#threadDepth)">
+        <text x="0" y="25" textLength="111" lengthAdjust="spacingAndGlyphs" fill="#75502c" stroke="#070707" stroke-opacity=".62" stroke-width="1.15" paint-order="stroke">Lumen</text>
+        <text x="117" y="25" textLength="58" lengthAdjust="spacingAndGlyphs" fill="#99958a" stroke="#070707" stroke-opacity=".62" stroke-width="1.15" paint-order="stroke">Labs</text>
+        <text x="0" y="25" textLength="111" lengthAdjust="spacingAndGlyphs" fill="url(#amberThread)" stroke="#d7ad70" stroke-width=".32">Lumen</text>
+        <text x="117" y="25" textLength="58" lengthAdjust="spacingAndGlyphs" fill="url(#ivoryThread)" stroke="#f2efe4" stroke-width=".32">Labs</text>
+      </g>
+    </symbol>
+  </defs>
+    <rect width="2400" height="3000" fill="url(#studio)"/>
+    <rect width="2400" height="3000" fill="url(#studioGlow)"/>
+    <path d="M245 2782 C630 2698 1754 2698 2155 2782 C1830 2900 586 2901 245 2782Z" fill="#6d675f" opacity=".2" filter="url(#shirtShadow)"/>
+    <path d="M470 2674 C740 2616 1657 2614 1938 2674 C1805 2756 605 2757 470 2674Z" fill="#18191a" opacity=".23" filter="url(#softBlur)"/>
+    <path d="M920 430 C820 458 738 486 642 540 L312 744 C255 779 235 835 264 902 L442 1250 C464 1292 512 1305 555 1282 L604 1255 L571 2608 C570 2651 601 2674 647 2679 C983 2713 1418 2713 1753 2679 C1799 2674 1830 2651 1829 2608 L1796 1255 L1845 1282 C1888 1305 1936 1292 1958 1250 L2136 902 C2165 835 2145 779 2088 744 L1758 540 C1662 486 1580 458 1480 430 C1437 548 1327 608 1200 608 C1073 608 963 548 920 430 Z" fill="#050607" opacity=".46" transform="translate(0 35)" filter="url(#shirtShadow)"/>
+    <g filter="url(#clothSurface)">
+      <path d="M920 430 C820 458 738 486 642 540 L312 744 C255 779 235 835 264 902 L442 1250 C464 1292 512 1305 555 1282 L604 1255 L571 2608 C570 2651 601 2674 647 2679 C983 2713 1418 2713 1753 2679 C1799 2674 1830 2651 1829 2608 L1796 1255 L1845 1282 C1888 1305 1936 1292 1958 1250 L2136 902 C2165 835 2145 779 2088 744 L1758 540 C1662 486 1580 458 1480 430 C1437 548 1327 608 1200 608 C1073 608 963 548 920 430 Z" fill="url(#cloth)"/>
+      <g clip-path="url(#shirtClip)">
+        <rect x="220" y="410" width="1960" height="2290" fill="url(#jersey)" opacity=".66"/>
+        <ellipse cx="1190" cy="1380" rx="775" ry="1040" fill="#686d70" opacity=".055"/>
+        <ellipse cx="760" cy="1480" rx="350" ry="1190" fill="#030405" opacity=".17"/>
+        <ellipse cx="1680" cy="1550" rx="290" ry="1130" fill="#050607" opacity=".2"/>
+        <path d="M865 490 C760 870 806 1740 736 2608" stroke="url(#foldLight)" stroke-width="190" fill="none" opacity=".7"/>
+        <path d="M1487 485 C1577 870 1522 1830 1654 2630" stroke="url(#foldLight)" stroke-width="165" fill="none" opacity=".63"/>
+        <path d="M1162 610 C1100 1040 1138 1750 1101 2680" stroke="url(#foldLight)" stroke-width="95" fill="none" opacity=".46"/>
+        <path d="M598 1090 C780 1140 858 1234 904 1414" stroke="#666b6e" stroke-opacity=".075" stroke-width="42" fill="none" filter="url(#softBlur)"/>
+        <path d="M1802 1090 C1620 1140 1542 1234 1496 1414" stroke="#000" stroke-opacity=".2" stroke-width="48" fill="none" filter="url(#softBlur)"/>
+        <path d="M595 2490 C880 2458 1510 2464 1821 2492" stroke="#62676a" stroke-opacity=".08" stroke-width="34" fill="none" filter="url(#softBlur)"/>
+      </g>
+    </g>
+    <path d="M916 430 C949 552 1066 627 1200 629 C1334 627 1451 552 1484 430 C1429 459 1357 476 1200 476 C1043 476 971 459 916 430Z" fill="url(#collar)"/>
+    <path d="M942 441 C989 514 1073 558 1200 559 C1327 558 1411 514 1458 441 C1395 467 1324 484 1200 484 C1076 484 1005 467 942 441Z" fill="url(#studio)"/>
+    <path d="M916 430 C949 552 1066 627 1200 629 C1334 627 1451 552 1484 430" fill="none" stroke="url(#rib)" stroke-width="38" opacity=".77"/>
+    <path d="M942 441 C989 514 1073 558 1200 559 C1327 558 1411 514 1458 441" fill="none" stroke="#64686b" stroke-opacity=".23" stroke-width="4"/>
+    <path d="M642 540 C792 583 858 673 901 827" fill="none" stroke="#08090a" stroke-width="17" opacity=".72"/>
+    <path d="M1758 540 C1608 583 1542 673 1499 827" fill="none" stroke="#08090a" stroke-width="17" opacity=".72"/>
+    <path d="M649 548 C794 594 848 673 888 815" fill="none" stroke="#55595c" stroke-opacity=".28" stroke-width="4" stroke-dasharray="3 8"/>
+    <path d="M1751 548 C1606 594 1552 673 1512 815" fill="none" stroke="#55595c" stroke-opacity=".28" stroke-width="4" stroke-dasharray="3 8"/>
+    <path d="M441 1248 C480 1210 537 1182 604 1163" fill="none" stroke="#060708" stroke-width="21" opacity=".77"/>
+    <path d="M1959 1248 C1920 1210 1863 1182 1796 1163" fill="none" stroke="#060708" stroke-width="21" opacity=".77"/>
+    <path d="M455 1234 C500 1202 548 1182 605 1168 M1945 1234 C1900 1202 1852 1182 1795 1168" fill="none" stroke="#575b5e" stroke-opacity=".24" stroke-width="4" stroke-dasharray="4 8"/>
+    <path d="M579 2578 C905 2610 1491 2610 1821 2578" fill="none" stroke="#08090a" stroke-width="31" opacity=".71"/>
+    <path d="M584 2567 C895 2596 1498 2597 1816 2567" fill="none" stroke="#55595c" stroke-opacity=".23" stroke-width="4" stroke-dasharray="4 9"/>
+    <g transform="translate(1450 1190) scale(1.03)">
+      <path d="M-8 31 C38 37 141 38 183 31" fill="none" stroke="#020303" stroke-opacity=".55" stroke-width="9" filter="url(#softBlur)"/>
+      <use href="#wordmark" width="181" height="37"/>
+    </g>
+    <g clip-path="url(#shirtClip)" opacity=".22">
+      <path d="M380 790 C520 718 652 653 770 615 M2030 790 C1880 714 1750 650 1630 610" stroke="#777c7e" stroke-width="3" stroke-dasharray="2 15" fill="none"/>
+      <path d="M646 2684 C930 2701 1470 2703 1753 2682" stroke="#777c7e" stroke-width="2" stroke-dasharray="3 17" fill="none"/>
+    </g>
+  </svg>
