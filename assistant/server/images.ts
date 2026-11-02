@@ -4,7 +4,7 @@ import net from 'node:net'
 // Finds the main photo of a public web page (og:image / twitter:image) so image cards can
 // show real pictures from the pages Claude found. Only public http(s) hosts are fetched.
 
-const TIMEOUT_MS = 6000
+const TIMEOUT_MS = 3500
 const MAX_BYTES = 1_500_000
 const MAX_REDIRECTS = 3
 const cache = new Map<string, string | null>()

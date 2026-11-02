@@ -5,6 +5,7 @@ import type { Card, Source, TurnEvent, TurnRequest } from '../shared/protocol.ts
 import { config } from './config.ts'
 import { findPageImage } from './images.ts'
 import { estimateCost } from './pricing.ts'
+import { ReplySplitter } from './reply.ts'
 
 type Emit = (event: TurnEvent) => void
 
@@ -15,96 +16,44 @@ const MAX_ITERATIONS = 8
 const SYSTEM = `You are Lumen, a voice-first personal assistant made by Lumen Labs, a digital studio in South Africa. You run inside a futuristic heads-up display: your words are spoken aloud by text-to-speech, and you can place visual cards on the screen.
 
 How to answer:
-- Your final reply is read aloud. Write natural spoken prose: no markdown, no bullet points, no headings, no URLs, no emoji. Say numbers the way a person would say them.
-- Be warm, sharp and brief. Lead with the answer. Quick mode: one to three sentences. Deep mode: a spoken briefing of four to seven sentences that covers what the cards show.
+- Start with your spoken reply. It is read aloud the moment you write it, so lead with the answer itself. Write natural spoken prose: no markdown, no bullet points, no headings, no URLs, no emoji. Say numbers the way a person would say them.
+- Be warm, sharp and brief. Quick mode: one to three sentences. Deep mode: a spoken briefing of four to seven sentences that covers what the cards show.
 - For small talk or simple questions you can answer reliably, just reply. No search, no cards.
-- Use web_search for anything current, local, factual that you are not certain of, or whenever the user asks you to look something up. Never guess at news, prices, scores, weather or schedules.
+- Use web_search for anything current, local, or factual that you are not certain of, or whenever the user asks you to look something up. Never guess at news, prices, scores, weather or schedules. In Quick mode, one or two well-chosen searches is usually enough; answer stable general knowledge without searching.
 
-Cards (show_card):
-- Use cards when they add something the voice cannot: a headline figure (stat), a comparison or trend (chart), steps or options (list), a short explainer (text), or a real photo (image).
-- Whenever you searched the web about something visual (a place, product, person, event, device, animal, food, building), include image cards so the user sees real pictures. Quick mode: one image card. Deep mode: two to four image cards from different pages.
-- An image card's page_url must be copied exactly from your web_search results; the screen shows that page's main photo. Prefer articles, product pages and encyclopedia pages over home pages.
-- Quick mode: at most three cards. Deep mode: build a research wall of six to twelve cards that mixes stats, at least one chart when real numbers exist, lists or text, and images.
-- Charts and stats must use real figures from your sources; never invent data. Put the unit in unit, and name the source and year in caption.
-- Keep titles short (two to six words). Keep text cards to three sentences at most.
-- Do not make a sources card. The screen lists your sources automatically.
-- Put every show_card call in a single message, then give your spoken reply after the results come back.
+Cards:
+After your spoken reply you may add cards for the screen. Write a line containing only [[cards]], then a JSON array of card objects. Everything before [[cards]] is spoken; nothing after it is. Use plain JSON, no code fences, and leave the section out entirely when no cards are needed. Example:
+The Moon is about three hundred and eighty four thousand kilometres away.
+[[cards]]
+[{"kind":"stat","title":"Earth to Moon","value":"384,400","unit":"km","caption":"Average distance, NASA"}]
 
-Timers: use set_timer when the user asks for a timer or a reminder in the next few hours.
+Card kinds and fields:
+- stat: title, value (the headline figure as text), unit, caption
+- chart: title, bars (two to eight objects with label and a numeric value), unit, caption
+- list: title, items (two to six short strings), caption
+- text: title, body (at most three sentences)
+- image: title, page_url, caption. page_url must be copied exactly from your web_search results; the screen shows that page's main photo. Prefer article, product and encyclopedia pages over home pages.
+- timer: seconds, label. Starts a countdown that rings on screen. Use it for timers and reminders in the next few hours.
 
-Photos: when the user shares a photo, look closely. Say what it is in your first sentence, then explain what matters. Read any visible text exactly. Search the web when identifying a product, plant, landmark, part or error message needs confirming, or when they ask about prices or where to buy, and show cards as usual. Do not identify real people from their faces; describe them instead. If the photo is unclear, say what you can see and what would help.
+Card guidance:
+- Use cards when they add something the voice cannot: a headline figure, a comparison or trend, steps or options, a short explainer, or a real photo.
+- Whenever you searched the web about something visual (a place, product, person, event, device, animal, food, building), include image cards. Quick mode: one image card. Deep mode: two to four image cards from different pages.
+- Quick mode: at most three cards. Deep mode: a research wall of six to twelve cards that mixes stats, at least one chart when real numbers exist, lists or text, and images.
+- Charts and stats must use real figures from your sources; never invent data. Name the source and year in caption.
+- Keep titles to two to six words. Do not make a sources card; the screen lists your sources automatically.
+
+Photos: when the user shares a photo, look closely. Say what it is in your first sentence, then explain what matters. Read any visible text exactly. Search the web when identifying a product, plant, landmark, part or error message needs confirming, or when they ask about prices or where to buy. Do not identify real people from their faces; describe them instead. If the photo is unclear, say what you can see and what would help.
 
 Briefings: when asked for a briefing, sound like a calm, upbeat morning radio host. Greet the user in a way that fits the time of day, keep it to five to seven spoken sentences, and let the cards carry the detail.
 
 The user is usually in South Africa: use metric units and rand (R) for prices unless asked otherwise.`
-
-const cardTool: Anthropic.Beta.BetaTool = {
-  name: 'show_card',
-  description:
-    "Place one visual card on the user's screen. kind decides which fields are used: stat (value, unit, caption), chart (bars, unit, caption), list (items, caption), text (body), image (page_url, caption).",
-  eager_input_streaming: true,
-  input_schema: {
-    type: 'object',
-    properties: {
-      kind: { type: 'string', enum: ['stat', 'chart', 'list', 'text', 'image'] },
-      title: { type: 'string', description: 'Short label, two to six words.' },
-      value: {
-        type: 'string',
-        description: 'stat: the headline figure, e.g. "384,400" or "R18.42".',
-      },
-      unit: {
-        type: 'string',
-        description: 'stat/chart: unit, e.g. "km", "%", "million units".',
-      },
-      caption: {
-        type: 'string',
-        description:
-          'One line of context. For stats and charts, name the source and year.',
-      },
-      body: { type: 'string', description: 'text: one to three sentences.' },
-      items: {
-        type: 'array',
-        items: { type: 'string' },
-        description: 'list: two to six short items.',
-      },
-      bars: {
-        type: 'array',
-        description: 'chart: two to eight bars with real values.',
-        items: {
-          type: 'object',
-          properties: { label: { type: 'string' }, value: { type: 'number' } },
-          required: ['label', 'value'],
-        },
-      },
-      page_url: {
-        type: 'string',
-        description: 'image: a page URL copied exactly from your web_search results.',
-      },
-    },
-    required: ['kind', 'title'],
-  },
-}
-
-const timerTool: Anthropic.Beta.BetaTool = {
-  name: 'set_timer',
-  description: "Start a countdown timer on the user's screen. It rings when finished.",
-  eager_input_streaming: true,
-  input_schema: {
-    type: 'object',
-    properties: {
-      seconds: { type: 'integer', description: 'Duration in seconds, 1 to 86400.' },
-      label: { type: 'string', description: 'What the timer is for, e.g. "Pasta".' },
-    },
-    required: ['seconds', 'label'],
-  },
-}
 
 const text = (max: number) => z.string().trim().min(1).max(max)
 const CardInput = z.discriminatedUnion('kind', [
   z.object({
     kind: z.literal('stat'),
     title: text(80),
-    value: text(40),
+    value: z.coerce.string().trim().min(1).max(40),
     unit: z.string().trim().max(40).optional(),
     caption: z.string().trim().max(200).optional(),
   }),
@@ -114,7 +63,7 @@ const CardInput = z.discriminatedUnion('kind', [
     unit: z.string().trim().max(40).optional(),
     caption: z.string().trim().max(200).optional(),
     bars: z
-      .array(z.object({ label: text(40), value: z.number().finite() }))
+      .array(z.object({ label: text(40), value: z.coerce.number().finite() }))
       .min(2)
       .max(8),
   }),
@@ -131,11 +80,12 @@ const CardInput = z.discriminatedUnion('kind', [
     page_url: z.url(),
     caption: z.string().trim().max(200).optional(),
   }),
+  z.object({
+    kind: z.literal('timer'),
+    seconds: z.coerce.number().int().min(1).max(86_400),
+    label: z.string().trim().max(60).optional(),
+  }),
 ])
-const TimerInput = z.object({
-  seconds: z.number().int().min(1).max(86_400),
-  label: z.string().trim().max(60).default('Timer'),
-})
 
 let client: Anthropic | undefined
 const getClient = () => (client ??= new Anthropic())
@@ -150,11 +100,17 @@ function normalizeUrl(url: string): string {
   }
 }
 
-type Profile = { maxSearches: number; effort: 'low' | 'medium' | 'high'; label: string }
+type Profile = {
+  model: string
+  maxSearches: number
+  effort: 'low' | 'medium' | 'high'
+  label: string
+}
 
 function profileFor(req: TurnRequest): Profile {
   if (req.briefing) {
     return {
+      model: config.model,
       maxSearches: 6,
       effort: 'medium',
       label: 'BRIEFING: run the daily briefing and build a briefing wall of cards.',
@@ -162,16 +118,21 @@ function profileFor(req: TurnRequest): Profile {
   }
   return req.mode === 'deep'
     ? {
+        model: config.model,
         maxSearches: 10,
         effort: 'high',
         label: 'DEEP: research thoroughly and build a full research wall of cards.',
       }
     : {
+        model: config.quickModel,
         maxSearches: 3,
         effort: 'low',
         label: 'QUICK: be fast and brief; at most three cards.',
       }
 }
+
+// Haiku models use the basic web search tool; the newer variant needs Sonnet or Opus.
+const isHaiku = (model: string) => model.startsWith('claude-haiku')
 
 function buildTools(profile: Profile): Anthropic.Beta.BetaToolUnion[] {
   const { city, region, country, timezone } = config.home
@@ -179,15 +140,15 @@ function buildTools(profile: Profile): Anthropic.Beta.BetaToolUnion[] {
     city || region || country || timezone
       ? { type: 'approximate' as const, city, region, country, timezone }
       : undefined
+  const common = {
+    name: 'web_search' as const,
+    max_uses: profile.maxSearches,
+    ...(location ? { user_location: location } : {}),
+  }
   return [
-    {
-      type: 'web_search_20260209',
-      name: 'web_search',
-      max_uses: profile.maxSearches,
-      ...(location ? { user_location: location } : {}),
-    },
-    cardTool,
-    timerTool,
+    isHaiku(profile.model)
+      ? { type: 'web_search_20250305', ...common }
+      : { type: 'web_search_20260209', ...common },
   ]
 }
 
@@ -264,26 +225,71 @@ export async function runTurn(
 
   const tools = buildTools(profile)
   const sources = new Map<string, Source>()
+  const pending: Promise<void>[] = []
   let costUsd = 0
   let searches = 0
-  let parseRetries = 0
+  let composing = false
+
+  // Each card is validated and shown the moment its JSON closes. Photos are looked up in
+  // the background so they never hold up the spoken answer.
+  const handleCard = (json: string) => {
+    let raw: unknown
+    try {
+      raw = JSON.parse(json)
+    } catch {
+      return
+    }
+    const parsed = CardInput.safeParse(raw)
+    if (!parsed.success) return
+    const input = parsed.data
+    const id = crypto.randomUUID()
+    if (input.kind === 'timer') {
+      emit({ type: 'timer', id, seconds: input.seconds, label: input.label || 'Timer' })
+      return
+    }
+    if (!composing) {
+      composing = true
+      emit({ type: 'status', phase: 'composing' })
+    }
+    if (input.kind !== 'image') {
+      const { kind, ...rest } = input
+      emit({ type: 'card', card: { id, kind, ...rest } as Card })
+      return
+    }
+    const known = sources.get(normalizeUrl(input.page_url))
+    if (!known) return
+    pending.push(
+      findPageImage(known.url).then((imageUrl) => {
+        if (!imageUrl || signal.aborted) return
+        emit({
+          type: 'card',
+          card: {
+            id,
+            kind: 'image',
+            title: input.title,
+            caption: input.caption,
+            imageUrl,
+            pageUrl: known.url,
+          },
+        })
+      }),
+    )
+  }
+  const splitter = new ReplySplitter((text) => emit({ type: 'delta', text }), handleCard)
+
+  // Server-side fallback on a policy decline (not offered for Haiku models).
+  const fallback = isHaiku(profile.model)
+    ? {}
+    : { betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' as const }
 
   emit({ type: 'status', phase: 'thinking' })
 
+  // One streamed request per question. The loop only repeats if the server pauses a long
+  // web-search run (pause_turn) and needs it resumed.
   for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
-    const pending: Promise<void>[] = []
-    const results = new Map<string, Anthropic.Beta.BetaToolResultBlockParam>()
-    const reply = (id: string, content: string, isError = false) =>
-      results.set(id, {
-        type: 'tool_result',
-        tool_use_id: id,
-        content,
-        is_error: isError,
-      })
-
     const stream = getClient().beta.messages.stream(
       {
-        model: config.model,
+        model: profile.model,
         max_tokens: 32000,
         system: SYSTEM,
         tools,
@@ -291,13 +297,12 @@ export async function runTurn(
         thinking: { type: 'adaptive' },
         output_config: { effort: profile.effort },
         cache_control: { type: 'ephemeral' },
-        betas: ['server-side-fallback-2026-07-01'],
-        fallbacks: 'default',
+        ...fallback,
       },
       { signal },
     )
 
-    stream.on('text', (delta) => emit({ type: 'delta', text: delta }))
+    stream.on('text', (delta) => splitter.push(delta))
 
     stream.on('contentBlock', (block) => {
       if (block.type === 'server_tool_use' && block.name === 'web_search') {
@@ -316,82 +321,12 @@ export async function runTurn(
           emit({ type: 'sources', items: [...sources.values()] })
         }
         emit({ type: 'status', phase: 'thinking' })
-        return
       }
-      if (block.type !== 'tool_use') return
-
-      if (block.name === 'set_timer') {
-        const parsed = TimerInput.safeParse(block.input)
-        if (!parsed.success)
-          return void reply(block.id, z.prettifyError(parsed.error), true)
-        const id = crypto.randomUUID()
-        emit({
-          type: 'timer',
-          id,
-          seconds: parsed.data.seconds,
-          label: parsed.data.label || 'Timer',
-        })
-        return void reply(block.id, 'Timer started on screen.')
-      }
-
-      if (block.name !== 'show_card') return void reply(block.id, 'Unknown tool.', true)
-      const parsed = CardInput.safeParse(block.input)
-      if (!parsed.success)
-        return void reply(block.id, z.prettifyError(parsed.error), true)
-      const input = parsed.data
-      const id = crypto.randomUUID()
-      emit({ type: 'status', phase: 'composing' })
-
-      if (input.kind !== 'image') {
-        const { kind, ...rest } = input
-        emit({ type: 'card', card: { id, kind, ...rest } as Card })
-        return void reply(block.id, 'Shown.')
-      }
-
-      const known = sources.get(normalizeUrl(input.page_url))
-      if (!known) {
-        return void reply(
-          block.id,
-          'page_url must be copied exactly from your web_search results.',
-          true,
-        )
-      }
-      pending.push(
-        findPageImage(known.url).then((imageUrl) => {
-          if (!imageUrl)
-            return void reply(
-              block.id,
-              'That page has no usable photo, so nothing was shown.',
-            )
-          emit({
-            type: 'card',
-            card: {
-              id,
-              kind: 'image',
-              title: input.title,
-              caption: input.caption,
-              imageUrl,
-              pageUrl: known.url,
-            },
-          })
-          reply(block.id, 'Shown.')
-        }),
-      )
     })
 
-    let message: Anthropic.Beta.BetaMessage
-    try {
-      message = await stream.finalMessage()
-      parseRetries = 0
-    } catch (err) {
-      // With eager input streaming, unparseable tool JSON rejects here; re-issue the turn.
-      if (err instanceof Anthropic.APIError || signal.aborted || parseRetries++ >= 2)
-        throw err
-      continue
-    }
-    await Promise.all(pending)
+    const message = await stream.finalMessage()
 
-    const cost = estimateCost(message.model || config.model, message.usage)
+    const cost = estimateCost(message.model || profile.model, message.usage)
     costUsd += cost
     addSpend(cost)
     searches += message.usage.server_tool_use?.web_search_requests ?? 0
@@ -405,37 +340,11 @@ export async function runTurn(
       messages.push({ role: 'assistant', content: message.content })
       continue
     }
-
-    const toolUses = message.content.filter(
-      (b): b is Anthropic.Beta.BetaToolUseBlock => b.type === 'tool_use',
-    )
-    if (toolUses.length === 0) break
-    if (message.stop_reason === 'max_tokens') {
-      emit({
-        type: 'error',
-        message: 'That answer ran too long. Try a narrower question.',
-      })
-      return
-    }
-
-    messages.push({ role: 'assistant', content: message.content })
-    messages.push({
-      role: 'user',
-      content: toolUses.map(
-        (t) =>
-          results.get(t.id) ?? {
-            type: 'tool_result' as const,
-            tool_use_id: t.id,
-            content: 'Shown.',
-          },
-      ),
-    })
-    if (overBudget()) {
-      emit({ type: 'error', message: "Today's spending cap was reached mid-answer." })
-      return
-    }
+    break
   }
 
+  splitter.end()
+  await Promise.all(pending)
   emit({ type: 'done' })
 }
 

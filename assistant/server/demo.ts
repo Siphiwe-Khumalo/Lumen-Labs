@@ -150,16 +150,22 @@ async function research(req: TurnRequest, emit: Emit, signal: AbortSignal) {
     emit({ type: 'sources', items: RESEARCH_SOURCES.slice(0, (i + 1) * 2) })
     emit({ type: 'usage', costUsd: 0, searches: i + 1 })
   }
-  emit({ type: 'status', phase: 'composing' })
-  for (const card of RESEARCH_CARDS) {
-    await wait(req.mode === 'deep' ? 420 : 300, signal)
-    emit({ type: 'card', card: { ...card, id: id() } })
-  }
-  await speak(
-    "Here's the picture. South Africa is the biggest data centre market in Africa, with most capacity in Johannesburg and Cape Town. Growth is being driven by cloud regions and AI workloads, and power resilience is the main thing everyone is building around. This is demo content, so the figures are illustrative rather than live.",
-    emit,
-    signal,
-  )
+  // Like the live version: Lumen starts talking while the cards land.
+  await Promise.all([
+    speak(
+      "Here's the picture. South Africa is the biggest data centre market in Africa, with most capacity in Johannesburg and Cape Town. Growth is being driven by cloud regions and AI workloads, and power resilience is the main thing everyone is building around. This is demo content, so the figures are illustrative rather than live.",
+      emit,
+      signal,
+    ),
+    (async () => {
+      await wait(1200, signal)
+      emit({ type: 'status', phase: 'composing' })
+      for (const card of RESEARCH_CARDS) {
+        await wait(req.mode === 'deep' ? 420 : 300, signal)
+        emit({ type: 'card', card: { ...card, id: id() } })
+      }
+    })(),
+  ])
 }
 
 async function quick(emit: Emit, signal: AbortSignal) {
@@ -259,16 +265,20 @@ async function briefing(emit: Emit, signal: AbortSignal) {
       caption: 'Illustrative photo for the demo',
     },
   ]
-  for (const card of cards) {
-    await wait(350, signal)
-    emit({ type: 'card', card })
-  }
   emit({ type: 'usage', costUsd: 0, searches: queries.length })
-  await speak(
-    "Good morning. It's a warm one in Joburg, twenty four degrees now with a high of twenty eight, and storms are possible this afternoon, so keep an umbrella close. The rand is a touch firmer at about seventeen eighty four to the dollar. Your headlines are on screen. This is the demo briefing, so the figures are illustrative.",
-    emit,
-    signal,
-  )
+  await Promise.all([
+    speak(
+      "Good morning. It's a warm one in Joburg, twenty four degrees now with a high of twenty eight, and storms are possible this afternoon, so keep an umbrella close. The rand is a touch firmer at about seventeen eighty four to the dollar. Your headlines are on screen. This is the demo briefing, so the figures are illustrative.",
+      emit,
+      signal,
+    ),
+    (async () => {
+      for (const card of cards) {
+        await wait(350, signal)
+        emit({ type: 'card', card })
+      }
+    })(),
+  ])
 }
 
 async function photo(emit: Emit, signal: AbortSignal) {

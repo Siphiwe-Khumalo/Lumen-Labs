@@ -77,20 +77,22 @@ It then opens in its own window with the Lumen ring icon.
 
 ## Settings (`.env` or Render environment)
 
-| Variable                                                 | What it does                                                                                                        |
-| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `ANTHROPIC_API_KEY`                                      | Your Claude API key (required for real answers).                                                                    |
-| `LUMEN_PASSCODE`                                         | Lock-screen passcode. Required online, optional on your laptop.                                                     |
-| `LUMEN_DAILY_BUDGET_USD`                                 | Stop answering after this many dollars per day (resets at midnight UTC and when the server restarts). `0` = no cap. |
-| `LUMEN_HOME_CITY` / `_REGION` / `_COUNTRY` / `_TIMEZONE` | Helps with local questions (weather, news, "near me").                                                              |
-| `LUMEN_MODEL`                                            | Claude model, default `claude-opus-5-5`.                                                                            |
+| Variable                                                 | What it does                                                                                                                                       |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ANTHROPIC_API_KEY`                                      | Your Claude API key (required for real answers).                                                                                                   |
+| `LUMEN_PASSCODE`                                         | Lock-screen passcode. Required online, optional on your laptop.                                                                                    |
+| `LUMEN_DAILY_BUDGET_USD`                                 | Stop answering after this many dollars per day (resets at midnight UTC and when the server restarts). `0` = no cap.                                |
+| `LUMEN_HOME_CITY` / `_REGION` / `_COUNTRY` / `_TIMEZONE` | Helps with local questions (weather, news, "near me").                                                                                             |
+| `LUMEN_MODEL`                                            | Claude model, default `claude-opus-5-5`.                                                                                                           |
+| `LUMEN_QUICK_MODEL`                                      | Model for Quick mode only, e.g. `claude-sonnet-5-5` (faster, half the price) or `claude-haiku-5-5` (fastest, cheapest). Defaults to `LUMEN_MODEL`. |
 
 ## How it works
 
 ```text
 assistant/
 ├── server/          Node + Express. Holds the API key; the browser never sees it.
-│   ├── agent.ts     Claude loop: web search, show_card and set_timer tools, streamed to the HUD
+│   ├── agent.ts     One streamed Claude request per question, with web search
+│   ├── reply.ts     Splits the reply into spoken text and cards as it streams
 │   ├── images.ts    Finds the main photo (og:image) of pages Claude found, public sites only
 │   ├── auth.ts      Passcode lock: signed HttpOnly cookie, rate-limited attempts
 │   ├── demo.ts      Scripted answers for `npm run demo`
@@ -101,10 +103,10 @@ assistant/
 ```
 
 1. Your voice is turned into text by the browser (Web Speech API).
-2. The server sends it to Claude with three tools: **web search**, **show_card** (stat, chart, list,
-   text or image) and **set_timer**.
-3. As Claude works, each search, source and card streams to the screen immediately, which is
-   why the wall builds up live.
+2. The server sends it to Claude in a single streamed request, with web search available.
+3. Claude writes the spoken answer first, so Lumen starts talking on the first sentence. The cards
+   (stat, chart, list, text, image, timer) follow in the same reply after a `[[cards]]` marker and
+   appear one by one while it speaks. Searches and sources show up as they happen.
 4. Image cards must come from pages in Claude's search results. The server reads that page's
    preview image, so photos are real and come with their source link.
 5. The spoken answer is read aloud sentence by sentence while it streams in.
