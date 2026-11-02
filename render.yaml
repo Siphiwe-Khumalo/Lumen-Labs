@@ -30,6 +30,8 @@ services:
         sync: false
       - key: LUMEN_DAILY_BUDGET_USD
         value: '3'
+      - key: LUMEN_QUICK_MODEL
+        value: claude-sonnet-5-5
       - key: LUMEN_HOME_CITY
         value: Johannesburg
       - key: LUMEN_HOME_REGION

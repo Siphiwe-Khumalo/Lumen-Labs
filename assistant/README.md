@@ -9,7 +9,8 @@ This folder is a separate app. It does not touch the Lumen Labs website in the r
 ## What it does
 
 - **Talk or type.** Click the ring, tap the mic, or press <kbd>Space</kbd>. Press <kbd>Esc</kbd> to stop.
-- **Quick mode** (default): fast answers, up to 3 web searches and 3 cards. Usually under $0.30.
+- **Quick mode** (default, runs on Claude Sonnet for speed): fast answers, up to 3 web searches and
+  3 cards. Usually under $0.15.
 - **Deep mode**: a full research wall (research status card, stats, charts, photos, sources), up to
   10 searches. Roughly $0.50 to $1.50 per question.
 - **Keep talking**: after a spoken answer, the mic reopens for a few seconds so you can just ask a
@@ -77,14 +78,14 @@ It then opens in its own window with the Lumen ring icon.
 
 ## Settings (`.env` or Render environment)
 
-| Variable                                                 | What it does                                                                                                                                       |
-| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ANTHROPIC_API_KEY`                                      | Your Claude API key (required for real answers).                                                                                                   |
-| `LUMEN_PASSCODE`                                         | Lock-screen passcode. Required online, optional on your laptop.                                                                                    |
-| `LUMEN_DAILY_BUDGET_USD`                                 | Stop answering after this many dollars per day (resets at midnight UTC and when the server restarts). `0` = no cap.                                |
-| `LUMEN_HOME_CITY` / `_REGION` / `_COUNTRY` / `_TIMEZONE` | Helps with local questions (weather, news, "near me").                                                                                             |
-| `LUMEN_MODEL`                                            | Claude model, default `claude-opus-5-5`.                                                                                                           |
-| `LUMEN_QUICK_MODEL`                                      | Model for Quick mode only, e.g. `claude-sonnet-5-5` (faster, half the price) or `claude-haiku-5-5` (fastest, cheapest). Defaults to `LUMEN_MODEL`. |
+| Variable                                                 | What it does                                                                                                              |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `ANTHROPIC_API_KEY`                                      | Your Claude API key (required for real answers).                                                                          |
+| `LUMEN_PASSCODE`                                         | Lock-screen passcode. Required online, optional on your laptop.                                                           |
+| `LUMEN_DAILY_BUDGET_USD`                                 | Stop answering after this many dollars per day (resets at midnight UTC and when the server restarts). `0` = no cap.       |
+| `LUMEN_HOME_CITY` / `_REGION` / `_COUNTRY` / `_TIMEZONE` | Helps with local questions (weather, news, "near me").                                                                    |
+| `LUMEN_MODEL`                                            | Model for Deep research and briefings, default `claude-opus-5-5`.                                                         |
+| `LUMEN_QUICK_MODEL`                                      | Model for Quick mode, default `claude-sonnet-5-5` (fast, half the price). `claude-haiku-5-5` is the fastest and cheapest. |
 
 ## How it works
 

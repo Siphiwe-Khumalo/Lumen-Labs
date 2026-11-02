@@ -22,9 +22,8 @@ export const config = {
   port: Number(process.env.PORT ?? 3000),
   host: optional('LUMEN_HOST') ?? (prod ? '0.0.0.0' : '127.0.0.1'),
   model: optional('LUMEN_MODEL') ?? 'claude-opus-5-5',
-  /** Model for Quick mode; defaults to LUMEN_MODEL. A faster model here speeds up everyday questions. */
-  quickModel:
-    optional('LUMEN_QUICK_MODEL') ?? optional('LUMEN_MODEL') ?? 'claude-opus-5-5',
+  /** Model for Quick mode: Sonnet answers everyday questions about twice as fast, at half the price. */
+  quickModel: optional('LUMEN_QUICK_MODEL') ?? 'claude-sonnet-5-5',
   passcode: optional('LUMEN_PASSCODE') ?? '',
   sessionSecret: optional('LUMEN_SESSION_SECRET'),
   dailyBudgetUsd: Number(optional('LUMEN_DAILY_BUDGET_USD') ?? 0) || 0,
