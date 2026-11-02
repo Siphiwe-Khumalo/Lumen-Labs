@@ -33,6 +33,8 @@ const PREFS_KEY = 'lumen.prefs.v1'
 const MAX_HISTORY = 30
 const BOOT_MS = 2600
 const PHOTO_QUESTION = "What's this? Tell me what you see."
+// Said the moment a web search starts, so there's never a silent wait.
+const ACKS = ['One sec.', 'Let me check.', 'Checking now.', 'On it.', 'Looking that up.']
 const BRIEFING_PATTERN =
   /^(brief me|(give me )?(my |the )?(morning |daily |evening )?briefing|morning brief)\b/i
 
@@ -105,6 +107,8 @@ export default function App() {
   const [booting, setBooting] = useState(true)
   const abortRef = useRef<AbortController | null>(null)
   const costSeen = useRef(new Map<string, number>())
+  /** Exchanges that have already spoken (an acknowledgement or the answer). */
+  const spokeFor = useRef(new Set<string>())
   /** The power-up sound plays once, on the first interaction shortly after launch. */
   const bootSoundPending = useRef(true)
   const now = useClock()
@@ -176,6 +180,10 @@ export default function App() {
         case 'status':
           return update(id, (x) => ({ ...x, phase: e.phase }))
         case 'search':
+          if (!spokeFor.current.has(id)) {
+            spokeFor.current.add(id)
+            speech.say(ACKS[Math.floor(Math.random() * ACKS.length)])
+          }
           return update(id, (x) => ({ ...x, searches: [...x.searches, e.query] }))
         case 'sources':
           return update(id, (x) => ({ ...x, sources: e.items }))
@@ -185,6 +193,7 @@ export default function App() {
         case 'timer':
           return addTimer(e.id, e.seconds, e.label)
         case 'delta':
+          spokeFor.current.add(id)
           speech.feed(e.text)
           return update(id, (x) => ({ ...x, answer: x.answer + e.text }))
         case 'usage': {

@@ -6,6 +6,7 @@ import { config } from './config.ts'
 import { findPageImage } from './images.ts'
 import { estimateCost } from './pricing.ts'
 import { ReplySplitter } from './reply.ts'
+import { homeWeather, isWeatherQuestion } from './weather.ts'
 
 type Emit = (event: TurnEvent) => void
 
@@ -43,6 +44,8 @@ Card guidance:
 - Keep titles to two to six words. Do not make a sources card; the screen lists your sources automatically.
 
 Photos: when the user shares a photo, look closely. Say what it is in your first sentence, then explain what matters. Read any visible text exactly. Search the web when identifying a product, plant, landmark, part or error message needs confirming, or when they ask about prices or where to buy. Do not identify real people from their faces; describe them instead. If the photo is unclear, say what you can see and what would help.
+
+Weather: when the context includes a <weather> block and it covers the place the user asked about, answer from it straight away without searching. Show a stat card with the temperature now and a list card for the day, with Open-Meteo in the caption. Search only for a different place or for warnings the block does not cover.
 
 Briefings: when asked for a briefing, sound like a calm, upbeat morning radio host. Greet the user in a way that fits the time of day, keep it to five to seven spoken sentences, and let the cards carry the detail.
 
@@ -101,6 +104,7 @@ function normalizeUrl(url: string): string {
 }
 
 type Profile = {
+  quick: boolean
   model: string
   maxSearches: number
   effort: 'low' | 'medium' | 'high'
@@ -110,6 +114,7 @@ type Profile = {
 function profileFor(req: TurnRequest): Profile {
   if (req.briefing) {
     return {
+      quick: false,
       model: config.model,
       maxSearches: 6,
       effort: 'medium',
@@ -118,12 +123,14 @@ function profileFor(req: TurnRequest): Profile {
   }
   return req.mode === 'deep'
     ? {
+        quick: false,
         model: config.model,
         maxSearches: 10,
         effort: 'high',
         label: 'DEEP: research thoroughly and build a full research wall of cards.',
       }
     : {
+        quick: true,
         model: config.quickModel,
         maxSearches: 3,
         effort: 'low',
@@ -166,16 +173,37 @@ function briefingRequest(): string {
 Add one or two image cards from the top news stories.`
 }
 
-function contextBlock(req: TurnRequest, profile: Profile): string {
-  return `<context>\nMode: ${profile.label}\nUser's local time: ${req.context.localTime} (${req.context.timezone})\n</context>`
+function contextBlock(
+  req: TurnRequest,
+  profile: Profile,
+  weather: string | null,
+): string {
+  const lines = [
+    `Mode: ${profile.label}`,
+    `User's local time: ${req.context.localTime} (${req.context.timezone})`,
+  ]
+  if (weather) lines.push(weather)
+  return `<context>\n${lines.join('\n')}\n</context>`
+}
+
+/**
+ * Quick answers skip extended thinking: it is the main source of delay before the first
+ * spoken word, and simple questions don't need it. Deep research and briefings keep it.
+ */
+function thinkingFor(profile: Profile): Anthropic.Beta.BetaThinkingConfigParam {
+  if (!profile.quick) return { type: 'adaptive' }
+  if (profile.model.startsWith('claude-sonnet-5-5')) return { type: 'between_tools' }
+  if (isHaiku(profile.model)) return { type: 'disabled' }
+  return { type: 'adaptive' }
 }
 
 function userContent(
   req: TurnRequest,
   profile: Profile,
+  weather: string | null,
 ): Anthropic.Beta.BetaMessageContentParam {
   const ask = req.briefing ? briefingRequest() : req.text
-  const text = `${contextBlock(req, profile)}\n\n${ask}`
+  const text = `${contextBlock(req, profile, weather)}\n\n${ask}`
   if (!req.image) return text
   return [
     {
@@ -221,7 +249,10 @@ export async function runTurn(
     )
   }
   const profile = profileFor(req)
-  messages.push({ role: 'user', content: userContent(req, profile) })
+  // Weather questions and briefings get the live home forecast up front (~0.3s) so Claude
+  // can usually skip a multi-second web search.
+  const weather = req.briefing || isWeatherQuestion(req.text) ? await homeWeather() : null
+  messages.push({ role: 'user', content: userContent(req, profile, weather) })
 
   const tools = buildTools(profile)
   const sources = new Map<string, Source>()
@@ -294,7 +325,7 @@ export async function runTurn(
         system: SYSTEM,
         tools,
         messages,
-        thinking: { type: 'adaptive' },
+        thinking: thinkingFor(profile),
         output_config: { effort: profile.effort },
         cache_control: { type: 'ephemeral' },
         ...fallback,

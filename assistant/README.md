@@ -23,6 +23,10 @@ This folder is a separate app. It does not touch the Lumen Labs website in the r
   read out like a morning radio host. About $0.30 to $0.70.
 - **Sound design**: a power-up sequence on launch, blips when the mic opens and closes, and soft
   ticks as cards land. All synthesised in the browser, no audio files.
+- **Fast weather**: weather questions use a live forecast for your home city from
+  [Open-Meteo](https://open-meteo.com) (free, no key), so Lumen can answer without a web search.
+- **Snappy Quick mode**: Quick answers run on Sonnet with extended thinking switched off, and
+  Lumen says "One sec…" the moment it starts a web search, so there is no silent wait.
 - **Timers**: "set a 10 minute timer". It rings, vibrates on Android and says so out loud.
 - **Session cost counter** in the top-right, plus an optional daily spending cap.
 - **Settings**: spoken replies, keep talking and interface sounds on/off, plus **Lock**.
