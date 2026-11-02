@@ -3,7 +3,14 @@
 export type Mode = 'quick' | 'deep'
 
 export type Card =
-  | { id: string; kind: 'stat'; title: string; value: string; unit?: string; caption?: string }
+  | {
+      id: string
+      kind: 'stat'
+      title: string
+      value: string
+      unit?: string
+      caption?: string
+    }
   | {
       id: string
       kind: 'chart'

@@ -13,3 +13,28 @@ services:
       - path: /*
         name: X-Frame-Options
         value: SAMEORIGIN
+
+  # Lumen voice assistant (assistant/). Secrets are entered in the Render dashboard.
+  - type: web
+    name: lumen-assistant
+    runtime: node
+    rootDir: assistant
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: LUMEN_PASSCODE
+        sync: false
+      - key: LUMEN_DAILY_BUDGET_USD
+        value: '3'
+      - key: LUMEN_HOME_CITY
+        value: Johannesburg
+      - key: LUMEN_HOME_REGION
+        value: Gauteng
+      - key: LUMEN_HOME_COUNTRY
+        value: ZA
+      - key: LUMEN_HOME_TIMEZONE
+        value: Africa/Johannesburg

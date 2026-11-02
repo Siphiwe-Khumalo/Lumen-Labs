@@ -68,6 +68,10 @@ https://siphiwe-khumalo.github.io/Lumen-Labs/
 
 `vite.config.ts` only applies the `/Lumen-Labs/` base inside GitHub Actions; Render and local development both serve from `/`.
 
+## Lumen assistant
+
+`assistant/` is a separate app: **Lumen**, a voice-first AI assistant with a heads-up display, powered by Claude. It has its own dependencies and its own Render service (`lumen-assistant` in `render.yaml`). See [`assistant/README.md`](assistant/README.md) for setup.
+
 ## Honesty and remaining inputs
 
 Nothing on the site claims a result that cannot be defended. There are no invented metrics, testimonials, client quotes, or awards.

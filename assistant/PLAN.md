@@ -1,6 +1,7 @@
-# Lumen assistant — build plan (paused, resume Monday)
+# Lumen assistant — build plan
 
-Status: **scaffold only**. `package.json` / lockfile and `shared/protocol.ts` exist; nothing runs yet.
+Status: **v0.1 built** (see `README.md` for setup). Tested end to end in demo mode on desktop and
+phone sizes; the live Claude path still needs a first run with a real API key.
 
 ## What we agreed
 
@@ -47,7 +48,7 @@ Status: **scaffold only**. `package.json` / lockfile and `shared/protocol.ts` ex
 - Deploy: add a second service to the root `render.yaml` with `rootDir: assistant`,
   build `npm ci && npm run build`, start `npm start`, env vars `ANTHROPIC_API_KEY`, `LUMEN_PASSCODE`.
 
-## Before Monday
+## Before going live
 
 - Create an API key at https://platform.claude.com → Settings → API Keys, and add prepaid credit
   (start with $5–10, auto-reload off). Never paste the key into chat or commit it.
