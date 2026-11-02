@@ -236,6 +236,29 @@ export function ResearchCard({ exchange }: { exchange: Exchange }) {
   )
 }
 
+export function PhotoCard({ exchange }: { exchange: Exchange }) {
+  return (
+    <Frame
+      index={0}
+      kind="input"
+      title="Your photo"
+      tag={hexTag(`${exchange.id}-img`)}
+      className="panel--photo"
+      footer={<span>QUERY // {exchange.query}</span>}
+    >
+      {exchange.image ? (
+        <div className="media media--photo">
+          <img src={exchange.image} alt="The photo you shared" />
+          <span className="media__scan" aria-hidden="true" />
+          <span className="media__reticle" aria-hidden="true" />
+        </div>
+      ) : (
+        <p className="prose prose--muted">Photos are not kept in history.</p>
+      )}
+    </Frame>
+  )
+}
+
 export function AnswerCard({ exchange }: { exchange: Exchange }) {
   const running = exchange.status === 'running'
   return (

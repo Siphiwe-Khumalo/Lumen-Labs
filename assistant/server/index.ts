@@ -21,6 +21,8 @@ app.use((_req, res, next) => {
   res.setHeader('Permissions-Policy', 'microphone=(self), camera=(), geolocation=()')
   next()
 })
+// Turns can carry a photo (base64 JPEG, ~0.3–1.5 MB); everything else stays small.
+app.use('/api/turn', express.json({ limit: '8mb' }))
 app.use('/api', express.json({ limit: '256kb' }))
 
 app.get('/api/health', (_req, res) => {
@@ -45,6 +47,16 @@ const TurnRequestSchema = z.object({
     .array(z.object({ user: z.string().max(4000), assistant: z.string().max(6000) }))
     .max(12),
   context: z.object({ timezone: z.string().max(80), localTime: z.string().max(120) }),
+  image: z
+    .object({
+      mediaType: z.enum(['image/jpeg', 'image/png', 'image/webp']),
+      data: z
+        .string()
+        .max(7_000_000)
+        .regex(/^[A-Za-z0-9+/]+={0,2}$/),
+    })
+    .optional(),
+  briefing: z.boolean().optional(),
 })
 
 app.post('/api/turn', requireAuth, async (req, res) => {

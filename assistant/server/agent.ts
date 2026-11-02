@@ -32,6 +32,10 @@ Cards (show_card):
 
 Timers: use set_timer when the user asks for a timer or a reminder in the next few hours.
 
+Photos: when the user shares a photo, look closely. Say what it is in your first sentence, then explain what matters. Read any visible text exactly. Search the web when identifying a product, plant, landmark, part or error message needs confirming, or when they ask about prices or where to buy, and show cards as usual. Do not identify real people from their faces; describe them instead. If the photo is unclear, say what you can see and what would help.
+
+Briefings: when asked for a briefing, sound like a calm, upbeat morning radio host. Greet the user in a way that fits the time of day, keep it to five to seven spoken sentences, and let the cards carry the detail.
+
 The user is usually in South Africa: use metric units and rand (R) for prices unless asked otherwise.`
 
 const cardTool: Anthropic.Beta.BetaTool = {
@@ -146,7 +150,30 @@ function normalizeUrl(url: string): string {
   }
 }
 
-function buildTools(mode: TurnRequest['mode']): Anthropic.Beta.BetaToolUnion[] {
+type Profile = { maxSearches: number; effort: 'low' | 'medium' | 'high'; label: string }
+
+function profileFor(req: TurnRequest): Profile {
+  if (req.briefing) {
+    return {
+      maxSearches: 6,
+      effort: 'medium',
+      label: 'BRIEFING: run the daily briefing and build a briefing wall of cards.',
+    }
+  }
+  return req.mode === 'deep'
+    ? {
+        maxSearches: 10,
+        effort: 'high',
+        label: 'DEEP: research thoroughly and build a full research wall of cards.',
+      }
+    : {
+        maxSearches: 3,
+        effort: 'low',
+        label: 'QUICK: be fast and brief; at most three cards.',
+      }
+}
+
+function buildTools(profile: Profile): Anthropic.Beta.BetaToolUnion[] {
   const { city, region, country, timezone } = config.home
   const location =
     city || region || country || timezone
@@ -156,7 +183,7 @@ function buildTools(mode: TurnRequest['mode']): Anthropic.Beta.BetaToolUnion[] {
     {
       type: 'web_search_20260209',
       name: 'web_search',
-      max_uses: mode === 'deep' ? 10 : 3,
+      max_uses: profile.maxSearches,
       ...(location ? { user_location: location } : {}),
     },
     cardTool,
@@ -164,12 +191,38 @@ function buildTools(mode: TurnRequest['mode']): Anthropic.Beta.BetaToolUnion[] {
   ]
 }
 
-function contextBlock(req: TurnRequest): string {
-  const mode =
-    req.mode === 'deep'
-      ? 'DEEP: research thoroughly and build a full research wall of cards.'
-      : 'QUICK: be fast and brief; at most three cards.'
-  return `<context>\nMode: ${mode}\nUser's local time: ${req.context.localTime} (${req.context.timezone})\n</context>`
+function briefingRequest(): string {
+  const where =
+    [config.home.city, config.home.region, config.home.country]
+      .filter(Boolean)
+      .join(', ') || 'my area in South Africa'
+  return `Give me my daily briefing. Cover, in this order:
+1. Weather today in ${where}: a stat card with the current temperature or today's high, and a list card with the high and low, chance of rain and wind.
+2. Top South African news: a list card with three to five headlines, one short line each.
+3. The biggest world headline, in one sentence.
+4. Markets: a stat card with the current US dollar to rand rate, and its direction today if you can find it.
+5. Any announced load-shedding, severe weather or major traffic warnings for my area. Skip this silently if there are none.
+Add one or two image cards from the top news stories.`
+}
+
+function contextBlock(req: TurnRequest, profile: Profile): string {
+  return `<context>\nMode: ${profile.label}\nUser's local time: ${req.context.localTime} (${req.context.timezone})\n</context>`
+}
+
+function userContent(
+  req: TurnRequest,
+  profile: Profile,
+): Anthropic.Beta.BetaMessageContentParam {
+  const ask = req.briefing ? briefingRequest() : req.text
+  const text = `${contextBlock(req, profile)}\n\n${ask}`
+  if (!req.image) return text
+  return [
+    {
+      type: 'image',
+      source: { type: 'base64', media_type: req.image.mediaType, data: req.image.data },
+    },
+    { type: 'text', text },
+  ]
 }
 
 export class SpendCapError extends Error {}
@@ -206,9 +259,10 @@ export async function runTurn(
       { role: 'assistant', content: turn.assistant },
     )
   }
-  messages.push({ role: 'user', content: `${contextBlock(req)}\n\n${req.text}` })
+  const profile = profileFor(req)
+  messages.push({ role: 'user', content: userContent(req, profile) })
 
-  const tools = buildTools(req.mode)
+  const tools = buildTools(profile)
   const sources = new Map<string, Source>()
   let costUsd = 0
   let searches = 0
@@ -235,7 +289,7 @@ export async function runTurn(
         tools,
         messages,
         thinking: { type: 'adaptive' },
-        output_config: { effort: req.mode === 'deep' ? 'high' : 'low' },
+        output_config: { effort: profile.effort },
         cache_control: { type: 'ephemeral' },
         betas: ['server-side-fallback-2026-07-01'],
         fallbacks: 'default',

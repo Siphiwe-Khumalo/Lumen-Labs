@@ -12,16 +12,28 @@ This folder is a separate app. It does not touch the Lumen Labs website in the r
 - **Quick mode** (default): fast answers, up to 3 web searches and 3 cards. Usually under $0.30.
 - **Deep mode**: a full research wall (research status card, stats, charts, photos, sources), up to
   10 searches. Roughly $0.50 to $1.50 per question.
+- **Keep talking**: after a spoken answer, the mic reopens for a few seconds so you can just ask a
+  follow-up. Stay quiet and it closes by itself. Turn it off in **Settings**.
+- **Show it something**: tap the camera lens (opens the camera on Android), or paste / drag a photo
+  onto the screen on your laptop. Ask about it, or stay quiet and Lumen describes it. It reads text,
+  identifies things and looks them up. Photos are never saved to history. About $0.02 to $0.10.
+- **Daily briefing**: **Brief me**, the briefing button on the home screen, or say "brief me". Weather
+  for your area, South African headlines, the dollar/rand rate and any warnings, as a card wall
+  read out like a morning radio host. About $0.30 to $0.70.
+- **Sound design**: a power-up sequence on launch, blips when the mic opens and closes, and soft
+  ticks as cards land. All synthesised in the browser, no audio files.
 - **Timers**: "set a 10 minute timer". It rings, vibrates on Android and says so out loud.
 - **Session cost counter** in the top-right, plus an optional daily spending cap.
-- **History**, **Clear view**, **Voice on/off**, **Mute** (mic), and a **passcode lock** when online.
+- **Settings**: spoken replies, keep talking and interface sounds on/off, plus **Lock**.
+- **History**, **Clear view**, **Text** mode, **Mute** (mic), and a **passcode lock** when online.
 - **Installable** on Windows (Chrome/Edge) and Android (Chrome) as its own app with an icon.
 
 ## Run it on your Windows laptop
 
 You need [Node.js 22 LTS](https://nodejs.org) installed once.
 
-1. Open a terminal (PowerShell) in this `assistant` folder.
+1. Open **Command Prompt** in this `assistant` folder (type `cmd` in File Explorer's address bar).
+   PowerShell may block `npm` with a "running scripts is disabled" error.
 2. Install the building blocks (first time only):
    ```bash
    npm install

@@ -3,11 +3,19 @@ import type { HistoryTurn, Mode, SessionInfo, TurnEvent } from '../shared/protoc
 import {
   AnswerCard,
   CardView,
+  PhotoCard,
   ResearchCard,
   SourcesCard,
   TimerCard,
 } from './components/Cards.tsx'
-import { BottomBar, HistoryDrawer, LockScreen, TopBar } from './components/Chrome.tsx'
+import {
+  BootSequence,
+  BottomBar,
+  HistoryDrawer,
+  LockScreen,
+  TopBar,
+  type Settings,
+} from './components/Chrome.tsx'
 import { Orb, type OrbState } from './components/Orb.tsx'
 import { useMicMeter } from './hooks/useMicMeter.ts'
 import { useSpeechIn } from './hooks/useSpeechIn.ts'
@@ -15,21 +23,39 @@ import { useSpeechOut } from './hooks/useSpeechOut.ts'
 import { useTimers } from './hooks/useTimers.ts'
 import { getSession, LockedError, login, logout, streamTurn } from './lib/api.ts'
 import { greeting } from './lib/format.ts'
+import { prepareImage, type Attachment } from './lib/image.ts'
+import { primeAudio, setSoundEnabled, sfx } from './lib/sfx.ts'
 import { load, save } from './lib/storage.ts'
 import type { Exchange } from './lib/types.ts'
 
 const HISTORY_KEY = 'lumen.history.v1'
 const PREFS_KEY = 'lumen.prefs.v1'
 const MAX_HISTORY = 30
+const BOOT_MS = 2600
+const PHOTO_QUESTION = "What's this? Tell me what you see."
+const BRIEFING_PATTERN =
+  /^(brief me|(give me )?(my |the )?(morning |daily |evening )?briefing|morning brief)\b/i
 
-type Prefs = { mode: Mode; voiceOn: boolean }
+type Prefs = Settings & { mode: Mode }
+type AskOptions = { voice?: boolean; briefing?: boolean }
+
+const DEFAULT_PREFS: Prefs = {
+  mode: 'quick',
+  voiceOn: true,
+  soundOn: true,
+  converse: true,
+}
 
 function toHistory(exchanges: Exchange[]): HistoryTurn[] {
   return exchanges
     .filter((x) => x.status === 'done' && x.answer.trim())
     .slice(-6)
     .map((x) => ({
-      user: x.query,
+      user: x.briefing
+        ? 'Give me my daily briefing.'
+        : x.hasImage
+          ? `[I shared a photo] ${x.query}`
+          : x.query,
       assistant: x.cards.length
         ? `${x.answer}\n[Cards shown: ${x.cards.map((c) => c.title).join('; ')}]`
         : x.answer,
@@ -45,12 +71,22 @@ function useClock() {
   return now
 }
 
+/** Keeps a ref pointing at the latest value, for callbacks that outlive a render. */
+function useLatest<T>(value: T) {
+  const ref = useRef(value)
+  useEffect(() => {
+    ref.current = value
+  })
+  return ref
+}
+
 export default function App() {
   const [session, setSession] = useState<SessionInfo | null>(null)
   const [offline, setOffline] = useState<string | null>(null)
-  const [prefs, setPrefs] = useState<Prefs>(() =>
-    load(PREFS_KEY, { mode: 'quick', voiceOn: true }),
-  )
+  const [prefs, setPrefs] = useState<Prefs>(() => ({
+    ...DEFAULT_PREFS,
+    ...load<Partial<Prefs>>(PREFS_KEY, {}),
+  }))
   const [exchanges, setExchanges] = useState<Exchange[]>(() =>
     load<Exchange[]>(HISTORY_KEY, []).filter((x) => x.status !== 'running'),
   )
@@ -63,13 +99,28 @@ export default function App() {
   const [historyOpen, setHistoryOpen] = useState(false)
   const [micMuted, setMicMuted] = useState(false)
   const [sessionCost, setSessionCost] = useState(0)
+  const [attachment, setAttachment] = useState<Attachment | null>(null)
+  const [followUpFor, setFollowUpFor] = useState<string | null>(null)
+  const [notice, setNotice] = useState<string | null>(null)
+  const [booting, setBooting] = useState(true)
   const abortRef = useRef<AbortController | null>(null)
   const costSeen = useRef(new Map<string, number>())
+  /** The power-up sound plays once, on the first interaction shortly after launch. */
+  const bootSoundPending = useRef(true)
   const now = useClock()
 
+  const prefsRef = useLatest(prefs)
+  const attachmentRef = useLatest(attachment)
+  const micMutedRef = useLatest(micMuted)
+
   useEffect(() => save(PREFS_KEY, prefs), [prefs])
+  useEffect(() => setSoundEnabled(prefs.soundOn), [prefs.soundOn])
   useEffect(() => {
-    const done = exchanges.filter((x) => x.status !== 'running').slice(-MAX_HISTORY)
+    // Photos stay in memory only; history keeps the text.
+    const done = exchanges
+      .filter((x) => x.status !== 'running')
+      .slice(-MAX_HISTORY)
+      .map((x) => ({ ...x, image: undefined }))
     save(HISTORY_KEY, done)
   }, [exchanges])
 
@@ -77,6 +128,37 @@ export default function App() {
     getSession()
       .then(setSession)
       .catch((e: Error) => setOffline(e.message))
+  }, [])
+
+  useEffect(() => {
+    const id = setTimeout(() => setBooting(false), BOOT_MS)
+    const late = setTimeout(() => {
+      bootSoundPending.current = false
+    }, 6000)
+    return () => {
+      clearTimeout(id)
+      clearTimeout(late)
+    }
+  }, [])
+
+  // Browsers only allow sound after a gesture: unlock audio on the first tap or key,
+  // and play the power-up if that happens while the HUD is still booting.
+  useEffect(() => {
+    const first = () => {
+      primeAudio()
+      if (bootSoundPending.current) {
+        bootSoundPending.current = false
+        sfx.boot()
+      }
+      window.removeEventListener('pointerdown', first)
+      window.removeEventListener('keydown', first)
+    }
+    window.addEventListener('pointerdown', first)
+    window.addEventListener('keydown', first)
+    return () => {
+      window.removeEventListener('pointerdown', first)
+      window.removeEventListener('keydown', first)
+    }
   }, [])
 
   const speech = useSpeechOut(prefs.voiceOn)
@@ -98,6 +180,7 @@ export default function App() {
         case 'sources':
           return update(id, (x) => ({ ...x, sources: e.items }))
         case 'card':
+          sfx.card()
           return update(id, (x) => ({ ...x, cards: [...x.cards, e.card] }))
         case 'timer':
           return addTimer(e.id, e.seconds, e.label)
@@ -111,6 +194,7 @@ export default function App() {
           return update(id, (x) => ({ ...x, costUsd: e.costUsd }))
         }
         case 'error':
+          sfx.error()
           speech.flush()
           return update(id, (x) => ({
             ...x,
@@ -119,6 +203,7 @@ export default function App() {
             endedAt: Date.now(),
           }))
         case 'done':
+          sfx.done()
           speech.flush()
           return update(id, (x) =>
             x.status === 'running' ? { ...x, status: 'done', endedAt: Date.now() } : x,
@@ -129,14 +214,27 @@ export default function App() {
   )
 
   const ask = useCallback(
-    async (text: string) => {
+    async (rawText: string, opts: AskOptions = {}) => {
       abortRef.current?.abort()
       speech.cancel()
+      setFollowUpFor(null)
+      setNotice(null)
       const controller = new AbortController()
       abortRef.current = controller
+
+      const text = rawText.trim()
+      const briefing = Boolean(opts.briefing) || BRIEFING_PATTERN.test(text)
+      const image = briefing ? null : attachmentRef.current
+      setAttachment(null)
+      const dateLabel = new Date().toLocaleDateString(undefined, {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+      })
+
       const exchange: Exchange = {
         id: crypto.randomUUID(),
-        query: text,
+        query: briefing ? `Daily briefing // ${dateLabel}` : text,
         mode: prefs.mode,
         startedAt: Date.now(),
         answer: '',
@@ -146,16 +244,21 @@ export default function App() {
         costUsd: 0,
         status: 'running',
         phase: 'thinking',
+        voice: opts.voice,
+        briefing,
+        hasImage: Boolean(image),
+        image: image?.preview,
       }
       const history = toHistory(exchanges)
       setExchanges((list) => [...list, exchange])
       setCurrentId(exchange.id)
       setCleared(false)
 
+      let failed = false
       try {
         const events = streamTurn(
           {
-            text,
+            text: briefing ? 'Daily briefing' : text,
             mode: prefs.mode,
             history,
             context: {
@@ -165,13 +268,21 @@ export default function App() {
                 timeStyle: 'short',
               }),
             },
+            image: image ? { mediaType: image.mediaType, data: image.data } : undefined,
+            briefing: briefing || undefined,
           },
           controller.signal,
         )
-        for await (const event of events) handleEvent(exchange.id, event)
+        for await (const event of events) {
+          if (event.type === 'error') failed = true
+          handleEvent(exchange.id, event)
+        }
         update(exchange.id, (x) =>
           x.status === 'running' ? { ...x, status: 'done', endedAt: Date.now() } : x,
         )
+        // Spoken conversation: reopen the mic for a follow-up once Lumen stops talking.
+        if (!failed && opts.voice && prefsRef.current.converse)
+          setFollowUpFor(exchange.id)
       } catch (err) {
         if (controller.signal.aborted) {
           update(exchange.id, (x) => ({
@@ -182,6 +293,7 @@ export default function App() {
           }))
           return
         }
+        sfx.error()
         if (err instanceof LockedError) {
           setSession((s) => (s ? { ...s, authed: false } : s))
         }
@@ -196,13 +308,24 @@ export default function App() {
         if (abortRef.current === controller) abortRef.current = null
       }
     },
-    [exchanges, prefs.mode, handleEvent, update, speech],
+    [exchanges, prefs.mode, handleEvent, update, speech, attachmentRef, prefsRef],
   )
+  const askRef = useLatest(ask)
 
-  const listen = useSpeechIn(ask)
+  const listen = useSpeechIn((text) => {
+    sfx.listenEnd()
+    void askRef.current(text, { voice: true })
+  })
   const mic = useMicMeter(listen.listening)
+  const { isBusy } = speech
+  const startListening = listen.start
+
+  const describePhotoIfSilent = useCallback(() => {
+    if (attachmentRef.current) void askRef.current(PHOTO_QUESTION, { voice: true })
+  }, [attachmentRef, askRef])
 
   const cancelAll = useCallback(() => {
+    setFollowUpFor(null)
     listen.cancel()
     speech.cancel()
     abortRef.current?.abort()
@@ -210,12 +333,102 @@ export default function App() {
 
   const talk = useCallback(() => {
     if (micMuted) return
-    if (listen.listening) return listen.stop()
+    if (listen.listening && !listen.passive) return listen.stop()
     speech.cancel()
     abortRef.current?.abort()
+    setFollowUpFor(null)
     setTextMode(false)
-    listen.start()
-  }, [micMuted, listen, speech])
+    setNotice(null)
+    primeAudio()
+    sfx.listenStart()
+    startListening({ onSilence: describePhotoIfSilent })
+  }, [micMuted, listen, speech, startListening, describePhotoIfSilent])
+
+  const takePhoto = useCallback(
+    async (file: File) => {
+      try {
+        const prepared = await prepareImage(file)
+        sfx.shutter()
+        setAttachment(prepared)
+        setNotice(null)
+        if (!textMode && listen.supported && !micMutedRef.current) {
+          speech.cancel()
+          abortRef.current?.abort()
+          setFollowUpFor(null)
+          sfx.listenStart()
+          startListening({ quiet: true, onSilence: describePhotoIfSilent })
+        }
+      } catch (err) {
+        sfx.error()
+        setNotice(err instanceof Error ? err.message : 'Could not read that photo.')
+      }
+    },
+    [
+      textMode,
+      listen.supported,
+      micMutedRef,
+      speech,
+      startListening,
+      describePhotoIfSilent,
+    ],
+  )
+  const takePhotoRef = useLatest(takePhoto)
+
+  // Follow-up: once Lumen has finished speaking, listen quietly for a reply.
+  useEffect(() => {
+    if (!followUpFor) return
+    let calm = 0
+    const id = setInterval(() => {
+      if (isBusy()) {
+        calm = 0
+        return
+      }
+      if (++calm < 3) return
+      clearInterval(id)
+      setFollowUpFor(null)
+      if (
+        micMutedRef.current ||
+        document.visibilityState !== 'visible' ||
+        abortRef.current
+      ) {
+        return
+      }
+      sfx.listenStart()
+      startListening({ quiet: true })
+    }, 200)
+    return () => clearInterval(id)
+  }, [followUpFor, isBusy, startListening, micMutedRef])
+
+  // Paste or drop a photo anywhere on the HUD.
+  useEffect(() => {
+    const imageFrom = (files?: FileList | null) =>
+      [...(files ?? [])].find((f) => f.type.startsWith('image/'))
+    const onPaste = (e: ClipboardEvent) => {
+      const file = imageFrom(e.clipboardData?.files)
+      if (file) {
+        e.preventDefault()
+        void takePhotoRef.current(file)
+      }
+    }
+    const onDragOver = (e: DragEvent) => {
+      if (e.dataTransfer?.types.includes('Files')) e.preventDefault()
+    }
+    const onDrop = (e: DragEvent) => {
+      const file = imageFrom(e.dataTransfer?.files)
+      if (file) {
+        e.preventDefault()
+        void takePhotoRef.current(file)
+      }
+    }
+    window.addEventListener('paste', onPaste)
+    window.addEventListener('dragover', onDragOver)
+    window.addEventListener('drop', onDrop)
+    return () => {
+      window.removeEventListener('paste', onPaste)
+      window.removeEventListener('dragover', onDragOver)
+      window.removeEventListener('drop', onDrop)
+    }
+  }, [takePhotoRef])
 
   // Space to talk, Escape to cancel (ignored while typing).
   useEffect(() => {
@@ -237,7 +450,13 @@ export default function App() {
   const current = exchanges.find((x) => x.id === currentId) ?? null
   const shown = cleared ? null : current
   const running = current?.status === 'running'
-  const docked = Boolean(shown && (shown.cards.length > 0 || shown.searches.length > 0))
+  const docked = Boolean(
+    shown &&
+    (shown.cards.length > 0 ||
+      shown.searches.length > 0 ||
+      shown.hasImage ||
+      shown.briefing),
+  )
 
   const orbState: OrbState = listen.listening
     ? 'listening'
@@ -270,23 +489,39 @@ export default function App() {
     speech.pulseRef,
   ])
 
+  const coarse = matchMedia('(pointer: coarse)').matches
   const status = listen.listening
-    ? listen.interim || 'Listening…'
-    : listen.error
-      ? listen.error
-      : running
-        ? current?.phase === 'searching'
-          ? `Searching: ${current.searches.at(-1) ?? 'the web'}`
-          : current?.phase === 'composing'
-            ? 'Building your brief…'
-            : 'Thinking…'
-        : micMuted
-          ? 'Microphone muted'
-          : speech.speaking
-            ? 'Speaking… press Esc to stop'
-            : matchMedia('(pointer: coarse)').matches
-              ? 'Tap the mic to talk'
-              : 'Press SPACE or click the mic to talk'
+    ? listen.interim ||
+      (attachment
+        ? 'Photo ready. Ask about it, or stay quiet and I’ll describe it…'
+        : listen.passive
+          ? 'Listening for a follow-up… just keep talking'
+          : 'Listening…')
+    : notice
+      ? notice
+      : listen.error
+        ? listen.error
+        : running
+          ? current?.phase === 'searching'
+            ? `Searching: ${current.searches.at(-1) ?? 'the web'}`
+            : current?.phase === 'composing'
+              ? 'Building your brief…'
+              : 'Thinking…'
+          : attachment
+            ? 'Photo ready. Tap the mic and ask about it, or type'
+            : micMuted
+              ? 'Microphone muted'
+              : speech.speaking
+                ? 'Speaking… press Esc to stop'
+                : coarse
+                  ? 'Tap the mic to talk, or the lens to show me something'
+                  : 'Press SPACE to talk · paste or drop a photo to show me something'
+
+  const toggleSetting = (key: keyof Settings) => {
+    if (key === 'voiceOn' && prefs.voiceOn) speech.cancel()
+    if (key === 'converse' && prefs.converse) setFollowUpFor(null)
+    setPrefs((p) => ({ ...p, [key]: !p[key] }))
+  }
 
   if (offline) {
     return (
@@ -303,8 +538,15 @@ export default function App() {
         <Orb state="idle" getLevel={() => 0} className="orb orb--lock" />
         <LockScreen
           onUnlock={async (code) => {
+            primeAudio()
             const err = await login(code)
-            if (!err) setSession({ ...session, authed: true })
+            if (err) {
+              sfx.error()
+            } else {
+              bootSoundPending.current = false
+              sfx.boot()
+              setSession({ ...session, authed: true })
+            }
             return err
           }}
         />
@@ -321,25 +563,30 @@ export default function App() {
     day: 'numeric',
     month: 'long',
   })
+  const hour = now.getHours()
+  const briefLabel =
+    hour < 12 ? 'Morning briefing' : hour < 17 ? 'Afternoon briefing' : 'Evening briefing'
 
   return (
-    <div className={`hud ${docked ? 'is-docked' : ''}`} data-state={orbState}>
+    <div
+      className={`hud ${docked ? 'is-docked' : ''} ${booting ? 'is-booting' : ''}`}
+      data-state={orbState}
+    >
       <div className="hud__bg" aria-hidden="true" />
       <TopBar
         mode={prefs.mode}
         onMode={(mode) => setPrefs((p) => ({ ...p, mode }))}
-        voiceOn={prefs.voiceOn}
-        onVoice={() => {
-          if (prefs.voiceOn) speech.cancel()
-          setPrefs((p) => ({ ...p, voiceOn: !p.voiceOn }))
-        }}
+        settings={prefs}
+        onToggle={toggleSetting}
         textMode={textMode}
         onText={() => setTextMode((v) => !v)}
         onHistory={() => setHistoryOpen(true)}
         onClear={() => {
           cancelAll()
+          setAttachment(null)
           setCleared(true)
         }}
+        onBrief={() => void ask('Daily briefing', { briefing: true })}
         sessionCost={sessionCost}
         demo={session.demo}
         canLock={session.authRequired}
@@ -351,6 +598,10 @@ export default function App() {
       />
 
       <main className="stage">
+        {booting && !shown ? (
+          <BootSequence demo={session.demo} voice={listen.supported} />
+        ) : null}
+
         <section className="core">
           <button
             type="button"
@@ -380,6 +631,13 @@ export default function App() {
                   <p className="caption__greet">
                     {greeting(now)}. <span>{dateText}</span>
                   </p>
+                  <button
+                    type="button"
+                    className="chip caption__brief"
+                    onClick={() => void ask('Daily briefing', { briefing: true })}
+                  >
+                    ▶ {briefLabel}
+                  </button>
                 </>
               )}
             </div>
@@ -401,7 +659,10 @@ export default function App() {
 
         {docked && shown ? (
           <section className="wall" aria-label="Results">
-            <ResearchCard exchange={shown} />
+            {shown.searches.length > 0 || shown.briefing || shown.mode === 'deep' ? (
+              <ResearchCard exchange={shown} />
+            ) : null}
+            {shown.hasImage ? <PhotoCard exchange={shown} /> : null}
             <AnswerCard exchange={shown} />
             {shown.cards.map((card, i) => (
               <CardView key={card.id} card={card} index={i + 1} />
@@ -418,14 +679,23 @@ export default function App() {
         busy={running}
         micMuted={micMuted}
         onMute={() => {
-          if (!micMuted) listen.cancel()
+          if (!micMuted) {
+            listen.cancel()
+            setFollowUpFor(null)
+          }
           setMicMuted((m) => !m)
         }}
         meter={mic.meter}
         status={status}
         textMode={textMode}
-        onSubmit={ask}
+        onSubmit={(text) => void ask(text)}
         onTalk={talk}
+        photo={attachment?.preview ?? null}
+        onPhoto={(file) => void takePhoto(file)}
+        onClearPhoto={() => {
+          setAttachment(null)
+          if (listen.passive) listen.cancel()
+        }}
       />
 
       <HistoryDrawer

@@ -1,6 +1,6 @@
 # Lumen assistant — build plan
 
-Status: **v0.1 built** (see `README.md` for setup). Tested end to end in demo mode on desktop and
+Status: **v0.2 built** (adds keep-talking, sound design and boot-up, camera, daily briefing) (see `README.md` for setup). Tested end to end in demo mode on desktop and
 phone sizes; the live Claude path still needs a first run with a real API key.
 
 ## What we agreed

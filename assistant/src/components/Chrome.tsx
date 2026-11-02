@@ -21,15 +21,95 @@ function Mark() {
   )
 }
 
+export type Settings = { voiceOn: boolean; soundOn: boolean; converse: boolean }
+
+const SETTING_LABELS: Record<keyof Settings, { name: string; hint: string }> = {
+  voiceOn: { name: 'Spoken replies', hint: 'Lumen reads answers aloud' },
+  converse: { name: 'Keep talking', hint: 'Mic reopens after an answer for a follow-up' },
+  soundOn: { name: 'Interface sounds', hint: 'Boot-up, blips and ticks' },
+}
+
+function SettingsMenu({
+  settings,
+  onToggle,
+  canLock,
+  onLock,
+}: {
+  settings: Settings
+  onToggle: (key: keyof Settings) => void
+  canLock: boolean
+  onLock: () => void
+}) {
+  const [open, setOpen] = useState(false)
+  const rootRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e: PointerEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false)
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    window.addEventListener('pointerdown', onDown)
+    window.addEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('pointerdown', onDown)
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  return (
+    <div className="settings" ref={rootRef}>
+      <button
+        type="button"
+        className="chip"
+        aria-expanded={open}
+        aria-haspopup="true"
+        onClick={() => setOpen((o) => !o)}
+      >
+        Settings
+      </button>
+      {open ? (
+        <div className="settings__panel" role="group" aria-label="Settings">
+          <span className="settings__head">SYSTEM // SETTINGS</span>
+          {(Object.keys(SETTING_LABELS) as (keyof Settings)[]).map((key) => (
+            <button
+              key={key}
+              type="button"
+              role="switch"
+              aria-checked={settings[key]}
+              className="toggle"
+              onClick={() => onToggle(key)}
+            >
+              <span className="toggle__text">
+                <span className="toggle__name">{SETTING_LABELS[key].name}</span>
+                <span className="toggle__hint">{SETTING_LABELS[key].hint}</span>
+              </span>
+              <span className="toggle__switch" aria-hidden="true" />
+            </button>
+          ))}
+          {canLock ? (
+            <button type="button" className="chip settings__lock" onClick={onLock}>
+              Lock Lumen
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
 type TopBarProps = {
   mode: Mode
   onMode: (mode: Mode) => void
-  voiceOn: boolean
-  onVoice: () => void
+  settings: Settings
+  onToggle: (key: keyof Settings) => void
   textMode: boolean
   onText: () => void
   onHistory: () => void
   onClear: () => void
+  onBrief: () => void
   sessionCost: number
   demo: boolean
   canLock: boolean
@@ -61,6 +141,9 @@ export function TopBar(p: TopBarProps) {
         <button type="button" className="chip" onClick={p.onClear}>
           Clear view
         </button>
+        <button type="button" className="chip chip--accent" onClick={p.onBrief}>
+          Brief me
+        </button>
         <div className="segmented" role="radiogroup" aria-label="Answer depth">
           {(['quick', 'deep'] as const).map((m) => (
             <button
@@ -75,19 +158,12 @@ export function TopBar(p: TopBarProps) {
             </button>
           ))}
         </div>
-        <button
-          type="button"
-          className="chip"
-          aria-pressed={p.voiceOn}
-          onClick={p.onVoice}
-        >
-          Voice {p.voiceOn ? 'on' : 'off'}
-        </button>
-        {p.canLock ? (
-          <button type="button" className="chip" onClick={p.onLock}>
-            Lock
-          </button>
-        ) : null}
+        <SettingsMenu
+          settings={p.settings}
+          onToggle={p.onToggle}
+          canLock={p.canLock}
+          onLock={p.onLock}
+        />
       </nav>
       <div className="cost" title="Estimated API spend this session">
         <span className="cost__label">SESSION</span>
@@ -119,11 +195,15 @@ type BottomBarProps = {
   textMode: boolean
   onSubmit: (text: string) => void
   onTalk: () => void
+  photo: string | null
+  onPhoto: (file: File) => void
+  onClearPhoto: () => void
 }
 
 export function BottomBar(p: BottomBarProps) {
   const [draft, setDraft] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
     if (p.textMode) inputRef.current?.focus()
   }, [p.textMode])
@@ -138,6 +218,23 @@ export function BottomBar(p: BottomBarProps) {
 
   return (
     <footer className="bottombar">
+      {p.photo ? (
+        <div className="attachment" role="status">
+          <img src={p.photo} alt="" />
+          <span className="attachment__text">
+            <b>PHOTO // LOCKED</b>
+            <span>Ask about it, or stay quiet and I’ll describe it</span>
+          </span>
+          <button
+            type="button"
+            className="chip chip--small"
+            onClick={p.onClearPhoto}
+            aria-label="Remove photo"
+          >
+            ✕
+          </button>
+        </div>
+      ) : null}
       <div className="bottombar__levels">
         <MeterBar meter={p.meter} />
         <span className="readout">
@@ -178,6 +275,43 @@ export function BottomBar(p: BottomBarProps) {
         </p>
       )}
 
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        hidden
+        onChange={(e) => {
+          const file = e.target.files?.[0]
+          if (file) p.onPhoto(file)
+          e.target.value = ''
+        }}
+      />
+      <button
+        type="button"
+        className="lens"
+        onClick={() => fileRef.current?.click()}
+        aria-label="Show Lumen a photo"
+        title="Show Lumen a photo (or paste / drop one)"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinejoin="round"
+            d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2.2l1.5-2h5.6l1.5 2h2.2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"
+          />
+          <circle
+            cx="12"
+            cy="13"
+            r="3.4"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+          />
+        </svg>
+      </button>
       <button
         type="button"
         className={`talk ${p.listening ? 'is-listening' : ''} ${p.busy ? 'is-busy' : ''}`}
@@ -198,6 +332,30 @@ export function BottomBar(p: BottomBarProps) {
         </svg>
       </button>
     </footer>
+  )
+}
+
+const BOOT_LINES = (demo: boolean, voice: boolean) => [
+  ['CORE SYSTEMS', 'ONLINE'],
+  ['VOICE I/O', voice ? 'READY' : 'TEXT ONLY'],
+  ['OPTICS', 'READY'],
+  ['NETWORK LINK', 'SECURE'],
+  ['CLAUDE UPLINK', demo ? 'DEMO' : 'ESTABLISHED'],
+]
+
+/** Startup readout shown once per launch while the HUD powers up. */
+export function BootSequence({ demo, voice }: { demo: boolean; voice: boolean }) {
+  return (
+    <div className="boot" aria-hidden="true">
+      <span className="boot__title">LUMEN OS // v0.2</span>
+      {BOOT_LINES(demo, voice).map(([label, value], i) => (
+        <span key={label} className="boot__line" style={{ '--n': i } as CSSProperties}>
+          <span>&gt; {label}</span>
+          <span className="boot__dots" />
+          <b>{value}</b>
+        </span>
+      ))}
+    </div>
   )
 }
 
@@ -256,7 +414,8 @@ export function HistoryDrawer({
                       hour: '2-digit',
                       minute: '2-digit',
                     })}{' '}
-                    · {x.mode.toUpperCase()} · {x.cards.length} BLOCKS · ≈{' '}
+                    · {x.briefing ? 'BRIEFING' : x.mode.toUpperCase()}
+                    {x.hasImage ? ' · PHOTO' : ''} · {x.cards.length} BLOCKS · ≈{' '}
                     {usd(x.costUsd)}
                   </span>
                 </button>

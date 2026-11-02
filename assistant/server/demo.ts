@@ -197,10 +197,98 @@ async function quick(emit: Emit, signal: AbortSignal) {
   )
 }
 
+async function briefing(emit: Emit, signal: AbortSignal) {
+  emit({ type: 'status', phase: 'thinking' })
+  await wait(500, signal)
+  const queries = [
+    'Johannesburg weather today',
+    'South Africa news today',
+    'USD ZAR exchange rate',
+  ]
+  const sources: Source[] = [
+    { title: 'Johannesburg weather forecast', url: 'https://www.weathersa.co.za/' },
+    { title: 'News24 — South Africa', url: 'https://www.news24.com/' },
+    { title: 'USD/ZAR live rate', url: 'https://www.xe.com/' },
+  ]
+  for (const [i, query] of queries.entries()) {
+    emit({ type: 'status', phase: 'searching' })
+    emit({ type: 'search', query })
+    await wait(700, signal)
+    emit({ type: 'sources', items: sources.slice(0, i + 1) })
+  }
+  emit({ type: 'status', phase: 'composing' })
+  const cards: Card[] = [
+    {
+      id: id(),
+      kind: 'stat',
+      title: 'Johannesburg now',
+      value: '24',
+      unit: '°C',
+      caption: 'Demo figure, not live',
+    },
+    {
+      id: id(),
+      kind: 'list',
+      title: 'Today’s weather',
+      items: ['High 28°, low 15°', '40% chance of afternoon storms', 'Wind NW, 15 km/h'],
+    },
+    {
+      id: id(),
+      kind: 'list',
+      title: 'South Africa headlines',
+      items: [
+        'Demo headline: Rand firms as markets open',
+        'Demo headline: Gautrain extends weekend hours',
+        'Demo headline: Springboks name squad for tour',
+      ],
+    },
+    {
+      id: id(),
+      kind: 'stat',
+      title: 'Dollar to rand',
+      value: 'R17.84',
+      unit: 'per USD',
+      caption: 'Demo figure, not live',
+    },
+    {
+      id: id(),
+      kind: 'image',
+      title: 'Top story',
+      imageUrl: '/demo/engineer-network.jpg',
+      pageUrl: 'https://www.news24.com/',
+      caption: 'Illustrative photo for the demo',
+    },
+  ]
+  for (const card of cards) {
+    await wait(350, signal)
+    emit({ type: 'card', card })
+  }
+  emit({ type: 'usage', costUsd: 0, searches: queries.length })
+  await speak(
+    "Good morning. It's a warm one in Joburg, twenty four degrees now with a high of twenty eight, and storms are possible this afternoon, so keep an umbrella close. The rand is a touch firmer at about seventeen eighty four to the dollar. Your headlines are on screen. This is the demo briefing, so the figures are illustrative.",
+    emit,
+    signal,
+  )
+}
+
+async function photo(emit: Emit, signal: AbortSignal) {
+  emit({ type: 'status', phase: 'thinking' })
+  await wait(900, signal)
+  await speak(
+    "I've got your photo. In demo mode I can't actually look at it, but with your API key added I'll tell you what it is, read any text in it, and look it up on the web if that helps.",
+    emit,
+    signal,
+  )
+}
+
 export async function runDemoTurn(req: TurnRequest, emit: Emit, signal: AbortSignal) {
   const t = req.text.toLowerCase()
   const timer = t.match(/(\d+)\s*(second|sec|minute|min)/)
-  if (t.includes('timer') && timer) {
+  if (req.briefing) {
+    await briefing(emit, signal)
+  } else if (req.image) {
+    await photo(emit, signal)
+  } else if (t.includes('timer') && timer) {
     const seconds = Number(timer[1]) * (timer[2].startsWith('min') ? 60 : 1)
     emit({ type: 'status', phase: 'thinking' })
     await wait(500, signal)

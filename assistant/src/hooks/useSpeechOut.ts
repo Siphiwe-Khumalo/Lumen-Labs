@@ -110,5 +110,14 @@ export function useSpeechOut(enabled: boolean) {
     [enabled, cancel, utter],
   )
 
-  return { supported, speaking, feed, flush, say, cancel, pulseRef }
+  /** True while anything is queued, buffered or audible (safe to call every tick). */
+  const isBusy = useCallback(
+    () =>
+      activeRef.current > 0 ||
+      bufferRef.current.trim().length > 0 ||
+      (supported && (speechSynthesis.speaking || speechSynthesis.pending)),
+    [supported],
+  )
+
+  return { supported, speaking, feed, flush, say, cancel, isBusy, pulseRef }
 }

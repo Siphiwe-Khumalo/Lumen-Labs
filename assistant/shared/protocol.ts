@@ -35,11 +35,17 @@ export type Source = { title: string; url: string }
 /** One finished question/answer pair, sent back as context for follow-ups. */
 export type HistoryTurn = { user: string; assistant: string }
 
+export type ImageMediaType = 'image/jpeg' | 'image/png' | 'image/webp'
+
 export type TurnRequest = {
   text: string
   mode: Mode
   history: HistoryTurn[]
   context: { timezone: string; localTime: string }
+  /** A photo to ask about (base64, no data: prefix). */
+  image?: { mediaType: ImageMediaType; data: string }
+  /** Run the daily briefing instead of a normal question. */
+  briefing?: boolean
 }
 
 /** Server-sent events streamed from POST /api/turn. */
