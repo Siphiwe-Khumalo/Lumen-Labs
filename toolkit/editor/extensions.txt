@@ -1,0 +1,36 @@
+# VS Code / Cursor extensions. install.sh reads this list (one ID per line).
+
+# Web dev
+dbaeumer.vscode-eslint
+esbenp.prettier-vscode
+bradlc.vscode-tailwindcss
+csstools.postcss
+vitest.explorer
+ms-playwright.playwright
+yoavbls.pretty-ts-errors
+formulahendry.auto-rename-tag
+christian-kohler.path-intellisense
+mikestead.dotenv
+ritwickdey.LiveServer
+
+# Design in the editor
+figma.figma-vscode-extension
+naumovs.color-highlight
+jock.svg
+kisstkondoros.vscode-gutter-preview
+stylelint.vscode-stylelint
+
+# Git + collaboration
+eamodio.gitlens
+github.vscode-pull-request-github
+github.vscode-github-actions
+
+# Quality of life
+usernamehw.errorlens
+streetsidesoftware.code-spell-checker
+yzhang.markdown-all-in-one
+ms-vscode-remote.remote-containers
+ms-azuretools.vscode-docker
+
+# AI
+anthropic.claude-code
